@@ -1,6 +1,6 @@
 package fr.abes.theses.batch;
 
-import fr.abes.theses.batch.tasklets.SelectDemandeATraiterTaslet;
+import fr.abes.theses.batch.tasklets.SelectDemandeATraiterTasklet;
 import lombok.extern.log4j.Log4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
@@ -52,7 +52,7 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public SelectDemandeATraiterTaslet selectDemandeATraiterTaslet() { return new SelectDemandeATraiterTaslet(); }
+    public SelectDemandeATraiterTasklet selectDemandeATraiterTaslet() { return new SelectDemandeATraiterTasklet(); }
 
 
 

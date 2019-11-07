@@ -8,7 +8,7 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
-public class SelectDemandeATraiterTaslet implements Tasklet, StepExecutionListener {
+public class SelectDemandeATraiterTasklet implements Tasklet, StepExecutionListener {
     @Override
     public void beforeStep(StepExecution stepExecution) {
 
