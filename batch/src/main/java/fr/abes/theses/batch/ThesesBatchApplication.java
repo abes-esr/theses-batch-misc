@@ -1,4 +1,4 @@
-package fr.abes.thesesbatch;
+package fr.abes.theses.batch;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
