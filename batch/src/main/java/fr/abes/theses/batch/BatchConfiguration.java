@@ -1,15 +1,21 @@
 package fr.abes.theses.batch;
 
-import fr.abes.theses.batch.tasklets.SelectDemandeATraiterTasklet;
+import fr.abes.theses.batch.tasklets.AuthentifierToSudocTasklet;
+import fr.abes.theses.batch.tasklets.GenererFichierTasklet;
+import fr.abes.theses.batch.tasklets.SelectThesesStarARedifTasklet;
 import lombok.extern.log4j.Log4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersIncrementer;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.*;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.annotation.EnableRetry;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -17,6 +23,7 @@ import javax.sql.DataSource;
 @Log4j
 @Configuration
 @EnableBatchProcessing
+@EnableRetry
 public class BatchConfiguration {
     @Autowired
     private JobBuilderFactory jobs;
@@ -32,11 +39,24 @@ public class BatchConfiguration {
         return new ThesesBatchConfigurer(entityManagerFactory);
     }
 
+    /**
+     * Job de rediffusion des notices de STAR dans le Sudoc (uniquement notices bibliographiques)
+     * @return
+     */
     @Bean
-    public Job selectDemandeATraiter() {
-        log.info("Début du batch de sélection de la prochaine demande à traiter");
+    public Job jobRediffusionNoticesBiblio(ItemReader itemReader, ItemProcessor itemProcessor, ItemWriter itemWriter) {
+        log.info("Début du batch de rediffusion des notices de STAR en notices bibliographique Sudoc");
 
-        return jobs.get("selectDemandeATraiter").incrementer(incrementer()).start(stepSelectDemandeATraiter()).on(ExitStatus.FAILED.getExitCode()).end().build().build();
+        return jobs
+                .get("traiterLigneFichierRecouv").incrementer(incrementer())
+                .start(stepSelectThesesStarARediff()).on("FAILED").end()
+                .from(stepSelectThesesStarARediff()).on("AUCUNE NOTICE").end()
+                .from(stepSelectThesesStarARediff()).on("COMPLETED").to(stepAuthentifierToSudoc())
+                .from(stepAuthentifierToSudoc()).on("FAILED").end()
+                .from(stepAuthentifierToSudoc()).on("COMPLETED").to(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter))
+                .from(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter)).on("FAILED").end()
+                .from(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter)).on("COMPLETED").to(stepGenererFichier())
+                .build().build();
     }
 
 
@@ -46,14 +66,41 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Step stepSelectDemandeATraiter() {
-        return steps.get("stepSelectDemandeATraiter").allowStartIfComplete(true)
-                .tasklet(selectDemandeATraiterTaslet()).build();
+    public Step stepSelectThesesStarARediff() {
+        return steps.get("selectThesesStarARediff").allowStartIfComplete(true)
+                .tasklet(selectThesesStarARedifTasklet()).build();
     }
 
     @Bean
-    public SelectDemandeATraiterTasklet selectDemandeATraiterTaslet() { return new SelectDemandeATraiterTasklet(); }
+    public Step stepAuthentifierToSudoc() {
+        return steps.get("authentifierToSudoc").allowStartIfComplete(true)
+                .tasklet(authentifierToSudocTasklet()).build();
+    }
 
+    @Bean
+    public Step stepDiffuserNoticeBiblio(ItemReader reader, ItemProcessor processor, ItemWriter writer) {
+        return steps.get("diffuserNoticeBiblio").chunk(1)
+                .reader(reader)
+                .processor(processor)
+                .writer(writer)
+                .build();
+    }
 
+    @Bean
+    public Step stepGenererFichier() {
+        return steps
+                .get("stepGenererFichier").allowStartIfComplete(true)
+                .tasklet(genererFichierTasklet())
+                .build();
+    }
+
+    @Bean
+    public SelectThesesStarARedifTasklet selectThesesStarARedifTasklet() { return new SelectThesesStarARedifTasklet(); }
+
+    @Bean
+    public AuthentifierToSudocTasklet authentifierToSudocTasklet() { return new AuthentifierToSudocTasklet(); }
+
+    @Bean
+    public GenererFichierTasklet genererFichierTasklet() { return new GenererFichierTasklet(); }
 
 }

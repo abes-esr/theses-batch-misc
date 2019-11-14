@@ -11,7 +11,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>fr.abes.theses</groupId>
+            <groupId>fr.abes</groupId>
             <artifactId>ThesesCore</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
@@ -20,7 +20,11 @@
             <artifactId>spring-batch-core</artifactId>
             <version>4.1.2.RELEASE</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20190722</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
