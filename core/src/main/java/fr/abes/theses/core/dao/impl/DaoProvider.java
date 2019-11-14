@@ -1,5 +1,6 @@
 package fr.abes.theses.core.dao.impl;
 
+import fr.abes.theses.core.dao.INoticeBiblioDao;
 import fr.abes.theses.core.dao.ITraitementDao;
 import fr.abes.theses.core.dao.ITraitementLigneDao;
 import lombok.Getter;
@@ -13,4 +14,7 @@ public class DaoProvider {
 
     @Resource
     private ITraitementLigneDao traitementLigne;
+
+    @Resource
+    private INoticeBiblioDao noticeBiblio;
 }

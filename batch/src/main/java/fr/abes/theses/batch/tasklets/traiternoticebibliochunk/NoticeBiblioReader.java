@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class NoticeBiblioReader implements ItemReader<LignesNoticeBiblioDto>, StepExecutionListener {
+
     @Override
     public void beforeStep(StepExecution stepExecution) {
-
     }
 
     @Override
@@ -24,6 +24,9 @@ public class NoticeBiblioReader implements ItemReader<LignesNoticeBiblioDto>, St
 
     @Override
     public LignesNoticeBiblioDto read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+
+
+
         return null;
     }
 }
