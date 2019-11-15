@@ -9,12 +9,8 @@ import javax.annotation.Resource;
 @Getter
 public class ServiceProvider {
     @Resource
-    private IMajStarSudocService majStarSudoc;
+    private IMajStarSudocService majStarSudocService;
 
     @Resource
-    private ITraitementService traitement;
-
-    @Resource
-    private ITraitementLigneService traitementLigne;
-
+    private INoticeBiblioService noticeBiblioService;
 }
