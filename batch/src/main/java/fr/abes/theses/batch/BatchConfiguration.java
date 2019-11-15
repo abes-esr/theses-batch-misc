@@ -80,9 +80,9 @@ public class BatchConfiguration {
     @Bean
     public Step stepDiffuserNoticeBiblio(ItemReader reader, ItemProcessor processor, ItemWriter writer) {
         return steps.get("diffuserNoticeBiblio").chunk(1)
-                .reader(reader)
-                .processor(processor)
-                .writer(writer)
+                .reader(reader) //on lit iddoc dans star
+                .processor(processor) //on transfo tef to unimarc
+                .writer(writer) //ecrire dans le sudoc + dire dans bdd
                 .build();
     }
 

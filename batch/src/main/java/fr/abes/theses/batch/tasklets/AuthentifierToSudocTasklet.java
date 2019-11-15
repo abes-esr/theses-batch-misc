@@ -1,7 +1,7 @@
 package fr.abes.theses.batch.tasklets;
 
 import fr.abes.cbs.exception.CBSException;
-import fr.abes.theses.batch.ligneFichierDto.LignesNoticeBiblioDto;
+import fr.abes.theses.batch.ligneFichierDto.LigneNoticeBiblioDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepContribution;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Slf4j
 public class AuthentifierToSudocTasklet implements Tasklet, StepExecutionListener {
-    private List<LignesNoticeBiblioDto> lignesFichier;
+    private List<LigneNoticeBiblioDto> lignesFichier;
     @Autowired
     ProxyRetry proxyRetry;
 
@@ -26,7 +26,31 @@ public class AuthentifierToSudocTasklet implements Tasklet, StepExecutionListene
         ExecutionContext executionContext = stepExecution
                 .getJobExecution()
                 .getExecutionContext();
-        this.lignesFichier = (List<LignesNoticeBiblioDto>) executionContext.get("lignes");
+        this.lignesFichier = (List<LigneNoticeBiblioDto>) executionContext.get("lignes");
+    }
+
+    /**
+     * step allowing the program to authenticate to Sudoc database
+     * @param stepContribution
+     * @param chunkContext
+     * @return
+     * @throws Exception
+     */
+
+    @Override
+    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
+        log.info("Entrée dans AuthentifierToSudocTasklet");
+
+        try
+        {
+            this.proxyRetry.authenticate();
+        }
+        catch (CBSException e)
+        {
+            log.error("Impossible de se connecter au Sudoc : " + e.toString());
+            stepContribution.setExitStatus(ExitStatus.FAILED);
+        }
+        return RepeatStatus.FINISHED;
     }
 
     @Override
@@ -35,16 +59,5 @@ public class AuthentifierToSudocTasklet implements Tasklet, StepExecutionListene
             return ExitStatus.FAILED;
         }
         return ExitStatus.COMPLETED;
-    }
-
-    @Override
-    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-        try {
-            this.proxyRetry.authenticate();
-        } catch (CBSException e) {
-            log.error("impossible de se connecter au Sudoc : " + e.toString());
-            stepContribution.setExitStatus(ExitStatus.FAILED);
-        }
-        return RepeatStatus.FINISHED;
     }
 }

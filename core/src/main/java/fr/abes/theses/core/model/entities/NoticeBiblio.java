@@ -3,11 +3,10 @@ package fr.abes.theses.core.model.entities;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GeneratorType;
+import org.hibernate.annotations.ValueGenerationType;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -18,13 +17,14 @@ import java.io.Serializable;
 public class NoticeBiblio implements Serializable,GenericEntity<Integer> {
     @Id
     @Column(name = "JOB_ID")
-    private  Integer id;
+    @GeneratedValue
+    private  Integer idJob;
 
     @Column(name = "THE_ID")
-    private Integer idThese;
+    private Integer iddoc;
 
     @Column(name = "ETA_ID")
-    private String idEtablissement;
+    private String codeEtab;
 
     @Column(name = "TRAITEE")
     private Integer done;
@@ -32,16 +32,16 @@ public class NoticeBiblio implements Serializable,GenericEntity<Integer> {
     @Column(name = "RETOUR_SUDOC")
     private String retourSudoc;
 
-    public NoticeBiblio(Integer id, Integer idThese, String idEtablissement, Integer done, String retourSudoc) {
-        this.id = id;
-        this.idThese = idThese;
-        this.idEtablissement = idEtablissement;
+    public NoticeBiblio(Integer idJob, Integer iddoc, String codeEtab, Integer done, String retourSudoc) {
+        this.idJob = idJob;
+        this.iddoc = iddoc;
+        this.codeEtab = codeEtab;
         this.done = done;
         this.retourSudoc = retourSudoc;
     }
 
     @Override
     public Integer getId() {
-        return this.id;
+        return this.idJob;
     }
 }
