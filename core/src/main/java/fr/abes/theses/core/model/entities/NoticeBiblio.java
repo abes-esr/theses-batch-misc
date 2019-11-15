@@ -39,6 +39,12 @@ public class NoticeBiblio implements Serializable,GenericEntity<Integer> {
         this.done = done;
         this.retourSudoc = retourSudoc;
     }
+    public NoticeBiblio(Integer iddoc, String codeEtab, Integer done, String retourSudoc) {
+        this.iddoc = iddoc;
+        this.codeEtab = codeEtab;
+        this.done = done;
+        this.retourSudoc = retourSudoc;
+    }
 
     @Override
     public Integer getId() {
