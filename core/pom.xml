@@ -7,20 +7,9 @@
         <artifactId>theses-batch</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>ThesesCore</artifactId>
+    <artifactId>core</artifactId>
     <description>Module core des applications Thèses</description>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.1.9.RELEASE</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -58,14 +47,4 @@
             <version>11.1.0.7.0</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>
