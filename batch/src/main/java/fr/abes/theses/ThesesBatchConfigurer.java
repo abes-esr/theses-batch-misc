@@ -37,7 +37,7 @@ public class ThesesBatchConfigurer implements BatchConfigurer {
 
     @Override
     public PlatformTransactionManager getTransactionManager() throws Exception {
-        return null;
+        return this.transactionManager;
     }
 
     @Override
