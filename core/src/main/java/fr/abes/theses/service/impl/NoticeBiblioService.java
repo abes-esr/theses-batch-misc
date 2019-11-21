@@ -12,8 +12,6 @@ import java.util.Optional;
 
 @Service
 public class NoticeBiblioService implements INoticeBiblioService {
-
-
     @Autowired
     @Getter
     private DaoProvider dao;
@@ -31,9 +29,6 @@ public class NoticeBiblioService implements INoticeBiblioService {
     @Override
     public NoticeBiblio findById(Integer id) {
         Optional<NoticeBiblio> noticeBiblio = getDao().getNoticeBiblio().findById(id);
-        if (noticeBiblio.isPresent()) {
-            return noticeBiblio.get();
-        }
-        return null;
+        return noticeBiblio.orElse(null);
     }
 }

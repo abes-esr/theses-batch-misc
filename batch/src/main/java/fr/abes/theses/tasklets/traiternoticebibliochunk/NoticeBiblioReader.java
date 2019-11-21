@@ -39,7 +39,7 @@ public class NoticeBiblioReader implements ItemReader<LigneNoticeBiblioDto>, Ste
      * @throws
      */
     @Override
-    public LigneNoticeBiblioDto read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public LigneNoticeBiblioDto read() throws UnexpectedInputException, ParseException, NonTransientResourceException {
 
         LigneNoticeBiblioDto ligne = null;
         if (i.intValue() < this.lignesFichier.size()) {
