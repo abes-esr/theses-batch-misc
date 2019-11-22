@@ -1,0 +1,10 @@
+addons:
+  sonarcloud:
+    organization: "abes-esr"
+    token:
+      secure: "N7opMABioz+NKjrgrYtfCt4RDe/v41iPl+vfZ6STPwGkRdPEU/2ePwFAw7pMnJZvh7r+2hi4rwEZOK2oKONBQBl68ImEMxupt72NyAhOSgB8BSKeXop65NMyN4vOW6hKI6Cj4dLmZOWMuFVz8qHaRW2M3JdSbAKSohHtqJ3fXnL1flKegfjj7jRvV0vZ1TNgG3SPQ0XNyUETDvssC0+JGI6h3b4PAa+Kyij0zbCnv2uUaDkc+ITmO0JQpto/Sf+/iX/xyjaBk/irJU3FhUxTzebYZQWGAVrvNYSnTltFKpvQSAhaFU493WG9ETIPd0IPbNPAmdrjZySWIbylM5jvaJ6iDkhlt7QKQxEXDGReJZ/UK0CWgIKchP7BsBP91wrRJ3JNhsjc54tsB7kezL5ovsEjhoC12zoWPPxuN29FdonSv1SBTz1nOMqu0s6ehc4Ri2AcQhxvT0kNfOy2E/OverPvbum4QwkmPQbqpCSBSOQt1WIMKdifIfVP5gOSBlUEbTAnZZxjrzxlTXIzx8pFKhcUXI6A6n9iQHksea8oTk12E6k6QWTqwfDGQqjJ/C85fePvtb7xvKpUC5NKke9As2PETox1quHPaW2yWXpp48fR+jCuPFCV0HaWPNM9L5dFoLFlq9BXnl/qM918zUuC8qLrx6/6/lzELu0D6EbckOc="
+
+
+script:
+  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=abes-esr_theses-batch
