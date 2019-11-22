@@ -28,11 +28,11 @@ public class NoticeBiblioProcessor implements ItemProcessor<LigneNoticeBiblioDto
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
-        ExecutionContext executionContext = stepExecution
+       /* ExecutionContext executionContext = stepExecution
                 .getJobExecution()
                 .getExecutionContext();
         this.noticeBiblio = (NoticeBiblio) executionContext.get("noticeBiblio");
-        log.info("...pour la noticeBiblio " + this.noticeBiblio.getId());
+        //log.info("...pour la noticeBiblio " + this.noticeBiblio.getId());*/
     }
 
     /**

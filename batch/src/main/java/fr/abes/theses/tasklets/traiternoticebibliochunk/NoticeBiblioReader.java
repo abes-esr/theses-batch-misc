@@ -1,6 +1,8 @@
 package fr.abes.theses.tasklets.traiternoticebibliochunk;
 
 import fr.abes.theses.ligneFichierDto.LigneNoticeBiblioDto;
+import fr.abes.theses.model.entities.NoticeBiblio;
+import fr.abes.theses.service.ServiceProvider;
 import fr.abes.theses.tasklets.ProxyRetry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
@@ -15,21 +17,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Component
-public class NoticeBiblioReader implements ItemReader<LigneNoticeBiblioDto>, StepExecutionListener {
+public class NoticeBiblioReader implements ItemReader<NoticeBiblio>, StepExecutionListener {
 
-    private List<LigneNoticeBiblioDto> lignesFichier;
-    AtomicInteger i = new AtomicInteger();
+    private List<NoticeBiblio> noticeBiblios;
+    private AtomicInteger i = new AtomicInteger();
+    private ServiceProvider serviceProvider;
 
     @Autowired
-    ProxyRetry proxyRetry;
-
+    public NoticeBiblioReader(ServiceProvider serviceProvider) {
+        this.serviceProvider = serviceProvider;
+    }
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
+        log.info("entree dans beforeStep de NoticeBiblioReader");
         ExecutionContext executionContext = stepExecution
                 .getJobExecution()
                 .getExecutionContext();
-        this.lignesFichier = (List<LigneNoticeBiblioDto>) executionContext.get("lignes");
+        this.noticeBiblios = serviceProvider.getNoticeBiblioService().findAll();
     }
 
     /**
@@ -39,13 +44,14 @@ public class NoticeBiblioReader implements ItemReader<LigneNoticeBiblioDto>, Ste
      * @throws
      */
     @Override
-    public LigneNoticeBiblioDto read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public NoticeBiblio read()  {
 
-        LigneNoticeBiblioDto ligne = null;
-        if (i.intValue() < this.lignesFichier.size()) {
-            ligne = this.lignesFichier.get(i.getAndIncrement());
+        NoticeBiblio noticeBiblio = null;
+        if (i.intValue() < this.noticeBiblios.size()) {
+            noticeBiblio = this.noticeBiblios.get(i.getAndIncrement());
         }
-        return ligne;
+        log.info("AAAAAAAA" +noticeBiblio.getCodeEtab());
+        return noticeBiblio;
     }
 
     @Override

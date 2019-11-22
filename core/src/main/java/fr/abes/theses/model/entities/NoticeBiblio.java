@@ -7,16 +7,18 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Entity
 @Getter
 @Setter
-@Table(name = "T_E_TRAITEMENT_NOTICEBIB_TNB", schema = "STAR")
 @NoArgsConstructor
+@Table(name = "T_E_TRAITEMENT_NOTICEBIB_TNB", schema = "STAR")
 public class NoticeBiblio implements Serializable,GenericEntity<Integer> {
     @Id
-    @Column(name = "JOB_ID")
     @GeneratedValue
-    private  Integer idJob;
+    @Column(name = "JOB_ID")
+    private Integer idJob;
 
     @Column(name = "THE_ID")
     private Integer iddoc;

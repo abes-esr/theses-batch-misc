@@ -1,16 +1,19 @@
 package fr.abes.theses.tasklets;
 
 import fr.abes.cbs.exception.CBSException;
+import fr.abes.theses.service.ServiceProvider;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 public class ProxyRetry {
-    /*@Autowired
+    @Autowired
     @Getter
-    private ServiceProvider service;*/
+    private ServiceProvider service;
 
     /**
      * permet de retenter plusieurs fois la connexion à CBS
@@ -19,8 +22,7 @@ public class ProxyRetry {
     @Retryable
     public void authenticate() throws CBSException {
         log.info("dans authenticate du ProxyRetry avec login M4001");
-/*
+
         getService().getMajStarSudocService().authenticateBiblio();
-*/
     }
 }

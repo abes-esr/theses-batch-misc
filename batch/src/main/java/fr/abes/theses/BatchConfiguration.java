@@ -50,7 +50,7 @@ public class BatchConfiguration {
         log.info("Début du batch de rediffusion des notices de STAR en notices bibliographique Sudoc");
 
         return jobs
-                .get("traiterLigneFichierRecouv").incrementer(incrementer())
+                .get("diffuserThesesVersSudoc").incrementer(incrementer())
                 .start(stepSelectThesesStarARediff()).on("FAILED").end()
                 .from(stepSelectThesesStarARediff()).on("AUCUNE NOTICE").end()
                 .from(stepSelectThesesStarARediff()).on("COMPLETED").to(stepAuthentifierToSudoc())
@@ -81,7 +81,7 @@ public class BatchConfiguration {
 
     @Bean
     public Step stepDiffuserNoticeBiblio(ItemReader reader, ItemProcessor processor, ItemWriter writer) {
-        return steps.get("diffuserNoticeBiblio").chunk(1)
+        return steps.get("diffuserNoticeBiblio").chunk(10)
                 .reader(reader) //on lit iddoc dans star
                 .processor(processor) //on transfo tef to unimarc
                 .writer(writer) //ecrire dans le sudoc + dire dans bdd

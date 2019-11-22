@@ -13,6 +13,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -35,18 +36,16 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
     @Value("${solr.url}")
     private String urlSolr;
 
-    private final String urlDiffusionTotale = "/select/?q=SGcodeEtab:(USPC%20OR%20PA13%20OR%20LEMA%20OR%20EMAC%20OR%20ESAE%20OR%20MULH)+SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=id%20asc&rows=5000&wt=json";
+    private final String urlDiffusionTotale = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=id%20asc&rows=5&wt=json";
     @Override
     public void beforeStep(StepExecution stepExecution) {
 
+        log.info("entree dans beforeStep de SelectThesesStarARedifTasklet");
+        ExecutionContext executionContext = stepExecution
+                .getJobExecution()
+                .getExecutionContext();
+
     }
-
-    /*@Override
-    public ExitStatus afterStep(StepExecution stepExecution) {
-        return stepExecution.getExitStatus();
-    }*/
-
-
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
         log.info("Entrée dans SelectThesesStarARedif");
@@ -54,8 +53,8 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
         try
         {
             String requete = urlSolr + urlDiffusionTotale;
-            URL urlEmbargo = new URL(requete);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(urlEmbargo.openStream(), "UTF-8"));
+            URL url = new URL(requete);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
             String ligne = "";
             StringBuilder builder = new StringBuilder();
             while ((ligne = reader.readLine()) != null)
@@ -76,6 +75,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                 for (int i=0;i<docs.length();i++)
                 {
                     int iddoc = Integer.parseInt(docs.optJSONObject(i).optString("id"));
+                    log.info("traite" + iddoc);
                     String codeEtab = docs.optJSONObject(i).optString("SGcodeEtab");
                     noticeBiblioService.save(new NoticeBiblio(iddoc, codeEtab, 0, ""));
                 }
@@ -83,8 +83,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
             }
         }
         catch (Exception e) {
-            log.error("Erreur lors de la récupération des iddoc, codeetab via solr = "
-                    + e.toString());
+            log.error(e.toString());
 //            mailer.mailEchecTraitement(
 //                    this.email,
 //                    this.demande.getId()
@@ -96,10 +95,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
 
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
-        if (stepExecution.getJobExecution().getExitStatus().equals(ExitStatus.FAILED)) {
-            return ExitStatus.FAILED;
-        }
-        return ExitStatus.COMPLETED;
+        return stepExecution.getExitStatus();
     }
 
 

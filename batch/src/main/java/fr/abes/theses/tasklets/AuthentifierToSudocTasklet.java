@@ -44,6 +44,7 @@ public class AuthentifierToSudocTasklet implements Tasklet, StepExecutionListene
         try
         {
             this.proxyRetry.authenticate();
+            log.debug("connexion OK");
         }
         catch (CBSException e)
         {
