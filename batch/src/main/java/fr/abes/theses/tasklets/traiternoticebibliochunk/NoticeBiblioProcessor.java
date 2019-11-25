@@ -1,10 +1,8 @@
 package fr.abes.theses.tasklets.traiternoticebibliochunk;
 
-import fr.abes.theses.ligneFichierDto.LigneNoticeBiblioDto;
 import fr.abes.theses.model.entities.NoticeBiblio;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ItemProcessor;
@@ -12,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class NoticeBiblioProcessor implements ItemProcessor<LigneNoticeBiblioDto, LigneNoticeBiblioDto>, StepExecutionListener {
+public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblio, NoticeBiblio>, StepExecutionListener {
 
    /* @Autowired
     StrategyFactory factory;
@@ -44,7 +42,7 @@ public class NoticeBiblioProcessor implements ItemProcessor<LigneNoticeBiblioDto
      */
 
     @Override
-    public LigneNoticeBiblioDto process(LigneNoticeBiblioDto ligneFichierDto) throws Exception {
+    public NoticeBiblio process(NoticeBiblio noticeBiblio) throws Exception {
 
       /*  try {
             int iddoc = ligneFichierDto.getIddoc();
@@ -56,7 +54,8 @@ public class NoticeBiblioProcessor implements ItemProcessor<LigneNoticeBiblioDto
             log.error("erreur lors de la recup de la noticetraitee : " + e.toString());
             ligneFichierDto.setRetourSudoc(e.getMessage());
         }*/
-        return ligneFichierDto;
+        log.info("dans le process = " + noticeBiblio);
+        return noticeBiblio;
     }
 
 

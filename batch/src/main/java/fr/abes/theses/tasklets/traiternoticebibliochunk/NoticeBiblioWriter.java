@@ -1,6 +1,7 @@
 package fr.abes.theses.tasklets.traiternoticebibliochunk;
 
-import fr.abes.theses.ligneFichierDto.LigneNoticeBiblioDto;
+import fr.abes.theses.model.entities.NoticeBiblio;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
@@ -9,8 +10,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @Component
-public class NoticeBiblioWriter implements ItemWriter<LigneNoticeBiblioDto>, StepExecutionListener {
+public class NoticeBiblioWriter implements ItemWriter<NoticeBiblio>, StepExecutionListener {
 
    /* @Autowired
     private StrategyFactory factory;
@@ -45,8 +47,9 @@ public class NoticeBiblioWriter implements ItemWriter<LigneNoticeBiblioDto>, Ste
      * @throws
      */
     @Override
-    public void write(List<? extends LigneNoticeBiblioDto> list) throws Exception {
+    public void write(List<? extends NoticeBiblio> list) throws Exception {
 
+        log.info("dans le write = ok");
     }
 
     /**
@@ -55,7 +58,7 @@ public class NoticeBiblioWriter implements ItemWriter<LigneNoticeBiblioDto>, Ste
      * @return
      * @throws
      */
-    public void write2(List<? extends LigneNoticeBiblioDto> list) throws Exception {
+    public void write2(List<? extends NoticeBiblio> list) throws Exception {
 
     }
 

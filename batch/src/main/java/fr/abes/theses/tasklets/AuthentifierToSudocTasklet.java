@@ -1,7 +1,7 @@
 package fr.abes.theses.tasklets;
 
 import fr.abes.cbs.exception.CBSException;
-import fr.abes.theses.ligneFichierDto.LigneNoticeBiblioDto;
+import fr.abes.theses.model.entities.NoticeBiblio;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepContribution;
@@ -17,16 +17,13 @@ import java.util.List;
 
 @Slf4j
 public class AuthentifierToSudocTasklet implements Tasklet, StepExecutionListener {
-    private List<LigneNoticeBiblioDto> lignesFichier;
+    private List<NoticeBiblio> lignesFichier;
     @Autowired
     ProxyRetry proxyRetry;
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
-        ExecutionContext executionContext = stepExecution
-                .getJobExecution()
-                .getExecutionContext();
-        this.lignesFichier = (List<LigneNoticeBiblioDto>) executionContext.get("lignes");
+
     }
 
     /**

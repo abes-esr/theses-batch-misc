@@ -49,6 +49,7 @@ public class NoticeBiblioReader implements ItemReader<NoticeBiblio>, StepExecuti
         if (i.intValue() < this.noticeBiblios.size()) {
             noticeBiblio = this.noticeBiblios.get(i.getAndIncrement());
         }
+        log.info("noticeBiblio.getCodeEtab() = " + noticeBiblio.getCodeEtab());
         return noticeBiblio;
     }
 
