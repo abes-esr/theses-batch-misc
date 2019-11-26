@@ -31,4 +31,9 @@ public class NoticeBiblioService implements INoticeBiblioService {
         Optional<NoticeBiblio> noticeBiblio = getDao().getNoticeBiblio().findById(id);
         return noticeBiblio.orElse(null);
     }
+
+    @Override
+    public List<NoticeBiblio> getNoticesNonTraite() {
+        return getDao().getNoticeBiblio().getNoticesNonTraite();
+    }
 }

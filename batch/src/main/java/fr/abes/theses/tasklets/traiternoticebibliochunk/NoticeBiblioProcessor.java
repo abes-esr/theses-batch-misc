@@ -1,11 +1,15 @@
 package fr.abes.theses.tasklets.traiternoticebibliochunk;
 
+import fr.abes.theses.model.entities.Document;
 import fr.abes.theses.model.entities.NoticeBiblio;
+import fr.abes.theses.service.ServiceProvider;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -16,10 +20,10 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblio, Notice
     StrategyFactory factory;
 
     @Autowired
-    ProxyRetry proxyRetry;
+    ProxyRetry proxyRetry;*/
     @Autowired
     @Getter
-    ServiceProvider service;*/
+   ServiceProvider service;
 
     private NoticeBiblio noticeBiblio;
 
@@ -54,7 +58,10 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblio, Notice
             log.error("erreur lors de la recup de la noticetraitee : " + e.toString());
             ligneFichierDto.setRetourSudoc(e.getMessage());
         }*/
-        log.info("dans le process = " + noticeBiblio);
+
+        Document doc = getService().getDocumentService().findById(noticeBiblio.getId());
+
+        log.info("dans le process = " + noticeBiblio + " Doc:" + doc.getDoc());
         return noticeBiblio;
     }
 

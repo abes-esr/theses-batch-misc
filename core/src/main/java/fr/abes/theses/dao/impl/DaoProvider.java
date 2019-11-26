@@ -1,6 +1,8 @@
 package fr.abes.theses.dao.impl;
 
+import fr.abes.theses.dao.IDocumentDao;
 import fr.abes.theses.dao.INoticeBiblioDao;
+import fr.abes.theses.service.IDocumentService;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 
@@ -11,4 +13,7 @@ import javax.annotation.Resource;
 public class DaoProvider {
     @Resource
     private INoticeBiblioDao noticeBiblio;
+
+    @Resource
+    private IDocumentDao document;
 }
