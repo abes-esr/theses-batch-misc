@@ -1,5 +1,6 @@
 package fr.abes.theses;
 
+import fr.abes.theses.configuration.ThesesOracleConfig;
 import lombok.extern.log4j.Log4j;
 import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -7,14 +8,19 @@ import org.springframework.batch.core.explore.support.MapJobExplorerFactoryBean;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 
 @Log4j
+@Import(ThesesOracleConfig.class)
 public class ThesesBatchConfigurer implements BatchConfigurer {
     private final EntityManagerFactory entityManagerFactory;
 
@@ -26,7 +32,10 @@ public class ThesesBatchConfigurer implements BatchConfigurer {
 
     private JobExplorer jobExplorer;
 
-    public ThesesBatchConfigurer(EntityManagerFactory entityManagerFactory) {
+    @Autowired
+    private DataSource thesesDatasource;
+
+    public ThesesBatchConfigurer(EntityManagerFactory entityManagerFactory) throws Exception{
         this.entityManagerFactory = entityManagerFactory;
     }
 
@@ -45,6 +54,7 @@ public class ThesesBatchConfigurer implements BatchConfigurer {
         return this.jobLauncher;
     }
 
+
     @Override
     public JobExplorer getJobExplorer() throws Exception {
         return this.jobExplorer;
@@ -61,8 +71,13 @@ public class ThesesBatchConfigurer implements BatchConfigurer {
             }
             // jobRepository:
             log.info("Forcing the use of a Map based JobRepository");
-            MapJobRepositoryFactoryBean jobRepositoryFactory = new MapJobRepositoryFactoryBean(this.transactionManager);
+            JobRepositoryFactoryBean jobRepositoryFactory = new JobRepositoryFactoryBean();
             jobRepositoryFactory.afterPropertiesSet();
+            jobRepositoryFactory.setDataSource(thesesDatasource);
+            jobRepositoryFactory.setTransactionManager(transactionManager);
+            jobRepositoryFactory.setIsolationLevelForCreate("ISOLATION_SERIALIZABLE");
+            jobRepositoryFactory.setTablePrefix("BATCH_");
+            jobRepositoryFactory.setMaxVarCharLength(1000);
             this.jobRepository = jobRepositoryFactory.getObject();
 
             // jobLauncher:

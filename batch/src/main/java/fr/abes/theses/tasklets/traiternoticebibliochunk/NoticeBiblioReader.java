@@ -1,5 +1,6 @@
 package fr.abes.theses.tasklets.traiternoticebibliochunk;
 
+import fr.abes.theses.model.NoticeBiblioDto;
 import fr.abes.theses.model.entities.NoticeBiblio;
 import fr.abes.theses.service.ServiceProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -16,15 +17,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Component
-public class NoticeBiblioReader implements ItemReader<NoticeBiblio>, StepExecutionListener {
+public class NoticeBiblioReader implements ItemReader<NoticeBiblioDto>, StepExecutionListener {
 
-    private List<NoticeBiblio> noticeBiblios;
+    private List<NoticeBiblioDto> noticeBiblios;
     private AtomicInteger i = new AtomicInteger();
-    private ServiceProvider serviceProvider;
 
-    @Autowired
     public NoticeBiblioReader(ServiceProvider serviceProvider) {
-        this.serviceProvider = serviceProvider;
     }
 
     @Override
@@ -33,7 +31,7 @@ public class NoticeBiblioReader implements ItemReader<NoticeBiblio>, StepExecuti
         ExecutionContext executionContext = stepExecution
                 .getJobExecution()
                 .getExecutionContext();
-        this.noticeBiblios = serviceProvider.getNoticeBiblioService().getNoticesNonTraite();
+        this.noticeBiblios = (List<NoticeBiblioDto>) executionContext.get("noticesBiblio");
     }
 
     /**
@@ -43,13 +41,12 @@ public class NoticeBiblioReader implements ItemReader<NoticeBiblio>, StepExecuti
      * @throws
      */
     @Override
-    public NoticeBiblio read()  {
+    public NoticeBiblioDto read()  {
 
-        NoticeBiblio noticeBiblio = null;
+        NoticeBiblioDto noticeBiblio = null;
         if (i.intValue() < this.noticeBiblios.size()) {
             noticeBiblio = this.noticeBiblios.get(i.getAndIncrement());
         }
-        //log.info("noticeBiblio.getCodeEtab() = " + noticeBiblio.getCodeEtab());
         return noticeBiblio;
     }
 

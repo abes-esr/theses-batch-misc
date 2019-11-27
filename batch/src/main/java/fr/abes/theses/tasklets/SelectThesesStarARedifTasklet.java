@@ -26,12 +26,10 @@ import java.net.URL;
 @Slf4j
 public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionListener {
 
-    //IMailer mailer; on verra
     @Resource
     private INoticeBiblioService noticeBiblioService;
 
-    @Resource
-    private DaoProvider daoProvider;
+    private Integer idJob;
 
     @Value("${solr.url}")
     private String urlSolr;
@@ -39,11 +37,8 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
     private final String urlDiffusionTotale = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=id%20asc&rows=5&wt=json";
     @Override
     public void beforeStep(StepExecution stepExecution) {
-
         log.info("entree dans beforeStep de SelectThesesStarARedifTasklet");
-        ExecutionContext executionContext = stepExecution
-                .getJobExecution()
-                .getExecutionContext();
+        idJob = stepExecution.getJobExecutionId().intValue();
 
     }
     @Override
@@ -77,7 +72,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                     int iddoc = Integer.parseInt(docs.optJSONObject(i).optString("id"));
                     log.info("traite" + iddoc);
                     String codeEtab = docs.optJSONObject(i).optString("SGcodeEtab");
-                    noticeBiblioService.save(new NoticeBiblio(iddoc, codeEtab, 0, ""));
+                    noticeBiblioService.save(new NoticeBiblio(idJob, iddoc, codeEtab, 0, ""));
                 }
                 stepContribution.setExitStatus(new ExitStatus("COMPLETED"));
             }

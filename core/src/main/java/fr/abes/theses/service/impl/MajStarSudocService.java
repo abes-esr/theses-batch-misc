@@ -61,34 +61,34 @@ public class MajStarSudocService implements IMajStarSudocService {
      */
     @Override
     public String majStarSudoc(String marcXml) {
-
-        String xslStar = cheminXslTef2Marc + fichierFusionStar;
-        /**
-         * le résultat du catalogage de la thèse avec balise XML
-         */
-        StringBuilder resultCatalogageStar = new StringBuilder("<THESE>");
-        /**
-         * Une instance d'une création ou m.à.j d'une thèse venant de STAR
-         */
-        Starsudoc theseStar = new Starsudoc();
-        //on remplace dans la thèse MarcXml les é par StringE9+StringAccent
-        marcXml = marcXml.replaceAll("é", Constants.STR_E9 + Constants.STR_769);
-        //on récupère le fichier xml qui contient les zones de créées dans STAR
-        try {
-            String resuStar = theseStar.transfTheseFromStarToMarcXml(marcXml); // on a transformé la thèse STAR en Marc
-            resultCatalogageStar.append("<BIBLIO><NOTICESTAR>").append(resuStar.replaceAll("<", "&lt").replaceAll(">", "&gt")).append("</NOTICESTAR>");
-            String resu;
-
-            if (!noticeBiblioFinded(theseStar)) {
-                resultCatalogageStar.append(creerNoticeBiblioEtExemplaires(theseStar));
-            } else {
-                resultCatalogageStar.append(fusionNoticeStarEtSudoc(theseStar, xslStar));
-            }
-            clientBiblio.disconnect();
-        } catch (CBSException ex) {
-            log.error("exception " + ex.getMessage());
-        }
-        return resultCatalogageStar.append("</THESE>").toString();
+        return "toto";
+//        String xslStar = cheminXslTef2Marc + fichierFusionStar;
+//        /**
+//         * le résultat du catalogage de la thèse avec balise XML
+//         */
+//        StringBuilder resultCatalogageStar = new StringBuilder("<THESE>");
+//        /**
+//         * Une instance d'une création ou m.à.j d'une thèse venant de STAR
+//         */
+//        Starsudoc theseStar = new Starsudoc();
+//        //on remplace dans la thèse MarcXml les é par StringE9+StringAccent
+//        marcXml = marcXml.replaceAll("é", Constants.STR_E9 + Constants.STR_769);
+//        //on récupère le fichier xml qui contient les zones de créées dans STAR
+//        try {
+//            String resuStar = theseStar.transfTheseFromStarToMarcXml(marcXml); // on a transformé la thèse STAR en Marc
+//            resultCatalogageStar.append("<BIBLIO><NOTICESTAR>").append(resuStar.replaceAll("<", "&lt").replaceAll(">", "&gt")).append("</NOTICESTAR>");
+//            String resu;
+//
+//            if (!noticeBiblioFinded(theseStar)) {
+//                resultCatalogageStar.append(creerNoticeBiblioEtExemplaires(theseStar));
+//            } else {
+//                resultCatalogageStar.append(fusionNoticeStarEtSudoc(theseStar, xslStar));
+//            }
+//            clientBiblio.disconnect();
+//        } catch (CBSException ex) {
+//            log.error("exception " + ex.getMessage());
+//        }
+//        return resultCatalogageStar.append("</THESE>").toString();
     }
 
     private boolean noticeBiblioFinded(Starsudoc theseStar) throws CBSException {

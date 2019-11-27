@@ -38,25 +38,13 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, Not
     @Value("${star.xsl.tef2marc}")
     private String fichierXslTef2Marc;
 
-       /* @Autowired
-    StrategyFactory factory;
-
-    @Autowired
-    ProxyRetry proxyRetry;*/
     @Autowired
     @Getter
-   ServiceProvider service;
-
-    private NoticeBiblio noticeBiblio;
-
+    ServiceProvider service;
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
-       /* ExecutionContext executionContext = stepExecution
-                .getJobExecution()
-                .getExecutionContext();
-        this.noticeBiblio = (NoticeBiblio) executionContext.get("noticeBiblio");
-        //log.info("...pour la noticeBiblio " + this.noticeBiblio.getId());*/
+
     }
 
     /**
@@ -68,29 +56,16 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, Not
      */
 
     @Override
-    public NoticeBiblioDto process(NoticeBiblioDto noticeBiblioDto) throws Exception {
-
-      /*  try {
-            int iddoc = ligneFichierDto.getIddoc();
-
-        } catch (CBSException e) {
-            log.error("erreur lors de la requête au Sudoc ou du saveExemplaire" + e.toString());
-            ligneFichierDto.setRetourSudoc(e.getMessage());
-        } catch (Exception e) {
-            log.error("erreur lors de la recup de la noticetraitee : " + e.toString());
-            ligneFichierDto.setRetourSudoc(e.getMessage());
-        }*/
-
+    public NoticeBiblioDto process(NoticeBiblioDto noticeBiblioDto) throws TransformerException {
       try {
-          Document doc = getService().getDocumentService().findById(noticeBiblioDto.getId());
+          Document doc = getService().getDocumentService().findById(noticeBiblioDto.getIddoc());
 
           String marcXml = getMarcXmlFromTef(doc);
 
           String resultatInfoXml = getService().getMajStarSudocService().majStarSudoc(marcXml);
 
           noticeBiblioDto.setRetourSudoc(resultatInfoXml);
-      } catch (CBSException e)
-      {
+      } catch (CBSException e) {
           noticeBiblioDto.setRetourSudoc(e.getMessage());
       }
 

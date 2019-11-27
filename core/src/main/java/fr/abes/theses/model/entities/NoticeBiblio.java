@@ -17,6 +17,9 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class NoticeBiblio implements Serializable,GenericEntity<Integer> {
     @Id
     @GeneratedValue
+    @Column(name = "ID")
+    private Integer id;
+
     @Column(name = "JOB_ID")
     private Integer idJob;
 
@@ -32,14 +35,16 @@ public class NoticeBiblio implements Serializable,GenericEntity<Integer> {
     @Column(name = "RETOUR_SUDOC")
     private String retourSudoc;
 
-    public NoticeBiblio(Integer idJob, Integer iddoc, String codeEtab, Integer done, String retourSudoc) {
+    public NoticeBiblio(Integer id, Integer idJob, Integer iddoc, String codeEtab, Integer done, String retourSudoc) {
+        this.id = id;
         this.idJob = idJob;
         this.iddoc = iddoc;
         this.codeEtab = codeEtab;
         this.done = done;
         this.retourSudoc = retourSudoc;
     }
-    public NoticeBiblio(Integer iddoc, String codeEtab, Integer done, String retourSudoc) {
+    public NoticeBiblio(Integer idJob, Integer iddoc, String codeEtab, Integer done, String retourSudoc) {
+        this.idJob = idJob;
         this.iddoc = iddoc;
         this.codeEtab = codeEtab;
         this.done = done;
@@ -48,6 +53,6 @@ public class NoticeBiblio implements Serializable,GenericEntity<Integer> {
 
     @Override
     public Integer getId() {
-        return this.idJob;
+        return this.id;
     }
 }
