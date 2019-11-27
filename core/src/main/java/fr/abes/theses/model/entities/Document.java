@@ -5,10 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnTransformer;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -22,8 +19,9 @@ public class Document implements Serializable, GenericEntity<Integer> {
     @Column(name = "IDDOC")
     private Integer idDoc;
 
-    @ColumnTransformer(read = "to_clob(doc)", write = "?")
-    @Column(name = "DOC", columnDefinition = "XMLType")
+    @ColumnTransformer(read = "NVL2(DOC, (DOC).getClobVal(), NULL)", write = "NULLSAFE_XMLTYPE(?)")
+    @Lob
+    @Column(name = "DOC")
     private String doc;
 
     @Column(name = "TEXTE")
