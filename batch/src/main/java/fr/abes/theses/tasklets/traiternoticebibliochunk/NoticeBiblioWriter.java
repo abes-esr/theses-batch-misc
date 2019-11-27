@@ -1,6 +1,7 @@
 package fr.abes.theses.tasklets.traiternoticebibliochunk;
 
 import fr.abes.theses.model.NoticeBiblioDto;
+import fr.abes.theses.model.NoticeBiblioDtoMapper;
 import fr.abes.theses.model.entities.NoticeBiblio;
 import fr.abes.theses.service.ServiceProvider;
 import lombok.Data;
@@ -52,12 +53,7 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExec
 
     private void majNoticeBiblio(NoticeBiblioDto noticeBiblioDto) throws DataAccessException {
         noticeBiblioDto.setDone(1);
-        NoticeBiblio noticeBiblio = new NoticeBiblio(
-                noticeBiblioDto.getId(),
-                noticeBiblioDto.getIdJob(),
-                noticeBiblioDto.getCodeEtab(),
-                noticeBiblioDto.getDone(),
-                noticeBiblioDto.getRetourSudoc());
+        NoticeBiblio noticeBiblio = NoticeBiblioDtoMapper.getNoticeBiblioEntity(noticeBiblioDto);
         service.getNoticeBiblioService().save(noticeBiblio);
         log.info("notice traitée : " + noticeBiblio.getIddoc());
     }

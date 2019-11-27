@@ -43,6 +43,6 @@ public class NoticeBiblioDto implements Serializable, GenericEntity<Integer> {
 
     @Override
     public Integer getId() {
-        return idJob;
+        return id;
     }
 }

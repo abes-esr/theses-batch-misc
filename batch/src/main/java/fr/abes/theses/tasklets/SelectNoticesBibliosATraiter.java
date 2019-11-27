@@ -47,6 +47,7 @@ public class SelectNoticesBibliosATraiter implements Tasklet, StepExecutionListe
 
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
+        log.info("Lancement Job n° " + jobId);
         for (NoticeBiblio noticeBiblio : getService().getNoticeBiblioService().getNoticesNonTraiteByJobId(jobId)) {
             this.noticeBiblioDtos.add(new NoticeBiblioDto(noticeBiblio));
         }
