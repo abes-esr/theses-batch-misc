@@ -47,11 +47,14 @@ public class SelectNoticesBibliosATraiter implements Tasklet, StepExecutionListe
 
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-        List<NoticeBiblio> noticeBiblios = getService().getNoticeBiblioService().getNoticesNonTraiteByJobId(jobId);
-        if (noticeBiblios.isEmpty()) {
+        for (NoticeBiblio noticeBiblio : getService().getNoticeBiblioService().getNoticesNonTraiteByJobId(jobId)) {
+            this.noticeBiblioDtos.add(new NoticeBiblioDto(noticeBiblio));
+        }
+        if (this.noticeBiblioDtos.isEmpty()) {
             log.error("Aucune notice à traiter pour le job " + jobId);
             stepContribution.setExitStatus(ExitStatus.FAILED);
         }
+
         return RepeatStatus.FINISHED;
     }
 }

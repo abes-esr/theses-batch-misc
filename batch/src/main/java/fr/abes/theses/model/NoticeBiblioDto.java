@@ -1,6 +1,7 @@
 package fr.abes.theses.model;
 
 import fr.abes.theses.model.entities.GenericEntity;
+import fr.abes.theses.model.entities.NoticeBiblio;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,8 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 public class NoticeBiblioDto implements Serializable, GenericEntity<Integer> {
+    private Integer id;
+
     private Integer idJob;
 
     private Integer iddoc;
@@ -27,6 +30,15 @@ public class NoticeBiblioDto implements Serializable, GenericEntity<Integer> {
         this.codeEtab = codeEtab;
         this.done = done;
         this.retourSudoc = retourSudoc;
+    }
+
+    public NoticeBiblioDto(NoticeBiblio notice) {
+        this.id = notice.getId();
+        this.iddoc = notice.getIddoc();
+        this.idJob = notice.getIdJob();
+        this.codeEtab = notice.getCodeEtab();
+        this.done = notice.getDone();
+        this.retourSudoc = notice.getRetourSudoc();
     }
 
     @Override

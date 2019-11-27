@@ -5,6 +5,7 @@ import fr.abes.theses.model.entities.NoticeBiblio;
 public class NoticeBiblioDtoMapper {
     public NoticeBiblio getNoticeBiblioEntity(NoticeBiblioDto noticeBiblioDto){
         return new NoticeBiblio(
+                noticeBiblioDto.getId(),
                 noticeBiblioDto.getIdJob(),
                 noticeBiblioDto.getIddoc(),
                 noticeBiblioDto.getCodeEtab(),

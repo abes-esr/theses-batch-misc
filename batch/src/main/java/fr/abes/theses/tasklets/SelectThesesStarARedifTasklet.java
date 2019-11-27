@@ -70,7 +70,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                 for (int i=0;i<docs.length();i++)
                 {
                     int iddoc = Integer.parseInt(docs.optJSONObject(i).optString("id"));
-                    log.info("traite" + iddoc);
+                    log.info("traite : " + iddoc);
                     String codeEtab = docs.optJSONObject(i).optString("SGcodeEtab");
                     noticeBiblioService.save(new NoticeBiblio(idJob, iddoc, codeEtab, 0, ""));
                 }

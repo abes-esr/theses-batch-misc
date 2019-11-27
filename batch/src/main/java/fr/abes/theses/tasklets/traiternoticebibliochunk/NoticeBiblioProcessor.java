@@ -59,7 +59,7 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, Not
     public NoticeBiblioDto process(NoticeBiblioDto noticeBiblioDto) throws TransformerException {
       try {
           Document doc = getService().getDocumentService().findById(noticeBiblioDto.getIddoc());
-
+            log.info("chunk processor for iddoc : " + doc.getIdDoc());
           String marcXml = getMarcXmlFromTef(doc);
 
           String resultatInfoXml = getService().getMajStarSudocService().majStarSudoc(marcXml);
