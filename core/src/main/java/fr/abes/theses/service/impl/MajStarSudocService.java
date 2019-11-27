@@ -29,6 +29,10 @@ public class MajStarSudocService implements IMajStarSudocService {
     private String loginM4001;
     @Value("${sudoc.passwdM4001")
     private String passM4001;
+    @Value("${star.xsl.fusionStar}")
+    private String fichierFusionStar;
+    @Value("${star.xsl}")
+    private String cheminXslTef2Marc;
 
     public MajStarSudocService() {
         this.clientBiblio = new ProcessCBS();
@@ -52,12 +56,13 @@ public class MajStarSudocService implements IMajStarSudocService {
      * </p>
      *
      * @param marcXml la thèse en MarcXml Sudoc sous forme de String
-     * @param xslStar le nom du fichier xml avec champs crées dans Star
      * @return le résultat de la création/modification de la thèse
      * @see fr.abes.cbs
      */
     @Override
-    public String majStarSudoc(String marcXml, String xslStar) {
+    public String majStarSudoc(String marcXml) {
+
+        String xslStar = cheminXslTef2Marc + fichierFusionStar;
         /**
          * le résultat du catalogage de la thèse avec balise XML
          */

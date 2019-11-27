@@ -5,7 +5,7 @@ import fr.abes.cbs.exception.CBSException;
 public interface IMajStarSudocService {
     void authenticateBiblio() throws CBSException;
 
-    String majStarSudoc(String marcXml, String xslStar);
+    String majStarSudoc(String marcXml) throws CBSException;
 
     String creerTheseBiblio(String noticeBiblio);
 
