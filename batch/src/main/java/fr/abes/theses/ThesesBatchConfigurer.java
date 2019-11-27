@@ -1,27 +1,26 @@
 package fr.abes.theses;
 
-import fr.abes.theses.configuration.ThesesOracleConfig;
 import lombok.extern.log4j.Log4j;
 import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.explore.support.MapJobExplorerFactoryBean;
+import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
-import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.batch.BatchProperties;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Log4j
-@Import(ThesesOracleConfig.class)
 public class ThesesBatchConfigurer implements BatchConfigurer {
+
     private final EntityManagerFactory entityManagerFactory;
 
     private PlatformTransactionManager transactionManager;
@@ -32,11 +31,11 @@ public class ThesesBatchConfigurer implements BatchConfigurer {
 
     private JobExplorer jobExplorer;
 
-    @Autowired
-    private DataSource thesesDatasource;
+    private final DataSource thesesDatasource;
 
-    public ThesesBatchConfigurer(EntityManagerFactory entityManagerFactory) throws Exception{
+    public ThesesBatchConfigurer(DataSource dataSource, EntityManagerFactory entityManagerFactory) throws Exception{
         this.entityManagerFactory = entityManagerFactory;
+        this.thesesDatasource = dataSource;
     }
 
     @Override
@@ -60,39 +59,53 @@ public class ThesesBatchConfigurer implements BatchConfigurer {
         return this.jobExplorer;
     }
 
+
     @PostConstruct
-    void initialize() {
+    public void initialize() {
         try {
-            log.info("Forcing the use of a JPA transactionManager");
-            if(this.entityManagerFactory == null){
-                log.error("Unable to initialize batch configurer : entityManagerFactory must not be null");
-            } else {
-                this.transactionManager = new JpaTransactionManager(this.entityManagerFactory);
-            }
-            // jobRepository:
-            log.info("Forcing the use of a Map based JobRepository");
-            JobRepositoryFactoryBean jobRepositoryFactory = new JobRepositoryFactoryBean();
-            jobRepositoryFactory.afterPropertiesSet();
-            jobRepositoryFactory.setDataSource(thesesDatasource);
-            jobRepositoryFactory.setTransactionManager(transactionManager);
-            jobRepositoryFactory.setIsolationLevelForCreate("ISOLATION_SERIALIZABLE");
-            jobRepositoryFactory.setTablePrefix("BATCH_");
-            jobRepositoryFactory.setMaxVarCharLength(1000);
-            this.jobRepository = jobRepositoryFactory.getObject();
-
-            // jobLauncher:
-            SimpleJobLauncher jobLauncherParam = new SimpleJobLauncher();
-            jobLauncherParam.setJobRepository(getJobRepository());
-            jobLauncherParam.afterPropertiesSet();
-            this.jobLauncher = jobLauncherParam;
-
-            // jobExplorer:
-            MapJobExplorerFactoryBean jobExplorerFactory = new MapJobExplorerFactoryBean(jobRepositoryFactory);
-            jobExplorerFactory.afterPropertiesSet();
-            this.jobExplorer = jobExplorerFactory.getObject();
-        } catch (Exception e) {
-            throw new IllegalStateException("unable to initialize spring batch");
+            this.transactionManager = createTransactionManager();
+            this.jobRepository = createJobRepository();
+            this.jobLauncher = createJobLauncher();
+            this.jobExplorer = createJobExplorer();
+        }
+        catch (Exception ex) {
+            throw new IllegalStateException("Unable to initialize Spring Batch", ex);
         }
     }
 
+    protected JobExplorer createJobExplorer() throws Exception {
+        JobExplorerFactoryBean jobExplorerFactoryBean = new JobExplorerFactoryBean();
+        jobExplorerFactoryBean.setDataSource(this.thesesDatasource);
+        jobExplorerFactoryBean.setTablePrefix("BATCH_");
+        jobExplorerFactoryBean.afterPropertiesSet();
+        return jobExplorerFactoryBean.getObject();
+    }
+
+    protected JobLauncher createJobLauncher() throws Exception {
+        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+        jobLauncher.setJobRepository(getJobRepository());
+        jobLauncher.afterPropertiesSet();
+        return jobLauncher;
+    }
+
+    protected JobRepository createJobRepository() throws Exception {
+        JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
+        factory.setDataSource(this.thesesDatasource);
+        if (this.entityManagerFactory != null) {
+            log.warn(
+                    "JPA does not support custom isolation levels, so locks may not be taken when launching Jobs");
+            factory.setIsolationLevelForCreate("ISOLATION_DEFAULT");
+        }
+            factory.setTablePrefix("BATCH_");
+        factory.setTransactionManager(getTransactionManager());
+        factory.afterPropertiesSet();
+        return factory.getObject();
+    }
+
+    protected PlatformTransactionManager createTransactionManager() {
+        if (this.entityManagerFactory != null) {
+            return new JpaTransactionManager(this.entityManagerFactory);
+        }
+        return new DataSourceTransactionManager(this.thesesDatasource);
+    }
 }

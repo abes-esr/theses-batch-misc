@@ -38,11 +38,11 @@ public class BatchConfiguration {
     private StepBuilderFactory steps;
 
     @Autowired
-    private DataSource thesesDatasource;
+    DataSource thesesDatasource;
 
     @Bean
     public BatchConfigurer configurer(EntityManagerFactory entityManagerFactory) throws Exception{
-        return new ThesesBatchConfigurer(entityManagerFactory);
+        return new ThesesBatchConfigurer(thesesDatasource, entityManagerFactory);
     }
 
     /**
