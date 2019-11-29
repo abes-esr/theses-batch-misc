@@ -32,3 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 /batch/src/main/resources/application.properties
+/core/src/test/resources/hibernate.cfg.xml
