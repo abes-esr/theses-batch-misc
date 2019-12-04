@@ -1,7 +1,7 @@
 package fr.abes.theses.tasklets;
 
 import fr.abes.theses.components.FichierResultat;
-import fr.abes.theses.model.NoticeBiblioDto;
+import fr.abes.theses.model.dto.NoticeBiblioDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepContribution;

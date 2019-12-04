@@ -1,10 +1,9 @@
 package fr.abes.theses.tasklets.traiternoticebibliochunk;
 
-import fr.abes.theses.model.NoticeBiblioDto;
-import fr.abes.theses.model.NoticeBiblioDtoMapper;
+import fr.abes.theses.model.dto.NoticeBiblioDto;
+import fr.abes.theses.model.dto.NoticeBiblioDtoMapper;
 import fr.abes.theses.model.entities.NoticeBiblio;
 import fr.abes.theses.service.ServiceProvider;
-import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;

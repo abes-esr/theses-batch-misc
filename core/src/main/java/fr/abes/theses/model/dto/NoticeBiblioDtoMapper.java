@@ -1,4 +1,4 @@
-package fr.abes.theses.model;
+package fr.abes.theses.model.dto;
 
 import fr.abes.theses.model.entities.NoticeBiblio;
 
@@ -10,6 +10,10 @@ public class NoticeBiblioDtoMapper {
                 noticeBiblioDto.getIddoc(),
                 noticeBiblioDto.getCodeEtab(),
                 noticeBiblioDto.getDone(),
-                noticeBiblioDto.getRetourSudoc());
+                noticeBiblioDto.getRetourSudoc(),
+                noticeBiblioDto.getDateCreation(),
+                noticeBiblioDto.getDateModification(),
+                noticeBiblioDto.getIndicSudoc(),
+                noticeBiblioDto.getPpn());
     }
 }

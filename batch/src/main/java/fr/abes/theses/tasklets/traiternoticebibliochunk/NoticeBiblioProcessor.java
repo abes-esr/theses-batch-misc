@@ -1,11 +1,9 @@
 package fr.abes.theses.tasklets.traiternoticebibliochunk;
 
-import fr.abes.cbs.exception.CBSException;
-import fr.abes.theses.model.NoticeBiblioDto;
-import fr.abes.theses.model.NoticeBiblioDtoMapper;
+import fr.abes.theses.model.dto.NoticeBiblioDto;
 import fr.abes.theses.model.entities.Document;
-import fr.abes.theses.model.entities.NoticeBiblio;
 import fr.abes.theses.service.ServiceProvider;
+import jdk.jshell.spi.ExecutionControl;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
@@ -16,14 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -54,21 +50,13 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, Not
      * @return
      * @throws
      */
-
     @Override
-    public NoticeBiblioDto process(NoticeBiblioDto noticeBiblioDto) throws TransformerException {
-      try {
-          Document doc = getService().getDocumentService().findById(noticeBiblioDto.getIddoc());
-            log.info("chunk processor for iddoc : " + doc.getIdDoc());
-          String marcXml = getMarcXmlFromTef(doc);
-
-          String resultatInfoXml = getService().getMajStarSudocService().majStarSudoc(marcXml);
-
-          noticeBiblioDto.setRetourSudoc(resultatInfoXml);
-      } catch (CBSException e) {
-          noticeBiblioDto.setRetourSudoc(e.getMessage());
-      }
-
+    public NoticeBiblioDto process(NoticeBiblioDto noticeBiblioDto) throws TransformerException, ExecutionControl.NotImplementedException {
+        Document doc = getService().getDocumentService().findById(noticeBiblioDto.getIddoc());
+        log.info("chunk processor for iddoc : " + doc.getIdDoc());
+        String marcXml = getMarcXmlFromTef(doc);
+        NoticeBiblioDto resultatInfoXml = getService().getMajStarSudocService().majStarSudoc(marcXml);
+        noticeBiblioDto.setRetourSudoc(resultatInfoXml.getRetourSudoc());
         return noticeBiblioDto;
     }
 
@@ -82,10 +70,8 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, Not
             final StringWriter writer = new StringWriter();
             final StreamResult output = new StreamResult(writer);
             transformer.transform(stream, output);
-
             return writer.toString();
-
-        }catch (TransformerException e){
+        } catch (TransformerException e) {
             throw e;
         }
     }

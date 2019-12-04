@@ -1,7 +1,6 @@
 package fr.abes.theses.tasklets.traiternoticebibliochunk;
 
-import fr.abes.theses.model.NoticeBiblioDto;
-import fr.abes.theses.model.entities.NoticeBiblio;
+import fr.abes.theses.model.dto.NoticeBiblioDto;
 import fr.abes.theses.service.ServiceProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
@@ -9,7 +8,6 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
