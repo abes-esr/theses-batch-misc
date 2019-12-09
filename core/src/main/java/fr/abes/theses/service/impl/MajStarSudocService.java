@@ -166,19 +166,25 @@ public class MajStarSudocService implements IMajStarSudocService {
      */
     public String fusionThese(Biblio noticeStar, Biblio noticeSudoc) {
         Biblio noticeFusionnee = new Biblio();
-        for (Zone zoneSudoc : noticeSudoc.getListeZones().values()) {
-            if (getDao().getZonePrioritaire().findZoneByLabel(zoneSudoc.getLabelForOutput()) == null) {
-                noticeFusionnee.addZone(zoneSudoc);
-            } else {
-                List<Zone> zoneStar = noticeStar.findZones(zoneSudoc.getLabelForOutput());
-                if (zoneStar.size() == 0) {
+
+        String labelZonePrecedente = "";
+
+        for (Zone zoneSudoc : noticeSudoc.getListeZones().values()){
+                if (getDao().getZonePrioritaire().findZoneByLabel(zoneSudoc.getLabelForOutput()) == null) {
                     noticeFusionnee.addZone(zoneSudoc);
                 } else {
-                    for (Zone zoneAEcrire : zoneStar) {
-                        noticeFusionnee.addZone(zoneAEcrire);
+                    List<Zone> zoneStar = noticeStar.findZones(zoneSudoc.getLabelForOutput());
+                    if (zoneStar.isEmpty()) {
+                        noticeFusionnee.addZone(zoneSudoc);
+                    } else {
+                        if (!zoneSudoc.getLabelForOutput().equals(labelZonePrecedente)){
+                            for (Zone zoneAEcrire : zoneStar) {
+                                noticeFusionnee.addZone(zoneAEcrire);
+                            }
+                            labelZonePrecedente = zoneSudoc.getLabelForOutput();
+                        }
                     }
                 }
-            }
         }
         return noticeFusionnee.toString();
     }
