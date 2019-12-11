@@ -3,9 +3,14 @@ package fr.abes.theses.service.impl;
 import fr.abes.cbs.exception.CBSException;
 import fr.abes.cbs.notices.Biblio;
 import fr.abes.cbs.notices.NoticeConcrete;
+import fr.abes.cbs.notices.SousZone;
 import fr.abes.cbs.notices.Zone;
 import fr.abes.cbs.process.ProcessCBS;
 import fr.abes.cbs.utilitaire.Constants;
+import fr.abes.cbs.zones.enumSousZones.Zone_214;
+import fr.abes.cbs.zones.enumSousZones.Zone_219;
+import fr.abes.cbs.zones.enumSousZones.Zone_701;
+import fr.abes.cbs.zones.enumZones.EnumZones;
 import fr.abes.theses.dao.impl.DaoProvider;
 import fr.abes.theses.model.dto.NoticeBiblioDto;
 import fr.abes.theses.service.IMajStarSudocService;
@@ -13,10 +18,12 @@ import jdk.jshell.spi.ExecutionControl;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -85,7 +92,6 @@ public class MajStarSudocService implements IMajStarSudocService {
             } else {
                 fusionNoticeStarEtSudoc(notice, trace);
             }
-            clientBiblio.disconnect();
         } catch (CBSException ex) {
             log.error("Erreur dans la création de la notice bibliographique " + ex.getMessage());
         }
@@ -142,7 +148,7 @@ public class MajStarSudocService implements IMajStarSudocService {
         Biblio noticeBiblio = new Biblio(resu.substring(resu.indexOf(Constants.STR_1F), resu.indexOf(Constants.STR_1E, resu.indexOf(Constants.STR_1F)) + 1));
         String fusion = fusionThese(theseStar.getNoticeBiblio(), noticeBiblio);
         try {
-            clientBiblio.modifierNotice(clientBiblio.getPpnEncours(), fusion);
+            clientBiblio.modifierNotice("1", fusion);
             //création notice biblio ok
             trace.setIndicSudoc("OK");
             trace.setPpn(clientBiblio.getPpnEncours());
@@ -168,7 +174,7 @@ public class MajStarSudocService implements IMajStarSudocService {
         Biblio noticeFusionnee = new Biblio();
 
         String labelZonePrecedente = "";
-
+        noticeSudoc = traitementPreliminaire(noticeSudoc);
         for (Zone zoneSudoc : noticeSudoc.getListeZones().values()){
                 if (getDao().getZonePrioritaire().findZoneByLabel(zoneSudoc.getLabelForOutput()) == null) {
                     noticeFusionnee.addZone(zoneSudoc);
@@ -186,7 +192,61 @@ public class MajStarSudocService implements IMajStarSudocService {
                     }
                 }
         }
-        return noticeFusionnee.toString();
+
+        noticeFusionnee = traitementSpecifique(noticeStar, noticeSudoc, noticeFusionnee);
+
+        return noticeFusionnee.toString().substring(1, noticeFusionnee.toString().length()-1);
+    }
+
+    private Biblio traitementPreliminaire(Biblio noticeSudoc) {
+        noticeSudoc.deleteZone("702");
+        noticeSudoc.deleteZone("712");
+        return noticeSudoc;
+    }
+
+    /**
+     * Traitement spécifique permettant de transférer toutes les sous zones de la 219 vers une nouvelle zone 214 dans la notice fusionnée
+     * @param noticeStar
+     * @param noticeSudoc
+     * @param noticeFusionnee
+     * @return
+     */
+    private Biblio traitementSpecifique(Biblio noticeStar, Biblio noticeSudoc, Biblio noticeFusionnee) {
+        traitement219(noticeStar, noticeFusionnee);
+        traitementZoneStar(noticeStar, noticeSudoc, noticeFusionnee);
+        return noticeFusionnee;
+    }
+
+    private void traitementZoneStar(Biblio noticeStar, Biblio noticeSudoc, Biblio noticeFusionnee) {
+        String labelZonePrecedente = "";
+
+        for(Zone zoneStar : noticeStar.getListeZones().values()){
+            String labelZone = zoneStar.getLabelForOutput();
+            if (noticeFusionnee.findZones(labelZone).isEmpty() && !labelZonePrecedente.equals(labelZone)){
+                for( Zone zoneStarToAdd : noticeStar.findZones(labelZone)){
+                    noticeFusionnee.addZone(zoneStarToAdd);
+                }
+                labelZonePrecedente = labelZone;
+            }
+        }
+    }
+
+    private void traitement219(Biblio noticeStar, Biblio noticeFusionnee) {
+        List<Zone> zone219s = noticeStar.findZones("219");
+        for (Zone zone219: zone219s) {
+            List<SousZone> sousZones214 = new ArrayList<>();
+            for (Zone_219 sousZone: EnumUtils.getEnumList(Zone_219.class)) {
+                if (EnumUtils.isValidEnum(Zone_214.class, sousZone.name())) {
+                    SousZone ssZone219 =  zone219.findSousZone(sousZone.name());
+                    if (ssZone219 != null) {
+                        sousZones214.add(new SousZone(Zone_214.valueOf(sousZone.name()), ssZone219.getValeur()));
+                    }
+                }
+            }
+            Zone zone214 = new Zone(EnumZones.Z214, sousZones214, zone219.getIndicateurs());
+            noticeFusionnee.deleteZone("214");
+            noticeFusionnee.addZone(zone214);
+        }
     }
 
     /**
@@ -284,6 +344,12 @@ public class MajStarSudocService implements IMajStarSudocService {
             log.error("Erreur CBS : " + ex.getMessage());
         }
         return resultCat.toString();
+    }
+
+    @Override
+    public void disconnectBiblio() {
+        log.info("Déconnexion du Sudoc login M4001");
+        this.clientBiblio.disconnect();
     }
 }
 

@@ -1,10 +1,7 @@
 package fr.abes.theses;
 
 import fr.abes.theses.configuration.ThesesOracleConfig;
-import fr.abes.theses.tasklets.AuthentifierToSudocTasklet;
-import fr.abes.theses.tasklets.GenererFichierTasklet;
-import fr.abes.theses.tasklets.SelectNoticesBibliosATraiter;
-import fr.abes.theses.tasklets.SelectThesesStarARedifTasklet;
+import fr.abes.theses.tasklets.*;
 import lombok.extern.log4j.Log4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersIncrementer;
@@ -62,8 +59,9 @@ public class BatchConfiguration {
                 .from(stepSelectNoticesBibliosATraiter()).on("COMPLETED").to(stepAuthentifierToSudoc())
                 .from(stepAuthentifierToSudoc()).on("FAILED").end()
                 .from(stepAuthentifierToSudoc()).on("COMPLETED").to(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter))
-                .from(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter)).on("FAILED").end()
+                .from(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter)).on("FAILED").to(stepDisconnect())
                 .from(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter)).on("COMPLETED").to(stepGenererFichier())
+                .from(stepGenererFichier()).next(stepDisconnect())
                 .build().build();
     }
 
@@ -109,6 +107,14 @@ public class BatchConfiguration {
     }
 
     @Bean
+    public Step stepDisconnect() {
+        return steps
+                .get("stepDisconnect").allowStartIfComplete(true)
+                .tasklet(disconnectTasklet())
+                .build();
+    }
+
+    @Bean
     public SelectThesesStarARedifTasklet selectThesesStarARedifTasklet() { return new SelectThesesStarARedifTasklet(); }
 
     @Bean
@@ -119,5 +125,8 @@ public class BatchConfiguration {
 
     @Bean
     public GenererFichierTasklet genererFichierTasklet() { return new GenererFichierTasklet(); }
+
+    @Bean
+    public DisconnectTasklet disconnectTasklet() {return new DisconnectTasklet();}
 
 }

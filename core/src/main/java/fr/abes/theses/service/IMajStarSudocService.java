@@ -8,6 +8,8 @@ import jdk.jshell.spi.ExecutionControl;
 public interface IMajStarSudocService {
     void authenticateBiblio() throws CBSException;
 
+    void disconnectBiblio();
+
     NoticeBiblioDto majStarSudoc(String marcXml) throws ExecutionControl.NotImplementedException;
 
     void creerTheseBiblio(NoticeConcrete noticeBiblio, NoticeBiblioDto trace);
