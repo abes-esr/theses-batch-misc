@@ -44,10 +44,15 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExec
         for (NoticeBiblioDto noticeBiblioDto : list) {
             try {
                 this.majNoticeBiblio(noticeBiblioDto);
+                this.majDonneesGestion(noticeBiblioDto);
             } catch (DataAccessException e) {
                 log.error("Erreur dans la mise à jour de la ligne " + noticeBiblioDto.getId());
             }
         }
+    }
+
+    private void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) {
+
     }
 
     private void majNoticeBiblio(NoticeBiblioDto noticeBiblioDto) throws DataAccessException {
