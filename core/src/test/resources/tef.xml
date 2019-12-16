@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:mets xmlns:mets="http://www.loc.gov/METS/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:tef="http://www.abes.fr/abes/documents/tef" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:metsRights="http://cosimo.stanford.edu/sdr/metsrights/" xmlns:mads="http://www.loc.gov/mads/" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.abes.fr/abes/documents/tef/recommandation/tef_schemas.xsd">
+    <mets:metsHdr ID="ABES.STAR.THESE_4536.METS_HEADER" CREATEDATE="2009-10-21T11:42:05" LASTMODDATE="2012-01-23T11:37:55" RECORDSTATUS="valide">
+        <mets:agent ROLE="CREATOR">
+            <mets:name />
+            <mets:note>Note</mets:note>
+        </mets:agent>
+        <mets:agent ROLE="DISSEMINATOR">
+            <mets:name>ABES</mets:name>
+        </mets:agent>
+        <mets:altRecordID ID="ABES.STAR.THESE_4536.METS_HEADER.ALTERNATE" TYPE="" />
+    </mets:metsHdr>
+    <mets:dmdSec ID="ABES.STAR.THESE_4536.gestionSTAR">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_gestionSTAR">
+            <mets:xmlData>
+                <star_gestion codeEtab="BOR2" libEtab="Bordeaux 2" ppnEtab="026403005" enProd="oui" ID_THESE="THESE_4536" scenarioEtab="cas1" etat="WFpostArchivage" xsi:noNamespaceSchemaLocation="http://www.abes.fr/abes/documents/pth/tef_gestion.xsd">
+                    <traitements scenario="cas1">
+                        <entree type="migration" date="2010-09-28T12:10:43" agentImport="" completudeImport="sansObjet" />
+                        <maj date="2012-01-23T11:37:55" import="non" SCOL="oui" BIBL="oui" FICH="oui" VALID="oui" />
+                        <facile date="2010-09-28T12:10:43Z" indicFacile="OK" trace="" import="non" SCOL="oui" BIBL="oui" FICH="oui" VALID="oui" />
+                        <ctrlUrl indicCtrlUrl="sansObjet" erreurUrl="sansObjet" compteIndicCtrlUrlKO="0" date="" />
+                        <remonteeArchive indicRemonteeArchive="sansObjet" date="" trace="" />
+                        <purge indicPurge="sansObjet" date="" />
+                        <invalidation indicInvalidation="sansObjet" date="" note="" />
+                        <sorties date="">
+                            <cines numeroPAC="127786" dateCines="2010-09-03T16:40:04" indicCines="OK" trace="" />
+                            <sudoc PPN="146284860" dateSudoc="2010-11-03T13:02:21Z" indicSudoc="OK" majSudoc="2012-01-23T11:41:51Z" trace="">
+                                <RCR code="" />
+                                <EPN />
+                            </sudoc>
+                            <diffusion urlPerenne="http://www.theses.fr/2009BOR21655" conformitePolDiffusion="oui" typeDiffusion="internet" restrictionTemporelleType="sansObjet" restrictionTemporelleFin="">
+                                <etabDiffuseur etabDiffuseurPolEtablissement="non" editeurScientifiqueLieu="" editeurScientifiqueNom="" />
+                                <abesDiffuseur abesDiffuseurPolEtablissement="oui" FichEtabDiffAbesIntranet="non" indicAbesDiffuseur="OK" dateAbesDiffuseur="2010-11-03T13:02:24Z" majAbesDiffuseur="2012-01-23T11:41:47Z" urlAbesDiffuseur="" />
+                                <ccsd ccsdDiffuseurPolEtablissement="non" pastel="non" indicCcsd="sansObjet" identifiantCcsd="" pwdCcsd="" urlCcsd="" numVersion="" dateCcsd="" majCcsd="" trace="" />
+                                <autresEtabDiffuseurs />
+                                <oai majOai="2012-01-23T11:40:32Z" dateOai="2010-09-29T10:20:33Z" indicOai="OK" />
+                            </diffusion>
+                        </sorties>
+                    </traitements>
+                    <workflow etatWF="postAtraiter">
+                        <commentaires nbCommentaires="0" />
+                        <DOCT interventionFicheEtablissement="oui" etatDOCT="nonModifiable" majDOCT="" />
+                        <rolesMD>
+                            <SCOL etatMD="postAtraiter" majMD="2012-01-23T10:38:04" indicBilan="sansObjet" bilan="">
+                                <notes nbNotes="0">
+                                    <note date="" contenu="" />
+                                </notes>
+                            </SCOL>
+                            <BIBL etatMD="postAtraiter" majMD="2012-01-23T10:38:04" indicBilan="sansObjet" bilan="" indicTheseTravaux="non">
+                                <notes nbNotes="0">
+                                    <note date="" contenu="" />
+                                </notes>
+                            </BIBL>
+                            <FICH etatMD="postAtraiter" majMD="2012-01-23T10:38:04" indicBilan="sansObjet" bilan="" alerteTheseTravaux="non">
+                                <notes nbNotes="0">
+                                    <note date="" contenu="" />
+                                </notes>
+                            </FICH>
+                        </rolesMD>
+                        <VALID validIndependant="oui" etatVALID="archivee" majVALID="2012-01-23T10:38:04">
+                            <notes nbNotes="0">
+                                <note date="" contenu="" />
+                            </notes>
+                            <refusValidationIntermediaire nbRefus="0">
+                                <refus date="" contenu="" SCOL="non" FICH="non" BIBL="non" />
+                            </refusValidationIntermediaire>
+                        </VALID>
+                    </workflow>
+                </star_gestion>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="ABES.STAR.THESE_4536.DESCRIPTION_BIBLIOGRAPHIQUE">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_desc_these">
+            <mets:xmlData>
+                <tef:thesisRecord>
+                    <dc:title xml:lang="fr">Enseigner en prison : entre contraintes, incertitudes et expertises</dc:title>
+                    <dcterms:alternative xml:lang="en">Teaching in prison : between expertise, the pressures and the incertainties</dcterms:alternative>
+                    <dc:subject xml:lang="fr">Prison</dc:subject>
+                    <dc:subject xml:lang="fr">Expertises</dc:subject>
+                    <dc:subject xml:lang="fr">Entretien</dc:subject>
+                    <dc:subject xml:lang="fr">Enseignement</dc:subject>
+                    <dc:subject xml:lang="fr">Incertitudes</dc:subject>
+                    <dc:subject xml:lang="fr">Urgence</dc:subject>
+                    <dc:subject xml:lang="fr">Mineur</dc:subject>
+                    <dc:subject xml:lang="fr">Eclectisme pedagogique</dc:subject>
+                    <dc:subject xml:lang="fr">Contraintes</dc:subject>
+                    <dc:subject xml:lang="fr">Observation</dc:subject>
+                    <dc:subject xml:lang="fr">Rôles</dc:subject>
+                    <tef:sujetRameau xml:lang="fr">
+                        <tef:vedetteRameauNomCommun>
+                            <tef:elementdEntree autoriteExterne="027455319" autoriteSource="Sudoc">Prisonniers Éducation</tef:elementdEntree>
+                            <tef:subdivision autoriteExterne="027226794" autoriteSource="Sudoc" type="subdivisionGeographique">France</tef:subdivision>
+                            <tef:subdivision autoriteExterne="027253139" autoriteSource="Sudoc" type="subdivisionDeForme">Thèses et écrits académiques</tef:subdivision>
+                        </tef:vedetteRameauNomCommun>
+                        <tef:vedetteRameauNomCommun>
+                            <tef:elementdEntree autoriteExterne="027266192" autoriteSource="Sudoc">Prisons</tef:elementdEntree>
+                            <tef:subdivision autoriteExterne="027226794" autoriteSource="Sudoc" type="subdivisionGeographique">France</tef:subdivision>
+                            <tef:subdivision autoriteExterne="027253139" autoriteSource="Sudoc" type="subdivisionDeForme">Thèses et écrits académiques</tef:subdivision>
+                        </tef:vedetteRameauNomCommun>
+                    </tef:sujetRameau>
+                    <dcterms:abstract xml:lang="fr">La question centrale posée est la suivante:"Qu'est-ce qu'enseigner en prison?" Dans une situation avérée de surpopulation carcérale, de législation pénale en constant mouvement, les enseignants présents dans toutes les prisons, remplissent leurs missions dans un contexte ni conçu ni pensé pour eux donc peu propice aux actions éducatives. Aussi, pour tenter de définir ce que représente l'enseignement en prison, nous avons essayé de répondre aux questions suivantes: Existe-t-il une spécificité pénitentiaire en matière d'enseignement? l'accès à l'enseignement relève-t-il du privilège, Ne peut-on pas envisager un enseignement à plusieurs vitesses? Peut-on parler de l'enseignement en prison commeun possible laboratoire pour la pédagogie? Pour répondre à ces questions, nous nous appuierons sur une approche multi-référentielle (historique, sociologique, ethnographique, et pédagogique) en utilisant l'observation participante comme méthode privilégiée. cette démarche sera complétée par l'utilisation d'entretiens réalisés auprès d'enseignants de prison, nécessaire à la prise de recul par rapport au terrain d'observation. Les résultats obtenus montrent qu'il n'y a pas un mais trois types d'enseignement. Si leur accès ne semble pas relever du privilège, c'est pour partie dû à l'offre, diversifiée mais risquée, de formation proposée par les enseignants. Ceux-ci jouent des rôles qu'ils ne maîtrisent pas forcément et qui fragilisent en même temps qu'ils renforcent leur position dans l'établissement. L'ensemble de ces éléments, associé à la conjonction de contraintes et d'incertitudes fortes et permanentes, d'une rotation d'entrées et de sorties incessantes, d'instabilité des groupes, de cohabitation de micro-dispositifs avec des dispositifs permanents de formation, de situations d'urgences,de détenus aux disponibilités mentales inégales et aux motivations les plus variées mais en forte demande, fondent la spécificité de l'enseignement en prison. Au regard des éléments mis en évidence, notre travail révèle cinq domaines de vigilance à observer: l'usure des responsables locaux de l'enseignement qui deviennent plus administratifs et moins enseignants; le "saupoudrage pédagogique" dû à une importante demande de scolarisation; la gestion privée des établissements comme frein éventuel aux possibilité d'apprentissage; l'accroissement des "rôles périphériques" des enseignants liés à une possible déshumanisation des sites; la "pénitentiarisation " de l'enseignement due notamment à l'évolution de l'arsenal législatif.</dcterms:abstract>
+                    <dcterms:abstract xml:lang="en">This thesis work set out to investigate the characteristics and implications of teaching in prison. In a prison context that is characterised by overpopulation and penal laws that are changing constantly, teachers who work in prisons, face working conditions that were not designed for educational purposes and increasing difficulties. As a consequence, to try to identify and analyse what teaching in prisons mean, the researcher has made an attempt to answer the following questions: Does the act of teaching presents some spécific characteristics within the prison context? Is the possibility to get access to learning a privilege? Can we talk about a "two levels" teaching system? In order to try and answer these questions, the researcher opted for a multireferential approach (historical, sociological, etnhographical and pedagogical) and resorted to participant observation as main research method. However, this observation work was completed with face to face interviews with teachers who work in prisons in view of a greater distance with the observed situation. Results identify three differents types of teaching in prisons. Moreover, getting access to education for prisoners is not a privilege thanks to a diversified training offer from part of teachers. The latter play roles that they are not trained to play which both strengthens and weakens their status. These factors combined with the conjunction of strong and steady constraints and uncertainties due to prisoners turnover, groups instability and a combination of micro, punctual training schemes together with formal and permanent educational curricula, of emergency situations and prisoners with mental difficulties with various levels of motivation are the background of the teaching in prison process. This research work enables to show evidence of the existence of five areas that should be granted specific attention:burnout amongst the local teachers in charge of managing education in prison because of the increasing administrative work burdens they have to face; the lack of time for in depth teaching due to a strong demand for learning in the prison context; the private management of prisons that represents a drawback for setting up education schemes; the increasing variety of tasks teachers have to perform on top of teaching due to a more adminstrative management ; teaching conditions more and more affected by the prison context due to an increasing legislative control.</dcterms:abstract>
+                    <dc:type>Electronic Thesis or Dissertation</dc:type>
+                    <dc:type xsi:type="dcterms:DCMIType">Text</dc:type>
+                    <dc:language xsi:type="dcterms:RFC3066">fr</dc:language>
+                </tef:thesisRecord>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="ABES.STAR.THESE_4536.VERSION_COMPLETE.DESCRIPTION.EDITION_ARCHIVAGE">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_desc_edition">
+            <mets:xmlData>
+                <tef:edition>
+                    <dcterms:medium xsi:type="dcterms:IMT">PDF</dcterms:medium>
+                    <dcterms:extent>36463923</dcterms:extent>
+                    <dc:identifier xsi:type="dcterms:URI">http://www.theses.fr/2009BOR21655/abes</dc:identifier>
+                </tef:edition>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:amdSec>
+        <mets:techMD ID="ABES.STAR.THESE_4536.ADMINISTRATION">
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_admin_these">
+                <mets:xmlData>
+                    <tef:thesisAdmin>
+                        <tef:auteur>
+                            <tef:nom>Fébrer</tef:nom>
+                            <tef:prenom>Michel</tef:prenom>
+                            <tef:nomDeNaissance>Fébrer</tef:nomDeNaissance>
+                            <tef:dateNaissance>1958-05-23</tef:dateNaissance>
+                            <tef:nationalite scheme="ISO-3166-1">FR</tef:nationalite>
+                            <tef:autoriteExterne autoriteSource="Sudoc">146276957</tef:autoriteExterne>
+                        </tef:auteur>
+                        <dc:identifier xsi:type="tef:nationalThesisPID">http://www.theses.fr/2009BOR21655</dc:identifier>
+                        <dc:identifier xsi:type="tef:NNT">2009BOR21655</dc:identifier>
+                        <dcterms:dateAccepted xsi:type="dcterms:W3CDTF">2009-12-12</dcterms:dateAccepted>
+                        <tef:thesis.degree>
+                            <tef:thesis.degree.discipline xml:lang="fr">Sciences de l'éducation</tef:thesis.degree.discipline>
+                            <tef:thesis.degree.grantor>
+                                <tef:nom>Bordeaux 2</tef:nom>
+                                <tef:autoriteExterne autoriteSource="Sudoc">026403005</tef:autoriteExterne>
+                            </tef:thesis.degree.grantor>
+                            <tef:thesis.degree.level>Doctorat</tef:thesis.degree.level>
+                            <tef:thesis.degree.name xml:lang="fr">Docteur es</tef:thesis.degree.name>
+                        </tef:thesis.degree>
+                        <tef:theseSurTravaux>non</tef:theseSurTravaux>
+                        <tef:avisJury>oui</tef:avisJury>
+                        <tef:directeurThese>
+                            <tef:nom>Debarbieux</tef:nom>
+                            <tef:prenom>Éric</tef:prenom>
+                            <tef:autoriteInterne>MADS_DIRECTEUR_DE_THESE_1</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">030093511</tef:autoriteExterne>
+                        </tef:directeurThese>
+                        <tef:presidentJury>
+                            <tef:nom>Sallaberry</tef:nom>
+                            <tef:prenom>Jean-Claude</tef:prenom>
+                            <tef:autoriteInterne>MADS_PRESIDENT_DU_JURY</tef:autoriteInterne>
+                        </tef:presidentJury>
+                        <tef:membreJury>
+                            <tef:nom>Bodin</tef:nom>
+                            <tef:prenom>Dominique</tef:prenom>
+                            <tef:autoriteInterne>MADS_MEMBRE_DU_JURY_1</tef:autoriteInterne>
+                        </tef:membreJury>
+                        <tef:rapporteur>
+                            <tef:nom>Bataille</tef:nom>
+                            <tef:prenom>Michel</tef:prenom>
+                            <tef:autoriteInterne>MADS_RAPPORTEUR_1</tef:autoriteInterne>
+                        </tef:rapporteur>
+                        <tef:rapporteur>
+                            <tef:nom>Tournier</tef:nom>
+                            <tef:prenom>Pierre-Victor</tef:prenom>
+                            <tef:autoriteInterne>MADS_RAPPORTEUR_2</tef:autoriteInterne>
+                        </tef:rapporteur>
+                        <tef:ecoleDoctorale>
+                            <tef:nom>Ecole Doctorale Sciences sociales. Société, Santé, Décision (Bordeaux)</tef:nom>
+                            <tef:autoriteInterne>MADS_ECOLE_DOCTORALE_1</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">091247659</tef:autoriteExterne>
+                        </tef:ecoleDoctorale>
+                        <tef:oaiSetSpec>ddc:370</tef:oaiSetSpec>
+                        <tef:MADSAuthority authorityID="MADS_DIRECTEUR_DE_THESE_1" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Debarbieux</mads:namePart>
+                                <mads:namePart type="given">Eric</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_PRESIDENT_DU_JURY" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Sallaberry</mads:namePart>
+                                <mads:namePart type="given">Jean-Claude</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_MEMBRE_DU_JURY_1" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Bodin</mads:namePart>
+                                <mads:namePart type="given">Dominique</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_RAPPORTEUR_1" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Bataille</mads:namePart>
+                                <mads:namePart type="given">Michel</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_RAPPORTEUR_2" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Tournier</mads:namePart>
+                                <mads:namePart type="given">Pierre-Victor</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_ECOLE_DOCTORALE_1" type="corporate">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Ecole Doctorale Sciences sociales. Société, Santé, Décision (Bordeaux)</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                    </tef:thesisAdmin>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:techMD>
+        <mets:techMD ID="ABES.STAR.THESE_4536.VERSION_COMPLETE.EDITION_ARCHIVAGE.TECH_FICHIER.DOSSIER_1.DOSSIER_1.FICHIER_1">
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_tech_fichier">
+                <mets:xmlData>
+                    <tef:meta_fichier>
+                        <tef:encodage>ASCII</tef:encodage>
+                        <tef:formatFichier>PDF</tef:formatFichier>
+                        <tef:taille>36463923</tef:taille>
+                    </tef:meta_fichier>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:techMD>
+        <mets:rightsMD ID="ABES.STAR.THESE_4536.DROITS_UNIVERSITE">
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_etablissement_these">
+                <mets:xmlData>
+                    <metsRights:RightsDeclarationMD RIGHTSCATEGORY="CONTRACTUAL">
+                        <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                            <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                        </metsRights:Context>
+                        <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                            <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                        </metsRights:Context>
+                    </metsRights:RightsDeclarationMD>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:rightsMD>
+        <mets:rightsMD ID="ABES.STAR.THESE_4536.DROITS_DOCTORANT">
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_auteur_these">
+                <mets:xmlData>
+                    <metsRights:RightsDeclarationMD RIGHTSCATEGORY="CONTRACTUAL">
+                        <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                            <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                        </metsRights:Context>
+                        <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                            <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                        </metsRights:Context>
+                    </metsRights:RightsDeclarationMD>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:rightsMD>
+        <mets:rightsMD ID="ABES.STAR.THESE_4536.VERSION_COMPLETE.DROITS">
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_version">
+                <mets:xmlData>
+                    <metsRights:RightsDeclarationMD RIGHTSCATEGORY="CONTRACTUAL">
+                        <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                            <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                        </metsRights:Context>
+                        <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                            <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                        </metsRights:Context>
+                    </metsRights:RightsDeclarationMD>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:rightsMD>
+    </mets:amdSec>
+    <mets:fileSec>
+        <mets:fileGrp USE="archive_et_diffusion" ID="ABES.STAR.THESE_4536.VERSION_COMPLETE.EDITION_ARCHIVAGE.FILEGRP">
+            <mets:file ID="ABES.STAR.THESE_4536.VERSION_COMPLETE.EDITION_ARCHIVAGE.DOSSIER_1.DOSSIER_1.FICHIER_1" ADMID="ABES.STAR.THESE_4536.VERSION_COMPLETE.EDITION_ARCHIVAGE.TECH_FICHIER.DOSSIER_1.DOSSIER_1.FICHIER_1" SEQ="1">
+                <mets:FLocat LOCTYPE="URL" xlink:href="BOR2/THESE_4536/document/0/0/1THESE/2THESE/These_enseigner en prison.pdf" />
+            </mets:file>
+        </mets:fileGrp>
+    </mets:fileSec>
+    <mets:structMap TYPE="logical">
+        <mets:div TYPE="THESE" CONTENTIDS="CONTENTIDS.ABES.STAR.THESE_4536" DMDID="ABES.STAR.THESE_4536.DESCRIPTION_BIBLIOGRAPHIQUE" ADMID="ABES.STAR.THESE_4536.ADMINISTRATION ABES.STAR.THESE_4536.DROITS_UNIVERSITE ABES.STAR.THESE_4536.DROITS_DOCTORANT">
+            <mets:div TYPE="VERSION_COMPLETE" CONTENTIDS="CONTENTIDS.ABES.STAR.THESE_4536.ABES.STAR.THESE_4536.VERSION_COMPLETE" ADMID="ABES.STAR.THESE_4536.VERSION_COMPLETE.DROITS">
+                <mets:div TYPE="EDITION" CONTENTIDS="CONTENTIDS.ABES.STAR.THESE_4536.VERSION_COMPLETE.EDITION_ARCHIVAGE" DMDID="ABES.STAR.THESE_4536.VERSION_COMPLETE.DESCRIPTION.EDITION_ARCHIVAGE">
+                    <mets:fptr FILEID="ABES.STAR.THESE_4536.VERSION_COMPLETE.EDITION_ARCHIVAGE.FILEGRP" />
+                </mets:div>
+            </mets:div>
+        </mets:div>
+    </mets:structMap>
+</mets:mets>
+

@@ -60,6 +60,7 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExec
         NoticeBiblio noticeBiblio = NoticeBiblioDtoMapper.getNoticeBiblioEntity(noticeBiblioDto);
         service.getNoticeBiblioService().save(noticeBiblio);
         log.info("notice traitée : " + noticeBiblio.getIddoc());
+        //TODO Gestion Tef : maj du bloc Sudoc de traitement
     }
 
     @Override
