@@ -4,6 +4,11 @@ import fr.abes.theses.service.XPathService;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.*;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+import java.util.Date;
+
 import static fr.abes.theses.service.XPathService.*;
 
 @Slf4j
@@ -24,6 +29,22 @@ public class Tef {
         checkDocumenTef();
     }
 
+
+    public void setStarGestionAttribut(Date dateCreation, Date dateModification, String retourSudoc, String indicSudoc, String ppn) throws InstantiationException {
+        checkDocumenTef();
+        SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        setDate(formater.format(dateModification));
+
+        if (retourSudoc.contains("NOK"))
+        {
+            XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", retourSudoc, documentTef);
+        }
+        else
+        {
+            XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "PPN", ppn, documentTef);
+            XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", "", documentTef);
+        }
+    }
 
     public void setStarGestionAttribut(String date, Document retour) throws InstantiationException {
         checkDocumenTef();
@@ -74,6 +95,5 @@ public class Tef {
             throw new InstantiationException("DocumentTef n'est pas initalisé");
         }
     }
-
 
 }

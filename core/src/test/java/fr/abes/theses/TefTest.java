@@ -1,6 +1,8 @@
 package fr.abes.theses;
 
 import fr.abes.theses.model.Tef;
+import fr.abes.theses.model.tefjaxb.Mets;
+import fr.abes.theses.service.MarshallingService;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.jdom2.Element;
@@ -9,8 +11,13 @@ import org.jdom2.input.SAXBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 
@@ -45,7 +52,24 @@ public class TefTest {
 
         Tef tef = new Tef(document.asXML());
 
-        //tef.setStarGestionAttribut();
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String dateStr = simpleDateFormat.format(new Date());
+
+        tef.setStarGestionAttribut(new Date(), new Date(), "retourSudoc", "indicSudoc", "5205");
+
+        var a = 0;
+    }
+
+    @Test
+    void tefTest3() throws Exception {
+        String filePath = getClass().getClassLoader().getResource("tef.xml").getPath();
+
+        InputStream inputStream = new FileInputStream(filePath);
+
+        Mets mets = new MarshallingService().chargerMets(inputStream);
+
+        var a= 0;
     }
 
 
