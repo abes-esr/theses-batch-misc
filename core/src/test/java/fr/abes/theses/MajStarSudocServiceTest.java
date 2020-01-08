@@ -49,12 +49,10 @@ public class MajStarSudocServiceTest {
                 "702 #1$3123456789$4111\r" +
                 "702 #1$3987654321$4999\r" + Constants.STR_1E);
 
-        assertThat(service.fusionThese(noticeStar, noticeSudoc)).isEqualTo(Constants.STR_1F + "008 $aOax3\r" +
+        assertThat(service.fusionThese(noticeStar, noticeSudoc)).isEqualTo("008 $aOax3\r" +
                 "200 ##$aTitre notice Sudoc$eComplément titre notice Sudoc$fMention de responsabilité notice Sudoc\r" +
                 "610 0#$aTraits spécifiques humains\r" +
-                "610 0#$aImagerie génétique\r" +
-                "702 #1$3123456789$4111\r" +
-                "702 #1$3987654321$4999\r" + Constants.STR_1E);
+                "610 0#$aImagerie génétique\r");
     }
 
 }

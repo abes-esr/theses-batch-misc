@@ -174,7 +174,7 @@ public class MajStarSudocService implements IMajStarSudocService {
         Biblio noticeFusionnee = new Biblio();
 
         String labelZonePrecedente = "";
-        noticeSudoc = traitementPreliminaire(noticeSudoc);
+        traitementPreliminaire(noticeSudoc, noticeStar);
         for (Zone zoneSudoc : noticeSudoc.getListeZones().values()){
                 if (getDao().getZonePrioritaire().findZoneByLabel(zoneSudoc.getLabelForOutput()) == null) {
                     noticeFusionnee.addZone(zoneSudoc);
@@ -198,10 +198,11 @@ public class MajStarSudocService implements IMajStarSudocService {
         return noticeFusionnee.toString().substring(1, noticeFusionnee.toString().length()-1);
     }
 
-    private Biblio traitementPreliminaire(Biblio noticeSudoc) {
+    private void traitementPreliminaire(Biblio noticeSudoc, Biblio noticeStar) {
         noticeSudoc.deleteZone("702");
         noticeSudoc.deleteZone("712");
-        return noticeSudoc;
+        noticeStar.deleteZone("702");
+        noticeStar.deleteZone("712");
     }
 
     /**
