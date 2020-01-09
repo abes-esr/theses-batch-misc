@@ -131,6 +131,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             trace.setPpn(clientBiblio.getPpnEncours());
             trace.setRetourSudoc("Notice biblio créée");
             trace.setDateCreation(new Date());
+            trace.setDateModification(new Date());
         } catch (CBSException ex) {
             trace.setIndicSudoc("NOK - Notice non créée</CODERETOUR>");
             trace.setRetourSudoc(ex.getMessage());
