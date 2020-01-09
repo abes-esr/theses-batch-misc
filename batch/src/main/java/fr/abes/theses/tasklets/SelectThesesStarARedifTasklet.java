@@ -31,10 +31,16 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
 
     private Integer idJob;
 
+    @Value("${rowsNumber}")
+    private Integer rowsNumber;
+
+    @Value("${startRow}")
+    private Integer startRow;
+
     @Value("${solr.url}")
     private String urlSolr;
 
-    private final String urlDiffusionTotale = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=id%20asc&rows=5&wt=json";
+    private final String urlDiffusionTotale = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=id%20asc&wt=json";
     @Override
     public void beforeStep(StepExecution stepExecution) {
         log.info("entree dans beforeStep de SelectThesesStarARedifTasklet");
@@ -47,7 +53,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
 
         try
         {
-            String requete = urlSolr + urlDiffusionTotale;
+            String requete = urlSolr + urlDiffusionTotale + "&start=" + startRow + "&rows=" + rowsNumber;
             URL url = new URL(requete);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
             String ligne = "";
