@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -80,8 +81,7 @@ public class MajStarSudocService implements IMajStarSudocService {
      * @see fr.abes.cbs
      */
     @Override
-    public NoticeBiblioDto majStarSudoc(String noticeStarXml) throws ExecutionControl.NotImplementedException {
-        NoticeBiblioDto trace = new NoticeBiblioDto();
+    public NoticeBiblioDto majStarSudoc(String noticeStarXml, NoticeBiblioDto trace) throws ExecutionControl.NotImplementedException {
         try {
             NoticeConcrete notice = new NoticeConcrete(noticeStarXml);
             this.setNumSource(notice.getNoticeBiblio().findZones("002").get(0).findSousZone("$a").getValeur());
@@ -129,6 +129,8 @@ public class MajStarSudocService implements IMajStarSudocService {
             clientBiblio.enregistrerNew(noticeBiblio.toString());
             trace.setIndicSudoc("OK");
             trace.setPpn(clientBiblio.getPpnEncours());
+            trace.setRetourSudoc("Notice biblio créée");
+            trace.setDateCreation(new Date());
         } catch (CBSException ex) {
             trace.setIndicSudoc("NOK - Notice non créée</CODERETOUR>");
             trace.setRetourSudoc(ex.getMessage());
@@ -152,6 +154,8 @@ public class MajStarSudocService implements IMajStarSudocService {
             //création notice biblio ok
             trace.setIndicSudoc("OK");
             trace.setPpn(clientBiblio.getPpnEncours());
+            trace.setRetourSudoc("Notice biblio fusionnée");
+            trace.setDateModification(new Date());
         } catch (Exception ex) {
             trace.setIndicSudoc("NOK");
             trace.setRetourSudoc(ex.getMessage());
