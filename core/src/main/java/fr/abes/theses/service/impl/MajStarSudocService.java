@@ -81,7 +81,7 @@ public class MajStarSudocService implements IMajStarSudocService {
      * @see fr.abes.cbs
      */
     @Override
-    public NoticeBiblioDto majStarSudoc(String noticeStarXml, NoticeBiblioDto trace) throws ExecutionControl.NotImplementedException {
+    public NoticeBiblioDto majStarSudoc(String noticeStarXml, NoticeBiblioDto trace)  {
         try {
             NoticeConcrete notice = new NoticeConcrete(noticeStarXml);
             this.setNumSource(notice.getNoticeBiblio().findZones("002").get(0).findSousZone("$a").getValeur());
@@ -145,7 +145,7 @@ public class MajStarSudocService implements IMajStarSudocService {
      * @throws CBSException
      * @throws ExecutionControl.NotImplementedException
      */
-    private void fusionNoticeStarEtSudoc(NoticeConcrete theseStar, NoticeBiblioDto trace) throws CBSException, ExecutionControl.NotImplementedException {
+    private void fusionNoticeStarEtSudoc(NoticeConcrete theseStar, NoticeBiblioDto trace) throws CBSException {
         clientBiblio.affUnma();
         String resu = clientBiblio.editer("1");
         Biblio noticeBiblio = new Biblio(resu.substring(resu.indexOf(Constants.STR_1F), resu.indexOf(Constants.STR_1E, resu.indexOf(Constants.STR_1F)) + 1));

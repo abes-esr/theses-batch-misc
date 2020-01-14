@@ -10,7 +10,7 @@ public interface IMajStarSudocService {
 
     void disconnectBiblio();
 
-    NoticeBiblioDto majStarSudoc(String marcXml, NoticeBiblioDto noticeBiblioDto) throws ExecutionControl.NotImplementedException;
+    NoticeBiblioDto majStarSudoc(String marcXml, NoticeBiblioDto noticeBiblioDto);
 
     void creerTheseBiblio(NoticeConcrete noticeBiblio, NoticeBiblioDto trace);
 
