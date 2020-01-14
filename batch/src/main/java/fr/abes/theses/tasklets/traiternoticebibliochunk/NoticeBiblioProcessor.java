@@ -44,16 +44,6 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblio, Notice
     @Override
     public NoticeBiblio process(NoticeBiblio noticeBiblio) throws Exception {
 
-      /*  try {
-            int iddoc = ligneFichierDto.getIddoc();
-
-        } catch (CBSException e) {
-            log.error("erreur lors de la requête au Sudoc ou du saveExemplaire" + e.toString());
-            ligneFichierDto.setRetourSudoc(e.getMessage());
-        } catch (Exception e) {
-            log.error("erreur lors de la recup de la noticetraitee : " + e.toString());
-            ligneFichierDto.setRetourSudoc(e.getMessage());
-        }*/
         log.info("dans le process = " + noticeBiblio);
         return noticeBiblio;
     }
