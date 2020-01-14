@@ -53,10 +53,14 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, Not
     @Override
     public NoticeBiblioDto process(NoticeBiblioDto noticeBiblioDto) throws TransformerException, ExecutionControl.NotImplementedException {
         Document doc = getService().getDocumentService().findById(noticeBiblioDto.getIddoc());
-        log.info("chunk processor for iddoc : " + doc.getIdDoc());
-        String marcXml = getMarcXmlFromTef(doc);
-        NoticeBiblioDto resultatInfoXml = getService().getMajStarSudocService().majStarSudoc(marcXml, noticeBiblioDto);
-        noticeBiblioDto.setRetourSudoc(resultatInfoXml.getRetourSudoc());
+        log.info("chunk processor for iddoc : " + noticeBiblioDto.getIddoc());
+        if (doc == null) {
+            noticeBiblioDto.setRetourSudoc("These not found");
+        } else {
+            String marcXml = getMarcXmlFromTef(doc);
+            NoticeBiblioDto resultatInfoXml = getService().getMajStarSudocService().majStarSudoc(marcXml, noticeBiblioDto);
+            noticeBiblioDto.setRetourSudoc(resultatInfoXml.getRetourSudoc());
+        }
         return noticeBiblioDto;
     }
 
