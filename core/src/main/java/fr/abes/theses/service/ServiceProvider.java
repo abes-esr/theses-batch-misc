@@ -13,4 +13,7 @@ public class ServiceProvider {
 
     @Resource
     private INoticeBiblioService noticeBiblioService;
+
+    @Resource
+    private IDocumentService documentService;
 }
