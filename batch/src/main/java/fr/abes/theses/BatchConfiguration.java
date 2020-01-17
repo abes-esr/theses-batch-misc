@@ -28,14 +28,17 @@ import javax.sql.DataSource;
 @Import(ThesesOracleConfig.class)
 @EnableRetry
 public class BatchConfiguration {
-    @Autowired
-    private JobBuilderFactory jobs;
+    private final JobBuilderFactory jobs;
 
-    @Autowired
-    private StepBuilderFactory steps;
+    private final StepBuilderFactory steps;
 
-    @Autowired
-    DataSource thesesDatasource;
+    private final DataSource thesesDatasource;
+
+    public BatchConfiguration(JobBuilderFactory jobs, StepBuilderFactory steps, DataSource thesesDatasource) {
+        this.jobs = jobs;
+        this.steps = steps;
+        this.thesesDatasource = thesesDatasource;
+    }
 
     @Bean
     public BatchConfigurer configurer(EntityManagerFactory entityManagerFactory) throws Exception{
@@ -65,6 +68,22 @@ public class BatchConfiguration {
                 .build().build();
     }
 
+    @Bean
+    public Job jobRediffusionNoticesExemplaires() {
+        log.info("Début du batch de rediffusion des exemplaires de notices star dans le Sudoc");
+
+        return jobs
+                .get("diffuserExemplairesThesesVersSudoc").incrementer(incrementer())
+                .start(stepSelectThesesStarARediff()).on("FAILED").end()
+                .from(stepSelectThesesStarARediff()).on("AUCUNE NOTICE").end()
+                .from(stepSelectThesesStarARediff()).on("COMPLETED").to(stepSelectNoticesBibliosATraiter())
+                .from(stepSelectNoticesBibliosATraiter()).on("FAILED").end()
+                .from(stepSelectNoticesBibliosATraiter()).on("COMPLETED").to(stepDiffuserExemp())
+                .from(stepDiffuserExemp()).on("FAILED").end()
+                .from(stepDiffuserExemp()).on("COMPLETED").to(stepGenererFichier())
+                .from(stepGenererFichier()).end()
+                .build();
+    }
 
     // ------------------ INCREMENTER ------------------
     protected JobParametersIncrementer incrementer() {
@@ -98,6 +117,11 @@ public class BatchConfiguration {
                 .build();
     }
 
+    public Step stepDiffuserExemp() {
+        return steps.get("diffuserNoticeExemp")
+                .tasklet(diffuserNoticeExempTasklet()).build();
+    }
+
     @Bean
     public Step stepGenererFichier() {
         return steps
@@ -128,5 +152,8 @@ public class BatchConfiguration {
 
     @Bean
     public DisconnectTasklet disconnectTasklet() {return new DisconnectTasklet();}
+
+    @Bean
+    public DiffuserNoticeExempTasklet diffuserNoticeExempTasklet() {return new DiffuserNoticeExempTasklet(); }
 
 }

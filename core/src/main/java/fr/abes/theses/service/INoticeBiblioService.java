@@ -13,4 +13,6 @@ public interface INoticeBiblioService {
     NoticeBiblio findById(Integer id);
 
     List<NoticeBiblio> getNoticesNonTraiteByJobId(Integer jobId);
+
+    List<String> getCodeEtabNonTraiteByJobId(Integer idJob);
 }

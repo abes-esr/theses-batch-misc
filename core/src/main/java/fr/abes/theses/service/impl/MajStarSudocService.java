@@ -60,8 +60,8 @@ public class MajStarSudocService implements IMajStarSudocService {
     }
 
     @Override
-    public void authenticateBiblio() throws CBSException {
-        this.clientBiblio.authenticate(serveurIp, serveurPort, loginM4001, passM4001);
+    public void authenticate(String login, String passwd) throws CBSException {
+        this.clientBiblio.authenticate(serveurIp, serveurPort, login, passwd);
     }
 
     /**
@@ -160,6 +160,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             trace.setIndicSudoc("NOK");
             trace.setRetourSudoc(ex.getMessage());
         }
+
     }
 
     /**

@@ -36,4 +36,9 @@ public class NoticeBiblioService implements INoticeBiblioService {
     public List<NoticeBiblio> getNoticesNonTraiteByJobId(Integer idJob) {
         return getDao().getNoticeBiblio().getNoticesNonTraiteByJobId(idJob);
     }
+
+    @Override
+    public List<String> getCodeEtabNonTraiteByJobId(Integer idJob) {
+        return getDao().getNoticeBiblio().getCodeEtabNonTraiteByJobId(idJob);
+    }
 }

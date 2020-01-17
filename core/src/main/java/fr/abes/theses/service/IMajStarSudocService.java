@@ -5,7 +5,7 @@ import fr.abes.cbs.notices.NoticeConcrete;
 import fr.abes.theses.model.dto.NoticeBiblioDto;
 
 public interface IMajStarSudocService {
-    void authenticateBiblio() throws CBSException;
+    void authenticate(String login, String passwd) throws CBSException;
 
     void disconnectBiblio();
 

@@ -11,4 +11,7 @@ public interface INoticeBiblioDao extends JpaRepository<NoticeBiblio, Integer> {
 
     @Query("select nb from NoticeBiblio nb where nb.done = 0 and nb.idJob = :idJob")
     List<NoticeBiblio> getNoticesNonTraiteByJobId(@Param("idJob") Integer idJob);
+
+    @Query("select distinct nb.codeEtab from NoticeBiblio nb where nb.done = 0 and nb.idJob = :idJob")
+    List<String> getCodeEtabNonTraiteByJobId(@Param("idJob") Integer idJob);
 }
