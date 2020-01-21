@@ -23,6 +23,6 @@ public class ProxyRetry {
     public void authenticate(String login, String passwd) throws CBSException {
         log.info("dans authenticate du ProxyRetry avec login M4001");
 
-        getService().getMajStarSudocService().authenticate(login, passwd);
+        getService().getMajStarSudocService().authenticateBiblio(login, passwd);
     }
 }

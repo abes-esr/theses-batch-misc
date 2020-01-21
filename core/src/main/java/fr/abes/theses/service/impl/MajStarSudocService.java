@@ -1,10 +1,7 @@
 package fr.abes.theses.service.impl;
 
 import fr.abes.cbs.exception.CBSException;
-import fr.abes.cbs.notices.Biblio;
-import fr.abes.cbs.notices.NoticeConcrete;
-import fr.abes.cbs.notices.SousZone;
-import fr.abes.cbs.notices.Zone;
+import fr.abes.cbs.notices.*;
 import fr.abes.cbs.process.ProcessCBS;
 import fr.abes.cbs.utilitaire.Constants;
 import fr.abes.cbs.zones.enumSousZones.Zone_214;
@@ -33,6 +30,7 @@ public class MajStarSudocService implements IMajStarSudocService {
     @Getter
     private DaoProvider dao;
 
+    @Getter
     private ProcessCBS clientBiblio;
     private ProcessCBS clientExpl;
 
@@ -40,12 +38,6 @@ public class MajStarSudocService implements IMajStarSudocService {
     private String serveurIp;
     @Value("${sudoc.port}")
     private String serveurPort;
-    @Value("${sudoc.passwdRcr}")
-    private String passwdRcr;
-    @Value("${sudoc.loginM4001}")
-    private String loginM4001;
-    @Value("${sudoc.passwdM4001}")
-    private String passM4001;
 
     @Getter
     @Setter
@@ -60,8 +52,13 @@ public class MajStarSudocService implements IMajStarSudocService {
     }
 
     @Override
-    public void authenticate(String login, String passwd) throws CBSException {
+    public void authenticateBiblio(String login, String passwd) throws CBSException {
         this.clientBiblio.authenticate(serveurIp, serveurPort, login, passwd);
+    }
+
+    @Override
+    public void authenticateExemp(String login, String passwd) throws CBSException {
+        this.clientExpl.authenticate(serveurIp, serveurPort, login, passwd);
     }
 
     /**
@@ -80,7 +77,7 @@ public class MajStarSudocService implements IMajStarSudocService {
      * @see fr.abes.cbs
      */
     @Override
-    public NoticeBiblioDto majStarSudoc(String noticeStarXml, NoticeBiblioDto trace)  {
+    public NoticeBiblioDto majStarSudocBiblio(String noticeStarXml, NoticeBiblioDto trace) {
         try {
             NoticeConcrete notice = new NoticeConcrete(noticeStarXml);
             this.setNumSource(notice.getNoticeBiblio().findZones("002").get(0).findSousZone("$a").getValeur());
@@ -139,6 +136,7 @@ public class MajStarSudocService implements IMajStarSudocService {
 
     /**
      * Méthode de modification d'une notice biblio dans le Sudoc
+     *
      * @param theseStar
      * @return
      * @throws CBSException
@@ -180,27 +178,27 @@ public class MajStarSudocService implements IMajStarSudocService {
 
         String labelZonePrecedente = "";
         traitementPreliminaire(noticeSudoc, noticeStar);
-        for (Zone zoneSudoc : noticeSudoc.getListeZones().values()){
-                if (getDao().getZonePrioritaire().findZoneByLabel(zoneSudoc.getLabelForOutput()) == null) {
+        for (Zone zoneSudoc : noticeSudoc.getListeZones().values()) {
+            if (getDao().getZonePrioritaire().findZoneByLabel(zoneSudoc.getLabelForOutput()) == null) {
+                noticeFusionnee.addZone(zoneSudoc);
+            } else {
+                List<Zone> zoneStar = noticeStar.findZones(zoneSudoc.getLabelForOutput());
+                if (zoneStar.isEmpty()) {
                     noticeFusionnee.addZone(zoneSudoc);
                 } else {
-                    List<Zone> zoneStar = noticeStar.findZones(zoneSudoc.getLabelForOutput());
-                    if (zoneStar.isEmpty()) {
-                        noticeFusionnee.addZone(zoneSudoc);
-                    } else {
-                        if (!zoneSudoc.getLabelForOutput().equals(labelZonePrecedente)){
-                            for (Zone zoneAEcrire : zoneStar) {
-                                noticeFusionnee.addZone(zoneAEcrire);
-                            }
-                            labelZonePrecedente = zoneSudoc.getLabelForOutput();
+                    if (!zoneSudoc.getLabelForOutput().equals(labelZonePrecedente)) {
+                        for (Zone zoneAEcrire : zoneStar) {
+                            noticeFusionnee.addZone(zoneAEcrire);
                         }
+                        labelZonePrecedente = zoneSudoc.getLabelForOutput();
                     }
                 }
+            }
         }
 
         noticeFusionnee = traitementSpecifique(noticeStar, noticeSudoc, noticeFusionnee);
 
-        return noticeFusionnee.toString().substring(1, noticeFusionnee.toString().length()-1);
+        return noticeFusionnee.toString().substring(1, noticeFusionnee.toString().length() - 1);
     }
 
     private void traitementPreliminaire(Biblio noticeSudoc, Biblio noticeStar) {
@@ -212,6 +210,7 @@ public class MajStarSudocService implements IMajStarSudocService {
 
     /**
      * Traitement spécifique permettant de transférer toutes les sous zones de la 219 vers une nouvelle zone 214 dans la notice fusionnée
+     *
      * @param noticeStar
      * @param noticeSudoc
      * @param noticeFusionnee
@@ -226,10 +225,10 @@ public class MajStarSudocService implements IMajStarSudocService {
     private void traitementZoneStar(Biblio noticeStar, Biblio noticeSudoc, Biblio noticeFusionnee) {
         String labelZonePrecedente = "";
 
-        for(Zone zoneStar : noticeStar.getListeZones().values()){
+        for (Zone zoneStar : noticeStar.getListeZones().values()) {
             String labelZone = zoneStar.getLabelForOutput();
-            if (noticeFusionnee.findZones(labelZone).isEmpty() && !labelZonePrecedente.equals(labelZone)){
-                for( Zone zoneStarToAdd : noticeStar.findZones(labelZone)){
+            if (noticeFusionnee.findZones(labelZone).isEmpty() && !labelZonePrecedente.equals(labelZone)) {
+                for (Zone zoneStarToAdd : noticeStar.findZones(labelZone)) {
                     noticeFusionnee.addZone(zoneStarToAdd);
                 }
                 labelZonePrecedente = labelZone;
@@ -239,11 +238,11 @@ public class MajStarSudocService implements IMajStarSudocService {
 
     private void traitement219(Biblio noticeStar, Biblio noticeFusionnee) {
         List<Zone> zone219s = noticeStar.findZones("219");
-        for (Zone zone219: zone219s) {
+        for (Zone zone219 : zone219s) {
             List<SousZone> sousZones214 = new ArrayList<>();
-            for (Zone_219 sousZone: EnumUtils.getEnumList(Zone_219.class)) {
+            for (Zone_219 sousZone : EnumUtils.getEnumList(Zone_219.class)) {
                 if (EnumUtils.isValidEnum(Zone_214.class, sousZone.name())) {
-                    SousZone ssZone219 =  zone219.findSousZone(sousZone.name());
+                    SousZone ssZone219 = zone219.findSousZone(sousZone.name());
                     if (ssZone219 != null) {
                         sousZones214.add(new SousZone(Zone_214.valueOf(sousZone.name()), ssZone219.getValeur()));
                     }
@@ -318,6 +317,21 @@ public class MajStarSudocService implements IMajStarSudocService {
         return resultExpl.toString();
     }
 */
+    @Override
+    public NoticeBiblioDto majStarSudocExemp(String noticeStarXml, NoticeBiblioDto trace) {
+        NoticeConcrete notice = new NoticeConcrete(noticeStarXml);
+        String nnt = notice.getNoticeBiblio().findZone("029", 0).findSousZone("$b").getValeur();
+        Zone e856;
+        for (Exemplaire exemp : notice.getExemplaires()) {
+            e856 = exemp.findZone("E856", 0);
+            exemp.deleteZone("E856", 0);
+            exemp.addZone(e856);
+
+            creerExpl(exemp, nnt, trace);
+        }
+        return trace;
+    }
+
     /**
      * <b>Créer un exemplaire pour la thèse venant de Star</b>
      * <p>
@@ -329,15 +343,15 @@ public class MajStarSudocService implements IMajStarSudocService {
      * </p>
      *
      * @param exemplaire les données de l'exemplaire
-     * @param lePPN      le ppn de la notice que l'on vient de créer ou modifier
+     * @param nnt        le nnt de la notice biblio
      * @return le message succès/échec de la création et l'epn structuré avec balise
      */
     @Override
-    public String creerExpl(String exemplaire, String lePPN) {
+    public String creerExpl(Exemplaire exemplaire, String nnt, NoticeBiblioDto trace) {
         StringBuilder resultCat = new StringBuilder();
         String resu;
         try {
-            clientExpl.search("che ppn " + lePPN);
+            clientExpl.search("che nnt " + nnt);
             clientExpl.creerExemplaire("e" + clientExpl.getNvNumEx());
             resu = clientExpl.newExemplaire(clientExpl.getNvNumEx() + " $bx" + Constants.SEP_CHAMP + exemplaire + Constants.SEP_CHAMP + "991 ##$aexemplaire créé automatiquement par STAR");
             //création exemplaire OK
