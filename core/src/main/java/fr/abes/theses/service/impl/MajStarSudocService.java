@@ -139,6 +139,7 @@ public class MajStarSudocService implements IMajStarSudocService {
 
     /**
      * Méthode de modification d'une notice biblio dans le Sudoc
+     *
      * @param theseStar
      * @return
      * @throws CBSException
@@ -147,9 +148,11 @@ public class MajStarSudocService implements IMajStarSudocService {
     private void fusionNoticeStarEtSudoc(NoticeConcrete theseStar, NoticeBiblioDto trace) throws CBSException {
         clientBiblio.affUnma();
         String resu = clientBiblio.editer("1");
-        Biblio noticeBiblio = new Biblio(resu.substring(resu.indexOf(Constants.STR_1F), resu.indexOf(Constants.STR_1E, resu.indexOf(Constants.STR_1F)) + 1));
-        String fusion = fusionThese(theseStar.getNoticeBiblio(), noticeBiblio);
+
         try {
+            Biblio noticeBiblio = new Biblio(resu.substring(resu.indexOf(Constants.STR_1F), resu.indexOf(Constants.STR_1E, resu.indexOf(Constants.STR_1F)) + 1));
+            String fusion = fusionThese(theseStar.getNoticeBiblio(), noticeBiblio);
+
             clientBiblio.modifierNotice("1", fusion);
             //création notice biblio ok
             trace.setIndicSudoc("OK");
@@ -179,27 +182,27 @@ public class MajStarSudocService implements IMajStarSudocService {
 
         String labelZonePrecedente = "";
         traitementPreliminaire(noticeSudoc, noticeStar);
-        for (Zone zoneSudoc : noticeSudoc.getListeZones().values()){
-                if (getDao().getZonePrioritaire().findZoneByLabel(zoneSudoc.getLabelForOutput()) == null) {
+        for (Zone zoneSudoc : noticeSudoc.getListeZones().values()) {
+            if (getDao().getZonePrioritaire().findZoneByLabel(zoneSudoc.getLabelForOutput()) == null) {
+                noticeFusionnee.addZone(zoneSudoc);
+            } else {
+                List<Zone> zoneStar = noticeStar.findZones(zoneSudoc.getLabelForOutput());
+                if (zoneStar.isEmpty()) {
                     noticeFusionnee.addZone(zoneSudoc);
                 } else {
-                    List<Zone> zoneStar = noticeStar.findZones(zoneSudoc.getLabelForOutput());
-                    if (zoneStar.isEmpty()) {
-                        noticeFusionnee.addZone(zoneSudoc);
-                    } else {
-                        if (!zoneSudoc.getLabelForOutput().equals(labelZonePrecedente)){
-                            for (Zone zoneAEcrire : zoneStar) {
-                                noticeFusionnee.addZone(zoneAEcrire);
-                            }
-                            labelZonePrecedente = zoneSudoc.getLabelForOutput();
+                    if (!zoneSudoc.getLabelForOutput().equals(labelZonePrecedente)) {
+                        for (Zone zoneAEcrire : zoneStar) {
+                            noticeFusionnee.addZone(zoneAEcrire);
                         }
+                        labelZonePrecedente = zoneSudoc.getLabelForOutput();
                     }
                 }
+            }
         }
 
         noticeFusionnee = traitementSpecifique(noticeStar, noticeSudoc, noticeFusionnee);
 
-        return noticeFusionnee.toString().substring(1, noticeFusionnee.toString().length()-1);
+        return noticeFusionnee.toString().substring(1, noticeFusionnee.toString().length() - 1);
     }
 
     private void traitementPreliminaire(Biblio noticeSudoc, Biblio noticeStar) {
@@ -211,6 +214,7 @@ public class MajStarSudocService implements IMajStarSudocService {
 
     /**
      * Traitement spécifique permettant de transférer toutes les sous zones de la 219 vers une nouvelle zone 214 dans la notice fusionnée
+     *
      * @param noticeStar
      * @param noticeSudoc
      * @param noticeFusionnee
@@ -219,16 +223,21 @@ public class MajStarSudocService implements IMajStarSudocService {
     private Biblio traitementSpecifique(Biblio noticeStar, Biblio noticeSudoc, Biblio noticeFusionnee) {
         traitement219(noticeStar, noticeFusionnee);
         traitementZoneStar(noticeStar, noticeSudoc, noticeFusionnee);
+        traitement579(noticeFusionnee);
         return noticeFusionnee;
+    }
+
+    private void traitement579(Biblio noticeFusionnee) {
+        noticeFusionnee.deleteZone("579");
     }
 
     private void traitementZoneStar(Biblio noticeStar, Biblio noticeSudoc, Biblio noticeFusionnee) {
         String labelZonePrecedente = "";
 
-        for(Zone zoneStar : noticeStar.getListeZones().values()){
+        for (Zone zoneStar : noticeStar.getListeZones().values()) {
             String labelZone = zoneStar.getLabelForOutput();
-            if (noticeFusionnee.findZones(labelZone).isEmpty() && !labelZonePrecedente.equals(labelZone)){
-                for( Zone zoneStarToAdd : noticeStar.findZones(labelZone)){
+            if (noticeFusionnee.findZones(labelZone).isEmpty() && !labelZonePrecedente.equals(labelZone)) {
+                for (Zone zoneStarToAdd : noticeStar.findZones(labelZone)) {
                     noticeFusionnee.addZone(zoneStarToAdd);
                 }
                 labelZonePrecedente = labelZone;
@@ -238,11 +247,11 @@ public class MajStarSudocService implements IMajStarSudocService {
 
     private void traitement219(Biblio noticeStar, Biblio noticeFusionnee) {
         List<Zone> zone219s = noticeStar.findZones("219");
-        for (Zone zone219: zone219s) {
+        for (Zone zone219 : zone219s) {
             List<SousZone> sousZones214 = new ArrayList<>();
-            for (Zone_219 sousZone: EnumUtils.getEnumList(Zone_219.class)) {
+            for (Zone_219 sousZone : EnumUtils.getEnumList(Zone_219.class)) {
                 if (EnumUtils.isValidEnum(Zone_214.class, sousZone.name())) {
-                    SousZone ssZone219 =  zone219.findSousZone(sousZone.name());
+                    SousZone ssZone219 = zone219.findSousZone(sousZone.name());
                     if (ssZone219 != null) {
                         sousZones214.add(new SousZone(Zone_214.valueOf(sousZone.name()), ssZone219.getValeur()));
                     }
@@ -317,6 +326,7 @@ public class MajStarSudocService implements IMajStarSudocService {
         return resultExpl.toString();
     }
 */
+
     /**
      * <b>Créer un exemplaire pour la thèse venant de Star</b>
      * <p>
