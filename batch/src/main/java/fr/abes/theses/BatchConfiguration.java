@@ -1,8 +1,7 @@
 package fr.abes.theses;
 
-import fr.abes.theses.tasklets.AuthentifierToSudocTasklet;
-import fr.abes.theses.tasklets.GenererFichierTasklet;
-import fr.abes.theses.tasklets.SelectThesesStarARedifTasklet;
+import fr.abes.theses.configuration.ThesesOracleConfig;
+import fr.abes.theses.tasklets.*;
 import lombok.extern.log4j.Log4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersIncrementer;
@@ -17,6 +16,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
 
 import javax.persistence.EntityManagerFactory;
@@ -25,6 +25,7 @@ import javax.sql.DataSource;
 @Log4j
 @Configuration
 @EnableBatchProcessing
+@Import(ThesesOracleConfig.class)
 @EnableRetry
 public class BatchConfiguration {
     @Autowired
@@ -34,11 +35,11 @@ public class BatchConfiguration {
     private StepBuilderFactory steps;
 
     @Autowired
-    private DataSource thesesDatasource;
+    DataSource thesesDatasource;
 
     @Bean
-    public BatchConfigurer configurer(EntityManagerFactory entityManagerFactory){
-        return new ThesesBatchConfigurer(entityManagerFactory);
+    public BatchConfigurer configurer(EntityManagerFactory entityManagerFactory) throws Exception{
+        return new ThesesBatchConfigurer(thesesDatasource, entityManagerFactory);
     }
 
     /**
@@ -53,11 +54,14 @@ public class BatchConfiguration {
                 .get("diffuserThesesVersSudoc").incrementer(incrementer())
                 .start(stepSelectThesesStarARediff()).on("FAILED").end()
                 .from(stepSelectThesesStarARediff()).on("AUCUNE NOTICE").end()
-                .from(stepSelectThesesStarARediff()).on("COMPLETED").to(stepAuthentifierToSudoc())
+                .from(stepSelectThesesStarARediff()).on("COMPLETED").to(stepSelectNoticesBibliosATraiter())
+                .from(stepSelectNoticesBibliosATraiter()).on("FAILED").end()
+                .from(stepSelectNoticesBibliosATraiter()).on("COMPLETED").to(stepAuthentifierToSudoc())
                 .from(stepAuthentifierToSudoc()).on("FAILED").end()
                 .from(stepAuthentifierToSudoc()).on("COMPLETED").to(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter))
-                .from(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter)).on("FAILED").end()
+                .from(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter)).on("FAILED").to(stepDisconnect())
                 .from(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter)).on("COMPLETED").to(stepGenererFichier())
+                .from(stepGenererFichier()).next(stepDisconnect())
                 .build().build();
     }
 
@@ -71,6 +75,12 @@ public class BatchConfiguration {
     public Step stepSelectThesesStarARediff() {
         return steps.get("selectThesesStarARediff").allowStartIfComplete(true)
                 .tasklet(selectThesesStarARedifTasklet()).build();
+    }
+
+    @Bean
+    public Step stepSelectNoticesBibliosATraiter() {
+        return steps.get("selectNoticesBibliosATraiter").allowStartIfComplete(true)
+                .tasklet(selectNoticesBibliosATraiter()).build();
     }
 
     @Bean
@@ -97,12 +107,26 @@ public class BatchConfiguration {
     }
 
     @Bean
+    public Step stepDisconnect() {
+        return steps
+                .get("stepDisconnect").allowStartIfComplete(true)
+                .tasklet(disconnectTasklet())
+                .build();
+    }
+
+    @Bean
     public SelectThesesStarARedifTasklet selectThesesStarARedifTasklet() { return new SelectThesesStarARedifTasklet(); }
+
+    @Bean
+    public SelectNoticesBibliosATraiter selectNoticesBibliosATraiter() { return new SelectNoticesBibliosATraiter(); }
 
     @Bean
     public AuthentifierToSudocTasklet authentifierToSudocTasklet() { return new AuthentifierToSudocTasklet(); }
 
     @Bean
     public GenererFichierTasklet genererFichierTasklet() { return new GenererFichierTasklet(); }
+
+    @Bean
+    public DisconnectTasklet disconnectTasklet() {return new DisconnectTasklet();}
 
 }

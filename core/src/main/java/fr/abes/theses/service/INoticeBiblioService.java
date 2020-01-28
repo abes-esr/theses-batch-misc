@@ -11,4 +11,6 @@ public interface INoticeBiblioService {
     NoticeBiblio save(NoticeBiblio noticeBiblio);
 
     NoticeBiblio findById(Integer id);
+
+    List<NoticeBiblio> getNoticesNonTraiteByJobId(Integer jobId);
 }

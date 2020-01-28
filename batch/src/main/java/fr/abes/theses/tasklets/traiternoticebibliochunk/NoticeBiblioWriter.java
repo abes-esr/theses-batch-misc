@@ -1,42 +1,35 @@
 package fr.abes.theses.tasklets.traiternoticebibliochunk;
 
+import fr.abes.theses.model.dto.NoticeBiblioDto;
+import fr.abes.theses.model.dto.NoticeBiblioDtoMapper;
 import fr.abes.theses.model.entities.NoticeBiblio;
+import fr.abes.theses.service.ServiceProvider;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Slf4j
 @Component
-public class NoticeBiblioWriter implements ItemWriter<NoticeBiblio>, StepExecutionListener {
+public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExecutionListener {
+    private List<NoticeBiblioDto> noticeBiblioDtos;
 
-   /* @Autowired
-    private StrategyFactory factory;
-
-    private IMailer mailer;
-    private ILigneNoticeBiblio ligneFichierService;
-    private IDemandeService demandeService;
-    private List<LigneFichierDto> lignesFichier;
-    private Demande demande;*/
-
-
-
-
-
+    @Autowired @Getter
+    ServiceProvider service;
     @Override
     public void beforeStep(StepExecution stepExecution) {
-      /*  ExecutionContext executionContext = stepExecution
+        ExecutionContext executionContext = stepExecution
                 .getJobExecution()
                 .getExecutionContext();
-        this.lignesNoticeBiblio = (List<LigneFichierDto>) executionContext.get("lignes");
-        this.demande = (Demande) executionContext.get("demande");
-        this.ligneFichierService = factory.getStrategy(ILigneFichierService.class, demande.getTypeDemande());
-        this.demandeService = factory.getStrategy(IDemandeService.class, demande.getTypeDemande());
-        this.mailer = factory.getStrategy(IMailer.class, demande.getTypeDemande());*/
+        this.noticeBiblioDtos = (List<NoticeBiblioDto>) executionContext.get("noticesBiblio");
 
     }
 
@@ -47,23 +40,32 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblio>, StepExecuti
      * @throws
      */
     @Override
-    public void write(List<? extends NoticeBiblio> list) throws Exception {
-
-        log.info("dans le write = ok");
+    public void write(List<? extends NoticeBiblioDto> list) throws Exception {
+        for (NoticeBiblioDto noticeBiblioDto : list) {
+            try {
+                this.majNoticeBiblio(noticeBiblioDto);
+                this.majDonneesGestion(noticeBiblioDto);
+            } catch (DataAccessException e) {
+                log.error("Erreur dans la mise à jour de la ligne " + noticeBiblioDto.getId());
+            }
+        }
     }
 
-    /**
-     * This method allows the writing of the rebroadcasting process result into STAR.TraitementNoticeBib table database
-     * @param
-     * @return
-     * @throws
-     */
-    public void write2(List<? extends NoticeBiblio> list) throws Exception {
+    private void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) {
 
+    }
+
+    private void majNoticeBiblio(NoticeBiblioDto noticeBiblioDto) throws DataAccessException {
+        noticeBiblioDto.setDone(1);
+        NoticeBiblio noticeBiblio = NoticeBiblioDtoMapper.getNoticeBiblioEntity(noticeBiblioDto);
+        service.getNoticeBiblioService().save(noticeBiblio);
+        log.info("notice traitée : " + noticeBiblio.getIddoc());
+        //TODO Gestion Tef : maj du bloc Sudoc de traitement
     }
 
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
-        return null;
+        stepExecution.getJobExecution().getExecutionContext().put("noticesBiblio", this.noticeBiblioDtos);
+        return ExitStatus.COMPLETED;
     }
 }

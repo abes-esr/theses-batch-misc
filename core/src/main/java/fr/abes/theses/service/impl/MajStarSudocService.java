@@ -1,21 +1,38 @@
 package fr.abes.theses.service.impl;
 
 import fr.abes.cbs.exception.CBSException;
+import fr.abes.cbs.notices.Biblio;
+import fr.abes.cbs.notices.NoticeConcrete;
+import fr.abes.cbs.notices.SousZone;
+import fr.abes.cbs.notices.Zone;
 import fr.abes.cbs.process.ProcessCBS;
 import fr.abes.cbs.utilitaire.Constants;
-import fr.abes.cbs.utilitaire.Utilitaire;
-import fr.abes.theses.api.Starsudoc;
+import fr.abes.cbs.zones.enumSousZones.Zone_214;
+import fr.abes.cbs.zones.enumSousZones.Zone_219;
+import fr.abes.cbs.zones.enumZones.EnumZones;
+import fr.abes.theses.dao.impl.DaoProvider;
+import fr.abes.theses.model.dto.NoticeBiblioDto;
 import fr.abes.theses.service.IMajStarSudocService;
+import jdk.jshell.spi.ExecutionControl;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
 @Service
 public class MajStarSudocService implements IMajStarSudocService {
+    @Autowired
+    @Getter
+    private DaoProvider dao;
+
     private ProcessCBS clientBiblio;
     private ProcessCBS clientExpl;
 
@@ -23,12 +40,19 @@ public class MajStarSudocService implements IMajStarSudocService {
     private String serveurIp;
     @Value("${sudoc.port}")
     private String serveurPort;
-    @Value("${sudoc.passwdRcr")
+    @Value("${sudoc.passwdRcr}")
     private String passwdRcr;
-    @Value("${sudoc.loginM4001")
+    @Value("${sudoc.loginM4001}")
     private String loginM4001;
-    @Value("${sudoc.passwdM4001")
+    @Value("${sudoc.passwdM4001}")
     private String passM4001;
+
+    @Getter
+    @Setter
+    private String numSource;
+    @Getter
+    @Setter
+    private String numThese;
 
     public MajStarSudocService() {
         this.clientBiblio = new ProcessCBS();
@@ -51,50 +75,37 @@ public class MajStarSudocService implements IMajStarSudocService {
      * </ul>
      * </p>
      *
-     * @param marcXml la thèse en MarcXml Sudoc sous forme de String
-     * @param xslStar le nom du fichier xml avec champs crées dans Star
+     * @param noticeStarXml la thèse en MarcXml Sudoc sous forme de String
      * @return le résultat de la création/modification de la thèse
      * @see fr.abes.cbs
      */
     @Override
-    public String majStarSudoc(String marcXml, String xslStar) {
-        /**
-         * le résultat du catalogage de la thèse avec balise XML
-         */
-        StringBuilder resultCatalogageStar = new StringBuilder("<THESE>");
-        /**
-         * Une instance d'une création ou m.à.j d'une thèse venant de STAR
-         */
-        Starsudoc theseStar = new Starsudoc();
-        //on remplace dans la thèse MarcXml les é par StringE9+StringAccent
-        marcXml = marcXml.replaceAll("é", Constants.STR_E9 + Constants.STR_769);
-        //on récupère le fichier xml qui contient les zones de créées dans STAR
+    public NoticeBiblioDto majStarSudoc(String noticeStarXml, NoticeBiblioDto trace)  {
         try {
-            String resuStar = theseStar.transfTheseFromStarToMarcXml(marcXml); // on a transformé la thèse STAR en Marc
-            resultCatalogageStar.append("<BIBLIO><NOTICESTAR>").append(resuStar.replaceAll("<", "&lt").replaceAll(">", "&gt")).append("</NOTICESTAR>");
-            String resu;
+            NoticeConcrete notice = new NoticeConcrete(noticeStarXml);
+            this.setNumSource(notice.getNoticeBiblio().findZones("002").get(0).findSousZone("$a").getValeur());
+            this.setNumThese(notice.getNoticeBiblio().findZones("029").get(0).findSousZone("$b").getValeur());
 
-            if (!noticeBiblioFinded(theseStar)) {
-                resultCatalogageStar.append(creerNoticeBiblioEtExemplaires(theseStar));
+            if (!noticeBiblioElecFinded(notice)) {
+                creerTheseBiblio(notice, trace);
             } else {
-                resultCatalogageStar.append(fusionNoticeStarEtSudoc(theseStar, xslStar));
+                fusionNoticeStarEtSudoc(notice, trace);
             }
-            clientBiblio.disconnect();
         } catch (CBSException ex) {
-            log.error("exception " + ex.getMessage());
+            log.error("Erreur dans la création de la notice bibliographique " + ex.getMessage());
         }
-        return resultCatalogageStar.append("</THESE>").toString();
+        return trace;
     }
 
-    private boolean noticeBiblioFinded(Starsudoc theseStar) throws CBSException {
+    private boolean noticeBiblioElecFinded(NoticeConcrete notice) throws CBSException {
         //on cherche si la thèse STAR est dans le Sudoc en utilisant le numéro source (zone unimarc 002)
-        String resu = clientBiblio.search("che sou " + theseStar.getNumSource());
+        clientBiblio.search("che sou " + getNumSource());
         if (clientBiblio.getNbNotices() == 0) {
             //pas de notice avec recherche sur le num. source donc on lance la recherche sur le num. de thèse (zone unimarc 029)
-            resu = clientBiblio.search("che num " + theseStar.getNumThese());
+            clientBiblio.search("che num " + getNumThese());
             if (clientBiblio.getNbNotices() >= 1) {
                 //quand la notice trouvée est une thèse papier, on doit créer la notice biblio electronique
-                if (theseStar.estThesePapier(resu)) {
+                if (!notice.getNoticeBiblio().isTheseElectronique()) {
                     return false;
                 }
             }
@@ -102,120 +113,154 @@ public class MajStarSudocService implements IMajStarSudocService {
         return true;
     }
 
-    private String creerNoticeBiblioEtExemplaires(Starsudoc theseStar)  {
-        //la thèse n'existe pas dans le Sudoc, ou existe pour la version papier, on va la créer (niveau biblio) dans le Sudoc
-        StringBuilder resu = new StringBuilder(creerTheseBiblio(theseStar.getNoticeBiblio()));
-        resu.append("</BIBLIO>");
-        if (theseStar.getListExpl().length() > 0) {
-            //il y a 1 ou plusieurs exemplaires dans la notice STAR à créer dans la notice Sudoc
-            resu.append(creerAllExplStar(theseStar));
+
+    /**
+     * Créer la notice biblio de la thèse venant de Star
+     * On utilise la méthode EnregistrerNew de la classe Cbs à laquelle on passe en paramètre NoticeBiblio
+     * Le ppn de la notice créée est dans PpnEncours de CBSclient
+     *
+     * @param noticeBiblio notice à créer
+     * @return le message succès/échec de la création, le ppn structuré avec balise
+     */
+    @Override
+    public void creerTheseBiblio(NoticeConcrete noticeBiblio, NoticeBiblioDto trace) {
+        try {
+            clientBiblio.enregistrerNew(noticeBiblio.toString());
+            trace.setIndicSudoc("OK");
+            trace.setPpn(clientBiblio.getPpnEncours());
+            trace.setRetourSudoc("Notice biblio créée");
+            trace.setDateCreation(new Date());
+            trace.setDateModification(new Date());
+        } catch (CBSException ex) {
+            trace.setIndicSudoc("NOK - Notice non créée</CODERETOUR>");
+            trace.setRetourSudoc(ex.getMessage());
         }
-        return resu.toString();
     }
 
-    private String fusionNoticeStarEtSudoc(Starsudoc theseStar, String xslStar) throws CBSException {
-        StringBuilder resultARetourner = new StringBuilder();
-        //la notice de thèse existe dans le Sudoc, on va fusionner notice STAR et notice Sudoc
-        String resu = clientBiblio.affUnma();
-        //On affiche la thèse en Unimarc pour récupérer toutes les données biblio et exemplaires
-        String resuEdit = Utilitaire.recupEntre(clientBiblio.editer("1"), Constants.STR_1F, Constants.STR_0D + Constants.STR_0D + Constants.STR_1E);
-        String[] listeZones = resuEdit.split(Constants.STR_0D);
-        // on sépare de la notice Sudoc la partie biblio et exemplaires si il y en a
-        String[] sudocExpl = null;//contient les éventuels exemplaires de la notice du Sudoc
-        if (clientBiblio.hasExpl) {
-            //il y a des exemplaires dans la notice Sudoc
-            sudocExpl = resu.substring(resu.indexOf("<BR>["), resu.length()).split("<BR>\\["); //contient la liste des exemplaires de la notice Sudoc
+    /**
+     * Méthode de modification d'une notice biblio dans le Sudoc
+     *
+     * @param theseStar
+     * @return
+     * @throws CBSException
+     * @throws ExecutionControl.NotImplementedException
+     */
+    private void fusionNoticeStarEtSudoc(NoticeConcrete theseStar, NoticeBiblioDto trace) throws CBSException {
+        clientBiblio.affUnma();
+        String resu = clientBiblio.editer("1");
+
+        try {
+            Biblio noticeBiblio = new Biblio(resu.substring(resu.indexOf(Constants.STR_1F), resu.indexOf(Constants.STR_1E, resu.indexOf(Constants.STR_1F)) + 1));
+            String fusion = fusionThese(theseStar.getNoticeBiblio(), noticeBiblio);
+
+            clientBiblio.modifierNotice("1", fusion);
+            //création notice biblio ok
+            trace.setIndicSudoc("OK");
+            trace.setPpn(clientBiblio.getPpnEncours());
+            trace.setRetourSudoc("Notice biblio fusionnée");
+            trace.setDateModification(new Date());
+        } catch (Exception ex) {
+            trace.setIndicSudoc("NOK");
+            trace.setRetourSudoc(ex.getMessage());
         }
-        //on passe la notice en Edition pour récupérer les éventuels zones systèmes protégées de la notice Sudoc
-        List<String> vecteurSudoc = Arrays.asList(listeZones);
-        StringBuilder fusion = theseStar.fusionThese(theseStar.getNoticeBiblio(), vecteurSudoc, xslStar);
-        resu = majTheseBiblio(fusion.toString());
-        //on a fusionné la notice biblio
-        resultARetourner.append(resu);
-        //La notice biblio du Sudoc a été mise à jour en fonction de la notice STAR
-        if (sudocExpl != null) {
-            //La notice Sudoc a des exemplaires
-            //On va supprimer dans la notice Sudoc tous les exemplaires qui contiennent un 991 $aexemplaire créé automatiquement par STAR
-            String[] explRCR;
-            for (int i = 1; i < sudocExpl.length; i++) {
-                explRCR = sudocExpl[i].split("<BR>e");
-                for (int j = 1; j < explRCR.length; j++) {
-                    if (explRCR[j].contains("automatiquement par STAR")) {
-                        String numexpl = explRCR[j].substring(0, 2);
-                        //on récupère le rcr de l'exemplaire en cours
-                        String rcr = explRCR[j].substring(explRCR[j].indexOf("930 ##$b") + 8, explRCR[j].indexOf("930 ##$b") + 17);
-                        //on ouvre une session avec le CBS pour le rcr en cours
-                        //Les rcr rattachés à un ILN >199 n'ont pas de login CBS - on utilise donc dans ce cas, le rcr 341720008 pour ouvrir la session
-                        if (Integer.parseInt(clientBiblio.ilnRattachement(rcr)) > 199) {
-                            rcr = "341720008";
+    }
+
+    /**
+     * <b>Dans le cas d'une m.à.j, fusionne la notice STAR et la notice sudoc biblio avant l'envoi au Sudoc pour m.à.j</b>
+     * <p>
+     * <ul>
+     * <li>La fusion se base sur un fichier qui liste les zones de la notice STAR qui vont écraser celles de la notice Sudoc</li>
+     * </ul>
+     * </p>
+     *
+     * @param noticeStar  la thèse venant de STAR convertie en Marc
+     * @param noticeSudoc la notice biblio venant du Sudoc
+     * @return la notice fusionnée
+     */
+    public String fusionThese(Biblio noticeStar, Biblio noticeSudoc) {
+        Biblio noticeFusionnee = new Biblio();
+
+        String labelZonePrecedente = "";
+        traitementPreliminaire(noticeSudoc, noticeStar);
+        for (Zone zoneSudoc : noticeSudoc.getListeZones().values()) {
+            if (getDao().getZonePrioritaire().findZoneByLabel(zoneSudoc.getLabelForOutput()) == null) {
+                noticeFusionnee.addZone(zoneSudoc);
+            } else {
+                List<Zone> zoneStar = noticeStar.findZones(zoneSudoc.getLabelForOutput());
+                if (zoneStar.isEmpty()) {
+                    noticeFusionnee.addZone(zoneSudoc);
+                } else {
+                    if (!zoneSudoc.getLabelForOutput().equals(labelZonePrecedente)) {
+                        for (Zone zoneAEcrire : zoneStar) {
+                            noticeFusionnee.addZone(zoneAEcrire);
                         }
-                        clientExpl.authenticate(this.serveurIp, this.serveurPort, "M" + rcr, passwdRcr);
-                        clientExpl.search("che ppn " + clientBiblio.getPpnEncours());
-                        //suppression de l'exemplaire
-                        clientExpl.supExemplaire(numexpl);
-                        clientExpl.disconnect();
+                        labelZonePrecedente = zoneSudoc.getLabelForOutput();
                     }
                 }
             }
         }
-        if (theseStar.getListExpl().length() > 0) {
-            //il y a 1 ou plusieurs exemplaires dans la notice STAR à créer dans la notice Sudoc
-            resultARetourner.append(creerAllExplStar(theseStar));
-        }
-        return resultARetourner.toString();
+
+        noticeFusionnee = traitementSpecifique(noticeStar, noticeSudoc, noticeFusionnee);
+
+        return noticeFusionnee.toString().substring(1, noticeFusionnee.toString().length() - 1);
+    }
+
+    private void traitementPreliminaire(Biblio noticeSudoc, Biblio noticeStar) {
+        noticeSudoc.deleteZone("702");
+        noticeSudoc.deleteZone("712");
+        noticeStar.deleteZone("702");
+        noticeStar.deleteZone("712");
     }
 
     /**
-     * <b>Créer la notice biblio de la thèse venant de Star</b>
-     * <p>
-     * <ul>
-     * <li>On utilise la méthode EnregistrerNew de la classe Cbs à laquelle on passe en paramètre NoticeBiblio</li>
-     * <li>Le ppn de la notice créée est dans PpnEncours de CBSclient</li>
+     * Traitement spécifique permettant de transférer toutes les sous zones de la 219 vers une nouvelle zone 214 dans la notice fusionnée
      *
-     * </ul>
-     * </p>
-     *
-     * @return le message succès/échec de la création, le ppn structuré avec balise
+     * @param noticeStar
+     * @param noticeSudoc
+     * @param noticeFusionnee
+     * @return
      */
-    @Override
-    public String creerTheseBiblio(String noticeBiblio) {
-        StringBuilder resultCat = new StringBuilder("<CODERETOUR>");
-        try {
-            clientBiblio.enregistrerNew(noticeBiblio); //on crée la notice biblio
-            //création notice biblio ok
-            resultCat.append("OK</CODERETOUR>");
-            resultCat.append("<PPN>" + clientBiblio.getPpnEncours() + "</PPN>");
-        } catch (CBSException ex) {
-            resultCat.append("NOK - Notice non créée</CODERETOUR>");
-            resultCat.append("<MESSAGE>" + ex.getMessage() + "</MESSAGE>");
-        }
-        return resultCat.toString();
+    private Biblio traitementSpecifique(Biblio noticeStar, Biblio noticeSudoc, Biblio noticeFusionnee) {
+        traitement219(noticeStar, noticeFusionnee);
+        traitementZoneStar(noticeStar, noticeSudoc, noticeFusionnee);
+        traitement579(noticeFusionnee);
+        return noticeFusionnee;
     }
 
-    /**
-     * <b>Mettre à jour dans le Sudoc, la notice biblio de la thèse venant de Star</b>
-     * <p>
-     * <ul>
-     * <li>On utilise la méthode ModifierNotice de la classe Cbs à laquelle on passe en paramètre Notice et CbsClient.PPnEncours</li>
-     * </ul>
-     * </p>
-     *
-     * @param notice la notice
-     * @return le message succès/échec de la m.à.j, le ppn structuré avec balise
-     */
-    @Override
-    public String majTheseBiblio(String notice) {
-        StringBuilder resultCat = new StringBuilder("<CODERETOUR>");
-        try {
-            clientBiblio.modifierNotice(clientBiblio.getPpnEncours(), notice);
-            //création notice biblio ok
-            resultCat.append("OK</CODERETOUR>");
-            resultCat.append("<PPN>" + clientBiblio.getPpnEncours() + "</PPN>");
-        } catch (Exception ex) {
-            resultCat.append("NOK</CODERETOUR>");
-            resultCat.append("<MESSAGE>" + ex.getMessage() + "</MESSAGE>");
+    private void traitement579(Biblio noticeFusionnee) {
+        noticeFusionnee.deleteZone("579");
+    }
+
+    private void traitementZoneStar(Biblio noticeStar, Biblio noticeSudoc, Biblio noticeFusionnee) {
+        String labelZonePrecedente = "";
+
+        for (Zone zoneStar : noticeStar.getListeZones().values()) {
+            String labelZone = zoneStar.getLabelForOutput();
+            if (noticeFusionnee.findZones(labelZone).isEmpty() && !labelZonePrecedente.equals(labelZone)) {
+                for (Zone zoneStarToAdd : noticeStar.findZones(labelZone)) {
+                    noticeFusionnee.addZone(zoneStarToAdd);
+                }
+                labelZonePrecedente = labelZone;
+            }
         }
-        return resultCat.append("</BIBLIO>").toString();
+    }
+
+    private void traitement219(Biblio noticeStar, Biblio noticeFusionnee) {
+        List<Zone> zone219s = noticeStar.findZones("219");
+        for (Zone zone219 : zone219s) {
+            List<SousZone> sousZones214 = new ArrayList<>();
+            for (Zone_219 sousZone : EnumUtils.getEnumList(Zone_219.class)) {
+                if (EnumUtils.isValidEnum(Zone_214.class, sousZone.name())) {
+                    SousZone ssZone219 = zone219.findSousZone(sousZone.name());
+                    if (ssZone219 != null) {
+                        sousZones214.add(new SousZone(Zone_214.valueOf(sousZone.name()), ssZone219.getValeur()));
+                    }
+                }
+            }
+            Zone zone214 = new Zone(EnumZones.Z214, sousZones214, zone219.getIndicateurs());
+            noticeFusionnee.deleteZone("214");
+            noticeFusionnee.addZone(zone214);
+        }
     }
 
     /**
@@ -227,6 +272,7 @@ public class MajStarSudocService implements IMajStarSudocService {
      * <p>
      * * @see Cbs#PPnEncours
      */
+    /*
     private String creerAllExplStar(Starsudoc laTheseStar) {
         String[] tabExpl;
         StringBuilder resultExpl = new StringBuilder();
@@ -279,6 +325,7 @@ public class MajStarSudocService implements IMajStarSudocService {
         }
         return resultExpl.toString();
     }
+*/
 
     /**
      * <b>Créer un exemplaire pour la thèse venant de Star</b>
@@ -312,6 +359,12 @@ public class MajStarSudocService implements IMajStarSudocService {
             log.error("Erreur CBS : " + ex.getMessage());
         }
         return resultCat.toString();
+    }
+
+    @Override
+    public void disconnectBiblio() {
+        log.info("Déconnexion du Sudoc login M4001");
+        this.clientBiblio.disconnect();
     }
 }
 

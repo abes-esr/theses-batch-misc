@@ -26,24 +26,25 @@ import java.net.URL;
 @Slf4j
 public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionListener {
 
-    //IMailer mailer; on verra
     @Resource
     private INoticeBiblioService noticeBiblioService;
 
-    @Resource
-    private DaoProvider daoProvider;
+    private Integer idJob;
+
+    @Value("${rowsNumber}")
+    private Integer rowsNumber;
+
+    @Value("${startRow}")
+    private Integer startRow;
 
     @Value("${solr.url}")
     private String urlSolr;
 
-    private final String urlDiffusionTotale = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=id%20asc&rows=5&wt=json";
+    private final String urlDiffusionTotale = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=id%20asc&wt=json";
     @Override
     public void beforeStep(StepExecution stepExecution) {
-
         log.info("entree dans beforeStep de SelectThesesStarARedifTasklet");
-        ExecutionContext executionContext = stepExecution
-                .getJobExecution()
-                .getExecutionContext();
+        idJob = stepExecution.getJobExecutionId().intValue();
 
     }
     @Override
@@ -52,7 +53,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
 
         try
         {
-            String requete = urlSolr + urlDiffusionTotale;
+            String requete = urlSolr + urlDiffusionTotale + "&start=" + startRow + "&rows=" + rowsNumber;
             URL url = new URL(requete);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
             String ligne = "";
@@ -75,9 +76,9 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                 for (int i=0;i<docs.length();i++)
                 {
                     int iddoc = Integer.parseInt(docs.optJSONObject(i).optString("id"));
-                    log.info("traite" + iddoc);
+                    log.info("traite : " + iddoc);
                     String codeEtab = docs.optJSONObject(i).optString("SGcodeEtab");
-                    noticeBiblioService.save(new NoticeBiblio(iddoc, codeEtab, 0, ""));
+                    noticeBiblioService.save(new NoticeBiblio(idJob, iddoc, codeEtab, 0, "", null, null, null, null));
                 }
                 stepContribution.setExitStatus(new ExitStatus("COMPLETED"));
             }

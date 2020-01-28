@@ -1,0 +1,642 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:mets xmlns:mets="http://www.loc.gov/METS/" xmlns:suj="http://www.theses.fr/namespace/sujets" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:tef="http://www.abes.fr/abes/documents/tef" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tefextension="http://www.abes.fr/abes/documents/tefextension" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:metsRights="http://cosimo.stanford.edu/sdr/metsrights/" xmlns:mads="http://www.loc.gov/mads/" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.abes.fr/abes/documents/tef/recommandation/tef_schemas.xsd">
+    <mets:metsHdr ID="ABES.STAR.THESE_12286.METS_HEADER" CREATEDATE="2011-02-15T16:13:08" LASTMODDATE="2018-09-07T11:12:53" RECORDSTATUS="valide">
+        <mets:agent ROLE="CREATOR">
+            <mets:name />
+            <mets:note>Note</mets:note>
+        </mets:agent>
+        <mets:agent ROLE="DISSEMINATOR">
+            <mets:name>ABES</mets:name>
+        </mets:agent>
+        <mets:altRecordID ID="ABES.STAR.THESE_12286.METS_HEADER.ALTERNATE" TYPE="" />
+    </mets:metsHdr>
+    <mets:dmdSec ID="ABES.STAR.THESE_12286.gestionSTAR">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_gestionSTAR">
+            <mets:xmlData>
+                <star_gestion codeEtab="FOR1" libEtab="Etablissement de Formation 1" ppnEtab="026404494" enProd="non" ID_THESE="THESE_12286" scenarioEtab="cas5" etat="archivee" xsi:noNamespaceSchemaLocation="http://www.abes.fr/abes/documents/pth/tef_gestion.xsd">
+                    <traitements scenario="cas4">
+                        <entree type="editeur" date="2011-02-15T16:13:08" agentImport="" completudeImport="sansObjet" />
+                        <maj date="2018-09-07T11:12:53" import="non" SCOL="oui" BIBL="oui" FICH="oui" VALID="oui" />
+                        <facile date="2018-09-07T11:10:44" indicFacile="OK" trace="" import="non" SCOL="oui" BIBL="oui" FICH="oui" VALID="oui" />
+                        <ctrlUrl indicCtrlUrl="sansObjet" erreurUrl="sansObjet" compteIndicCtrlUrlKO="0" date="" />
+                        <remonteeArchive indicRemonteeArchive="sansObjet" date="" trace="" />
+                        <purge indicPurge="sansObjet" date="" />
+                        <invalidation indicInvalidation="sansObjet" date="" note="" />
+                        <sorties date="">
+                            <cines numeroPAC="" dateCines="" indicCines="sansObjet" trace="" />
+                            <sudoc PPN="" dateSudoc="" indicSudoc="sansObjet" majSudoc="" trace="">
+                                <RCR code="999000008">ABES. Corinne 2</RCR>
+                                <EPN />
+                            </sudoc>
+                            <diffusion urlPerenne="http://www.theses.fr/2013FOR19999" conformitePolDiffusion="oui" typeDiffusion="internet" restrictionTemporelleType="confEmbargo" restrictionTemporelleFin="2018-10-03" embargoFin="2018-10-03" confidentialiteFin="2017-09-27">
+                                <etabDiffuseur etabDiffuseurPolEtablissement="oui" editeurScientifiqueLieu="" editeurScientifiqueNom="">
+                                    <urlEtabDiffuseur majUrlEtabDiffuseur="">https://etablissement/2013FOR19999</urlEtabDiffuseur>
+                                </etabDiffuseur>
+                                <abesDiffuseur abesDiffuseurPolEtablissement="oui" FichEtabDiffAbesIntranet="non" indicAbesDiffuseur="oui" dateAbesDiffuseur="" majAbesDiffuseur="" urlAbesDiffuseur="http://www.theses.fr/2013FOR19999/abes" />
+                                <ccsd ccsdDiffuseurPolEtablissement="oui" pastel="oui" indicCcsd="sansObjet" identifiantCcsd="" pwdCcsd="" urlCcsd="" numVersion="" dateCcsd="" majCcsd="" trace="">
+                                    <domaineCcsd code="INFO:INFO-AI" />
+                                    <laboCcsd codeLaboCcsd="109361" libLaboCcsd="Laboratoired'Energitique et des Transferts Thermique et Massique / LETTM" />
+                                    <sujetPastel codeSujetPastel="1" />
+                                    <fondPastel codeFondPastel="1" />
+                                </ccsd>
+                                <autresEtabDiffuseurs />
+                                <oai majOai="" dateOai="" indicOai="sansObjet" />
+                            </diffusion>
+                        </sorties>
+                    </traitements>
+                    <workflow etatWF="postAtraiter">
+                        <commentaires nbCommentaires="0" />
+                        <DOCT interventionFicheEtablissement="oui" etatDOCT="nonModifiable" majDOCT="" />
+                        <rolesMD>
+                            <SCOL etatMD="postAtraiter" majMD="2018-09-07T09:12:54" indicBilan="sansObjet" bilan="">
+                                <notes nbNotes="0">
+                                    <note date="" contenu="" />
+                                </notes>
+                            </SCOL>
+                            <BIBL etatMD="postAtraiter" majMD="2018-09-07T09:12:54" indicBilan="sansObjet" bilan="" indicTheseTravaux="oui">
+                                <notes nbNotes="0">
+                                    <note date="" contenu="" />
+                                </notes>
+                            </BIBL>
+                            <FICH etatMD="postAtraiter" majMD="2018-09-07T09:12:54" indicBilan="sansObjet" bilan="" alerteTheseTravaux="oui">
+                                <notes nbNotes="0">
+                                    <note date="" contenu="" />
+                                </notes>
+                            </FICH>
+                        </rolesMD>
+                        <VALID validIndependant="oui" etatVALID="archivee" majVALID="2018-09-07T09:12:54">
+                            <notes nbNotes="0">
+                                <note date="" contenu="" />
+                            </notes>
+                            <refusValidationIntermediaire nbRefus="0">
+                                <refus date="" contenu="" SCOL="non" FICH="non" BIBL="non" />
+                            </refusValidationIntermediaire>
+                        </VALID>
+                    </workflow>
+                </star_gestion>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="ABES.STAR.THESE_12286.DESCRIPTION_BIBLIOGRAPHIQUE">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_desc_these">
+            <mets:xmlData>
+                <tef:thesisRecord>
+                    <dc:title xml:lang="fr">Azerty : Qwerty</dc:title>
+                    <dcterms:alternative xml:lang="en">Azerty : Qwerty</dcterms:alternative>
+                    <dc:subject xml:lang="fr">Clavier</dc:subject>
+                    <dc:subject xml:lang="fr">Ordinateur</dc:subject>
+                    <dc:subject xml:lang="fr">Ergonomie</dc:subject>
+                    <dc:subject xml:lang="en">Keyboard</dc:subject>
+                    <dc:subject xml:lang="en">Computer</dc:subject>
+                    <dc:subject xml:lang="en">Ergonomy</dc:subject>
+                    <dc:subject xsi:type="dcterms:DDC">004</dc:subject>
+                    <tef:sujetRameau xml:lang="fr">
+                        <tef:vedetteRameauPersonne>
+                            <tef:elementdEntree autoriteExterne="032886020" autoriteSource="Sudoc">Hugo, Léopoldine (1824-1843)</tef:elementdEntree>
+                            <tef:subdivision autoriteExterne="031937667" autoriteSource="Sudoc" type="subdivisionDeSujet">16e-18e siècles(Décadence)</tef:subdivision>
+                            <tef:subdivision autoriteExterne="033921377" autoriteSource="Sudoc" type="subdivisionDeSujet">Teneur en vitamine E</tef:subdivision>
+                            <tef:subdivision autoriteExterne="029235367" autoriteSource="Sudoc" type="subdivisionChronologique">Histoire navale -- 17e siècle</tef:subdivision>
+                            <tef:subdivision autoriteExterne="066838630" autoriteSource="Sudoc" type="subdivisionGeographique">Semiretche (Kazakhstan)</tef:subdivision>
+                            <tef:subdivision autoriteExterne="077069226" autoriteSource="Sudoc" type="subdivisionDeForme">Dictionnaires tohono o'odham</tef:subdivision>
+                        </tef:vedetteRameauPersonne>
+                        <tef:vedetteRameauPersonne>
+                            <tef:elementdEntree autoriteExterne="026927551" autoriteSource="Sudoc">Hugo, Adèle (1830-1915)</tef:elementdEntree>
+                            <tef:subdivision autoriteExterne="027814335" autoriteSource="Sudoc" type="subdivisionDeForme">Soins à domicile</tef:subdivision>
+                            <tef:subdivision autoriteExterne="027811794" autoriteSource="Sudoc" type="subdivisionDeSujet">Travail à froid</tef:subdivision>
+                            <tef:subdivision autoriteExterne="028021428" autoriteSource="Sudoc" type="subdivisionChronologique">11e siècle</tef:subdivision>
+                            <tef:subdivision autoriteExterne="066838967" autoriteSource="Sudoc" type="subdivisionGeographique">Baraba, steppe de (Russie)</tef:subdivision>
+                            <tef:subdivision autoriteExterne="027600742" autoriteSource="Sudoc" type="subdivisionDeForme">Bouddhisme de la Terre pure</tef:subdivision>
+                        </tef:vedetteRameauPersonne>
+                        <tef:vedetteRameauCollectivite>
+                            <tef:elementdEntree autoriteExterne="026543737" autoriteSource="Sudoc">Lyon</tef:elementdEntree>
+                            <tef:subdivision autoriteExterne="034360026" autoriteSource="Sudoc" type="subdivisionDeSujet">Aquitaine, Ducs d'</tef:subdivision>
+                            <tef:subdivision autoriteExterne="027597334" autoriteSource="Sudoc" type="subdivisionDeForme">États-Unis (ouest)</tef:subdivision>
+                            <tef:subdivision autoriteExterne="086305646" autoriteSource="Sudoc" type="subdivisionChronologique">20e siècle</tef:subdivision>
+                            <tef:subdivision autoriteExterne="226987515" autoriteSource="Sudoc" type="subdivisionGeographique">F'Derick (Mauritanie ; région)</tef:subdivision>
+                        </tef:vedetteRameauCollectivite>
+                        <tef:vedetteRameauFamille>
+                            <tef:elementdEntree autoriteExterne="027905527" autoriteSource="Sudoc">Hugo (famille)</tef:elementdEntree>
+                            <tef:subdivision autoriteExterne="050719750" autoriteSource="Sudoc" type="subdivisionDeSujet">Caguana (Porto Rico ; site archéologique)</tef:subdivision>
+                            <tef:subdivision autoriteExterne="050828487" autoriteSource="Sudoc" type="subdivisionDeForme">Île du Sud (Nouvelle-Zélande)</tef:subdivision>
+                            <tef:subdivision autoriteExterne="027810119" autoriteSource="Sudoc" type="subdivisionChronologique">14e siècle</tef:subdivision>
+                        </tef:vedetteRameauFamille>
+                        <tef:vedetteRameauAuteurTitre>
+                            <tef:elementdEntree autoriteExterne="027312976" autoriteSource="Sudoc">Hugo, Victor (1802-1885). Les châtiments</tef:elementdEntree>
+                            <tef:subdivision autoriteExterne="033959463" autoriteSource="Sudoc" type="subdivisionDeSujet">États-Unis (est)</tef:subdivision>
+                            <tef:subdivision autoriteExterne="085939722" autoriteSource="Sudoc" type="subdivisionDeForme">Buffalo (N. Y.)</tef:subdivision>
+                        </tef:vedetteRameauAuteurTitre>
+                        <tef:vedetteRameauTitre>
+                            <tef:elementdEntree autoriteExterne="02751613X" autoriteSource="Sudoc">Bible -- Lecture</tef:elementdEntree>
+                            <tef:subdivision autoriteExterne="034077340" autoriteSource="Sudoc" type="subdivisionDeSujet">Relation avec Matthieu</tef:subdivision>
+                            <tef:subdivision autoriteExterne="034935274" autoriteSource="Sudoc" type="subdivisionDeForme">Avant 221 av. J.-C</tef:subdivision>
+                        </tef:vedetteRameauTitre>
+                        <tef:vedetteRameauNomCommun>
+                            <tef:elementdEntree autoriteExterne="027852369" autoriteSource="Sudoc">Noyade -- Prévention</tef:elementdEntree>
+                            <tef:subdivision autoriteExterne="187173257" autoriteSource="Sudoc" type="subdivisionDeSujet">Angleterre (G.B. ; Sud-Est) -- 1830-1831 (Emeutes)</tef:subdivision>
+                            <tef:subdivision autoriteExterne="030854113" autoriteSource="Sudoc" type="subdivisionDeForme">Donbass</tef:subdivision>
+                            <tef:subdivision autoriteExterne="028018958" autoriteSource="Sudoc" type="subdivisionChronologique">10e siècle</tef:subdivision>
+                            <tef:subdivision autoriteExterne="061791296" autoriteSource="Sudoc" type="subdivisionGeographique">Ja'k -- Hongrie</tef:subdivision>
+                        </tef:vedetteRameauNomCommun>
+                        <tef:vedetteRameauNomGeographique>
+                            <tef:elementdEntree autoriteExterne="027749258" autoriteSource="Sudoc">Villequier (Seine-Maritime)</tef:elementdEntree>
+                            <tef:subdivision autoriteExterne="027226794" autoriteSource="Sudoc" type="subdivisionGeographique">France</tef:subdivision>
+                            <tef:subdivision autoriteExterne="029265592" autoriteSource="Sudoc" type="subdivisionDeSujet">Et l'Orient</tef:subdivision>
+                            <tef:subdivision autoriteExterne="035040254" autoriteSource="Sudoc" type="subdivisionDeForme">Pacifique, Côte du (Canada)</tef:subdivision>
+                            <tef:subdivision autoriteExterne="156831759" autoriteSource="Sudoc" type="subdivisionChronologique">Berry Pomeroy (GB) -- Castle</tef:subdivision>
+                        </tef:vedetteRameauNomGeographique>
+                        <tef:vedetteRameauNomCommun>
+                            <tef:elementdEntree autoriteExterne="040696693" autoriteSource="Sudoc.FMesh">Noyade</tef:elementdEntree>
+                            <tef:subdivision autoriteExterne="038961504" autoriteSource="Sudoc.FMesh" type="subdivisionDeSujet">main d'oeuvre</tef:subdivision>
+                        </tef:vedetteRameauNomCommun>
+                    </tef:sujetRameau>
+                    <dcterms:abstract xml:lang="fr">AZERTY est un arrangement spécifique des caractères de l’alphabet latin et de divers caractères typographiques sur les touches des machines à écrire et claviers d’ordinateur. Elle dérive, tout comme le QWERTZ germanique, de la disposition QWERTY anglaise et possède ses propres variantes nationales en France et en Belgique. Son nom provient des six premières lettres de la première rangée des touches alphabétiques.</dcterms:abstract>
+                    <dcterms:abstract xml:lang="en">AZERTY is a specific layout for the characters of the Latin alphabet on typewriter keys and computer keyboards. The layout takes its name from the first six letters to appear on the first row of alphabetical keys. Like the German QWERTZ layout, it is modelled on the English QWERTY layout. It is used by most French speakers based in Europe, though France and Belgium each have their own national variations on the layout. Luxembourg and Switzerland use the Swiss QWERTZ keyboard. Most of the residents of Quebec, the mainly French-speaking province of Canada, use a QWERTY keyboard that has been adapted to the French language such as the Multilingual Standard keyboard CAN/CSA Z243.200-92 which is stipulated by the government of Quebec and the Government of Canada.The competing layouts devised for French (e.g., the ZHJAYSCPG layout put forward in 1907, Claude Marsan's 1976 layout, the 2002 Dvorak-fr, and the 2005 Bépo layout) have won only limited recognition.</dcterms:abstract>
+                    <dc:type>Electronic Thesis or Dissertation</dc:type>
+                    <dc:type xsi:type="dcterms:DCMIType">Text</dc:type>
+                    <dc:type xsi:type="dcterms:DCMIType">Collection</dc:type>
+                    <dc:type xsi:type="dcterms:DCMIType">Image</dc:type>
+                    <dc:type xsi:type="dcterms:DCMIType">MovingImage</dc:type>
+                    <dc:type xsi:type="dcterms:DCMIType">StillImage</dc:type>
+                    <dc:type xsi:type="dcterms:DCMIType">Software</dc:type>
+                    <dc:type xsi:type="dcterms:DCMIType">InteractiveResource</dc:type>
+                    <dc:type xsi:type="dcterms:DCMIType">Sound</dc:type>
+                    <dc:language xsi:type="dcterms:RFC3066">fr</dc:language>
+                    <dc:language xsi:type="dcterms:RFC3066">en</dc:language>
+                </tef:thesisRecord>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="ABES.STAR.THESE_12286.VERSION_COMPLETE.DESCRIPTION.EDITION_ARCHIVAGE">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_desc_edition">
+            <mets:xmlData>
+                <tef:edition>
+                    <dcterms:medium xsi:type="dcterms:IMT">PDF</dcterms:medium>
+                    <dcterms:extent>375923</dcterms:extent>
+                    <tef:editeur>
+                        <tef:nom>ABES</tef:nom>
+                        <tef:place>Montpellier</tef:place>
+                    </tef:editeur>
+                    <dcterms:issued xsi:type="dcterms:W3CDTF">2018-12-31</dcterms:issued>
+                </tef:edition>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="ABES.STAR.THESE_12286.VERSION_COMPLETE.DESCRIPTION.EDITION_1">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_desc_edition">
+            <mets:xmlData>
+                <tef:edition>
+                    <dcterms:medium xsi:type="dcterms:IMT">text/html</dcterms:medium>
+                    <dcterms:extent />
+                    <dc:identifier xsi:type="dcterms:URI">https://intranetabes/2013FOR19999</dc:identifier>
+                </tef:edition>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="ABES.STAR.THESE_12286.VERSION_INCOMPLETE_1.DESCRIPTION.EDITION_1">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_desc_edition">
+            <mets:xmlData>
+                <tef:edition>
+                    <dcterms:medium xsi:type="dcterms:IMT">content/unknown</dcterms:medium>
+                    <dcterms:extent>15335</dcterms:extent>
+                    <dc:identifier xsi:type="dcterms:URI">https://etablissement/2013FOR19999</dc:identifier>
+                    <dc:identifier xsi:type="dcterms:URI">http://www.theses.fr/2013FOR19999/abes</dc:identifier>
+                    <dc:identifier xsi:type="dcterms:URI" />
+                    <tef:editeur>
+                        <tef:nom>ABES</tef:nom>
+                        <tef:place>Montpellier</tef:place>
+                    </tef:editeur>
+                    <dcterms:issued xsi:type="dcterms:W3CDTF">2018-12-31</dcterms:issued>
+                </tef:edition>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="ABES.STAR.THESE_12286.VERSION_INCOMPLETE_1.DESCRIPTION">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_desc_version">
+            <mets:xmlData>
+                <tef:version>
+                    <tef:manque>
+                        <tef:ressourceID>ABES.STAR.THESE_12286.RESSOURCE_TIERS_1</tef:ressourceID>
+                    </tef:manque>
+                    <tef:manque>
+                        <tef:ressourceID>ABES.STAR.THESE_12286.RESSOURCE_TIERS_2</tef:ressourceID>
+                    </tef:manque>
+                    <tef:manque>
+                        <tef:noteVersion>Paragraphe 1</tef:noteVersion>
+                    </tef:manque>
+                    <tef:manque>
+                        <tef:noteVersion>Paragraphe 2</tef:noteVersion>
+                    </tef:manque>
+                </tef:version>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="ABES.STAR.THESE_12286.RESSOURCE_TIERS_1.DESCRIPTION">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_desc_externe">
+            <mets:xmlData>
+                <tef:ressourceExterneDescription>
+                    <dc:title xml:lang="fr">Arabesques 86</dc:title>
+                    <dc:creator>Obiwan Kenobi</dc:creator>
+                    <dc:publisher>ABES</dc:publisher>
+                    <dc:language>fr</dc:language>
+                    <dc:date>2018</dc:date>
+                    <dc:type xsi:type="dcterms:DCMIType">Text</dc:type>
+                </tef:ressourceExterneDescription>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="ABES.STAR.THESE_12286.RESSOURCE_TIERS_2.DESCRIPTION">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_desc_externe">
+            <mets:xmlData>
+                <tef:ressourceExterneDescription>
+                    <dc:title xml:lang="en">Arabesques 89</dc:title>
+                    <dc:creator>Dark Vador</dc:creator>
+                    <dc:publisher>ABES</dc:publisher>
+                    <dc:language>en</dc:language>
+                    <dc:date>2016</dc:date>
+                    <dc:type xsi:type="dcterms:DCMIType">Text</dc:type>
+                </tef:ressourceExterneDescription>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:amdSec>
+        <mets:techMD ID="ABES.STAR.THESE_12286.ADMINISTRATION">
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_admin_these">
+                <mets:xmlData>
+                    <tef:thesisAdmin>
+                        <tef:auteur>
+                            <tef:nom>Hugo</tef:nom>
+                            <tef:prenom>Victor</tef:prenom>
+                            <tef:dateNaissance>1980-06-30</tef:dateNaissance>
+                            <tef:nationalite scheme="ISO-3166-1">FR</tef:nationalite>
+                            <tef:autoriteExterne autoriteSource="Sudoc">026927608</tef:autoriteExterne>
+                        </tef:auteur>
+                        <dc:identifier xsi:type="tef:nationalThesisPID">http://www.theses.fr/2013FOR19999</dc:identifier>
+                        <dc:identifier xsi:type="tef:NNT">2013FOR19999</dc:identifier>
+                        <dcterms:dateAccepted xsi:type="dcterms:W3CDTF">2013-02-14</dcterms:dateAccepted>
+                        <tef:thesis.degree>
+                            <tef:thesis.degree.discipline xml:lang="fr">Azerty</tef:thesis.degree.discipline>
+                            <tef:thesis.degree.grantor>
+                                <tef:nom>Etablissement de Formation 1</tef:nom>
+                                <tef:autoriteExterne autoriteSource="Sudoc">026404494</tef:autoriteExterne>
+                            </tef:thesis.degree.grantor>
+                            <tef:thesis.degree.grantor>
+                                <tef:nom>Freie Universität (Berlin)</tef:nom>
+                                <tef:autoriteInterne>MADS_ETABLISSEMENT_DE_COTUTELLE_1</tef:autoriteInterne>
+                                <tef:autoriteExterne autoriteSource="Sudoc">026450194</tef:autoriteExterne>
+                            </tef:thesis.degree.grantor>
+                            <tef:thesis.degree.level>Doctorat</tef:thesis.degree.level>
+                            <tef:thesis.degree.name xml:lang="fr">Docteur es</tef:thesis.degree.name>
+                        </tef:thesis.degree>
+                        <tef:theseSurTravaux>oui</tef:theseSurTravaux>
+                        <tef:avisJury>oui</tef:avisJury>
+                        <tef:directeurThese>
+                            <tef:nom>Proust</tef:nom>
+                            <tef:prenom>Marcel</tef:prenom>
+                            <tef:autoriteInterne>MADS_DIRECTEUR_DE_THESE_1</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">084137401</tef:autoriteExterne>
+                        </tef:directeurThese>
+                        <tef:presidentJury>
+                            <tef:nom>Yourcenar</tef:nom>
+                            <tef:prenom>Marguerite</tef:prenom>
+                            <tef:autoriteInterne>MADS_PRESIDENT_DU_JURY</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">027201694</tef:autoriteExterne>
+                        </tef:presidentJury>
+                        <tef:membreJury>
+                            <tef:nom>Marx</tef:nom>
+                            <tef:prenom>Karl</tef:prenom>
+                            <tef:autoriteInterne>MADS_MEMBRE_DU_JURY_1</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">027329305</tef:autoriteExterne>
+                        </tef:membreJury>
+                        <tef:membreJury>
+                            <tef:nom>Proudhon</tef:nom>
+                            <tef:prenom>Pierre-Joseph</tef:prenom>
+                            <tef:autoriteInterne>MADS_MEMBRE_DU_JURY_2</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">027083772</tef:autoriteExterne>
+                        </tef:membreJury>
+                        <tef:membreJury>
+                            <tef:nom>Gouges</tef:nom>
+                            <tef:prenom>Olympe de</tef:prenom>
+                            <tef:autoriteInterne>MADS_MEMBRE_DU_JURY_3</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">027484211</tef:autoriteExterne>
+                        </tef:membreJury>
+                        <tef:membreJury>
+                            <tef:nom>Sand</tef:nom>
+                            <tef:prenom>Georges</tef:prenom>
+                            <tef:autoriteInterne>MADS_MEMBRE_DU_JURY_4</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">027121585</tef:autoriteExterne>
+                        </tef:membreJury>
+                        <tef:membreJury>
+                            <tef:nom>Musset</tef:nom>
+                            <tef:prenom>Alfred de</tef:prenom>
+                            <tef:autoriteInterne>MADS_MEMBRE_DU_JURY_5</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">027043339</tef:autoriteExterne>
+                        </tef:membreJury>
+                        <tef:rapporteur>
+                            <tef:nom>Marx</tef:nom>
+                            <tef:prenom>Karl</tef:prenom>
+                            <tef:autoriteInterne>MADS_RAPPORTEUR_1</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">027329305</tef:autoriteExterne>
+                        </tef:rapporteur>
+                        <tef:rapporteur>
+                            <tef:nom>Proudhon</tef:nom>
+                            <tef:prenom>Pierre-Joseph</tef:prenom>
+                            <tef:autoriteInterne>MADS_RAPPORTEUR_2</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">027083772</tef:autoriteExterne>
+                        </tef:rapporteur>
+                        <tef:rapporteur>
+                            <tef:nom>Gouges</tef:nom>
+                            <tef:prenom>Olympe de</tef:prenom>
+                            <tef:autoriteInterne>MADS_RAPPORTEUR_3</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">027484211</tef:autoriteExterne>
+                        </tef:rapporteur>
+                        <tef:ecoleDoctorale>
+                            <tef:nom>École doctorale Arts, Lettres, Langues (Rennes)</tef:nom>
+                            <tef:autoriteInterne>MADS_ECOLE_DOCTORALE_1</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">139075909</tef:autoriteExterne>
+                        </tef:ecoleDoctorale>
+                        <tef:partenaireRecherche type="laboratoire">
+                            <tef:nom>Laboratoire Synergies langues arts musique (Évry)</tef:nom>
+                            <tef:autoriteInterne>MADS_PARTENAIRE_DE_RECHERCHE_1</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">181623447</tef:autoriteExterne>
+                        </tef:partenaireRecherche>
+                        <tef:partenaireRecherche type="equipeRecherche">
+                            <tef:nom>Équipe de recherche interdisciplinaire en langues romanes (Rennes)</tef:nom>
+                            <tef:autoriteInterne>MADS_PARTENAIRE_DE_RECHERCHE_2</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">152960899</tef:autoriteExterne>
+                        </tef:partenaireRecherche>
+                        <tef:partenaireRecherche type="entreprise">
+                            <tef:nom>Manufacture française des pneumatiques Michelin</tef:nom>
+                            <tef:autoriteInterne>MADS_PARTENAIRE_DE_RECHERCHE_3</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">02644318X</tef:autoriteExterne>
+                        </tef:partenaireRecherche>
+                        <tef:partenaireRecherche type="fondation">
+                            <tef:nom>Fondation Carnot</tef:nom>
+                            <tef:autoriteInterne>MADS_PARTENAIRE_DE_RECHERCHE_4</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">050231847</tef:autoriteExterne>
+                        </tef:partenaireRecherche>
+                        <tef:partenaireRecherche type="autreType" autreType="établissement d'inscription">
+                            <tef:nom>Université Lumière (Lyon)</tef:nom>
+                            <tef:autoriteInterne>MADS_PARTENAIRE_DE_RECHERCHE_5</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="Sudoc">02640334X</tef:autoriteExterne>
+                        </tef:partenaireRecherche>
+                        <tef:partenaireRecherche type="laboratoire">
+                            <tef:nom>Laboratoired'Energitique et des Transferts Thermique et Massique / LETTM</tef:nom>
+                            <tef:autoriteInterne>MADS_PARTENAIRE_DE_RECHERCHE_6</tef:autoriteInterne>
+                            <tef:autoriteExterne autoriteSource="labTEL">109361</tef:autoriteExterne>
+                        </tef:partenaireRecherche>
+                        <tef:oaiSetSpec>ddc:004</tef:oaiSetSpec>
+                        <tef:MADSAuthority authorityID="MADS_ETABLISSEMENT_DE_COTUTELLE_1" type="corporate">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Freie Universität (Berlin)</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_DIRECTEUR_DE_THESE_1" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Proust</mads:namePart>
+                                <mads:namePart type="given">Marcel</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_PRESIDENT_DU_JURY" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Yourcenar</mads:namePart>
+                                <mads:namePart type="given">Marguerite</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_MEMBRE_DU_JURY_1" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Marx</mads:namePart>
+                                <mads:namePart type="given">Karl</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_MEMBRE_DU_JURY_2" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Proudhon</mads:namePart>
+                                <mads:namePart type="given">Pierre-Joseph</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_MEMBRE_DU_JURY_3" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Gouges</mads:namePart>
+                                <mads:namePart type="given">Olympe de</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_MEMBRE_DU_JURY_4" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Sand</mads:namePart>
+                                <mads:namePart type="given">Georges</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_MEMBRE_DU_JURY_5" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Musset</mads:namePart>
+                                <mads:namePart type="given">Alfred de</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_RAPPORTEUR_1" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Marx</mads:namePart>
+                                <mads:namePart type="given">Karl</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_RAPPORTEUR_2" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Proudhon</mads:namePart>
+                                <mads:namePart type="given">Pierre-Joseph</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_RAPPORTEUR_3" type="personal">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Gouges</mads:namePart>
+                                <mads:namePart type="given">Olympe de</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_ECOLE_DOCTORALE_1" type="corporate">
+                            <tef:personMADS>
+                                <mads:namePart type="family">École doctorale Arts, Lettres, Langues (Rennes)</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_PARTENAIRE_DE_RECHERCHE_1" type="corporate">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Laboratoire Synergies langues arts musique (Évry)</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_PARTENAIRE_DE_RECHERCHE_2" type="corporate">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Équipe de recherche interdisciplinaire en langues romanes (Rennes)</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_PARTENAIRE_DE_RECHERCHE_3" type="corporate">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Manufacture française des pneumatiques Michelin</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_PARTENAIRE_DE_RECHERCHE_4" type="corporate">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Fondation Carnot</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_PARTENAIRE_DE_RECHERCHE_5" type="corporate">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Université Lumière (Lyon)</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                        <tef:MADSAuthority authorityID="MADS_PARTENAIRE_DE_RECHERCHE_6" type="corporate">
+                            <tef:personMADS>
+                                <mads:namePart type="family">Laboratoired'Energitique et des Transferts Thermique et Massique / LETTM</mads:namePart>
+                            </tef:personMADS>
+                        </tef:MADSAuthority>
+                    </tef:thesisAdmin>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:techMD>
+        <mets:techMD ID="ABES.STAR.THESE_12286.VERSION_COMPLETE.EDITION_ARCHIVAGE.TECH_FICHIER.DOSSIER_1.DOSSIER_1.FICHIER_1">
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_tech_fichier">
+                <mets:xmlData>
+                    <tef:meta_fichier>
+                        <tef:formatFichier>PDF</tef:formatFichier>
+                        <tef:taille>190371</tef:taille>
+                    </tef:meta_fichier>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:techMD>
+        <mets:techMD ID="ABES.STAR.THESE_12286.VERSION_COMPLETE.EDITION_ARCHIVAGE.TECH_FICHIER.DOSSIER_1.DOSSIER_1.FICHIER_2">
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_tech_fichier">
+                <mets:xmlData>
+                    <tef:meta_fichier>
+                        <tef:formatFichier>PDF</tef:formatFichier>
+                        <tef:taille>185552</tef:taille>
+                    </tef:meta_fichier>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:techMD>
+        <mets:rightsMD ID="ABES.STAR.THESE_12286.DROITS_UNIVERSITE">
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_etablissement_these">
+                <mets:xmlData>
+                    <metsRights:RightsDeclarationMD RIGHTSCATEGORY="CONTRACTUAL">
+                        <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                            <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                <metsRights:ConstraintDescription>confidentialité 2013-02-14 2017-09-27</metsRights:ConstraintDescription>
+                            </metsRights:Constraints>
+                        </metsRights:Context>
+                        <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                            <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                <metsRights:ConstraintDescription>confidentialité 2013-02-14 2017-09-27</metsRights:ConstraintDescription>
+                            </metsRights:Constraints>
+                        </metsRights:Context>
+                    </metsRights:RightsDeclarationMD>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:rightsMD>
+        <mets:rightsMD ID="ABES.STAR.THESE_12286.DROITS_DOCTORANT">
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_auteur_these">
+                <mets:xmlData>
+                    <metsRights:RightsDeclarationMD RIGHTSCATEGORY="CONTRACTUAL">
+                        <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                            <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                <metsRights:ConstraintDescription>restriction 2013-02-14 2018-10-03</metsRights:ConstraintDescription>
+                            </metsRights:Constraints>
+                        </metsRights:Context>
+                        <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                            <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                        </metsRights:Context>
+                    </metsRights:RightsDeclarationMD>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:rightsMD>
+        <mets:rightsMD ID="ABES.STAR.THESE_12286.RESSOURCE_TIERS_1.DROITS">
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_externe">
+                <mets:xmlData>
+                    <metsRights:RightsDeclarationMD RIGHTSCATEGORY="CONTRACTUAL">
+                        <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                            <metsRights:Permissions DISPLAY="false" DUPLICATE="false" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                        </metsRights:Context>
+                        <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                            <metsRights:Permissions DISPLAY="false" DUPLICATE="false" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                        </metsRights:Context>
+                    </metsRights:RightsDeclarationMD>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:rightsMD>
+        <mets:rightsMD ID="ABES.STAR.THESE_12286.RESSOURCE_TIERS_2.DROITS">
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_externe">
+                <mets:xmlData>
+                    <metsRights:RightsDeclarationMD RIGHTSCATEGORY="CONTRACTUAL">
+                        <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                            <metsRights:Permissions DISPLAY="false" DUPLICATE="false" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                        </metsRights:Context>
+                        <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                            <metsRights:Permissions DISPLAY="false" DUPLICATE="false" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                        </metsRights:Context>
+                    </metsRights:RightsDeclarationMD>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:rightsMD>
+        <mets:rightsMD ID="ABES.STAR.THESE_12286.VERSION_COMPLETE.DROITS">
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_version">
+                <mets:xmlData>
+                    <metsRights:RightsDeclarationMD RIGHTSCATEGORY="CONTRACTUAL">
+                        <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                            <metsRights:Permissions DISPLAY="false" DUPLICATE="false" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                        </metsRights:Context>
+                        <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                            <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                <metsRights:ConstraintDescription>confidentialité 2013-02-14 2017-09-27</metsRights:ConstraintDescription>
+                            </metsRights:Constraints>
+                        </metsRights:Context>
+                    </metsRights:RightsDeclarationMD>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:rightsMD>
+        <mets:rightsMD ID="ABES.STAR.THESE_12286.VERSION_INCOMPLETE_1.DROITS">
+            <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_version">
+                <mets:xmlData>
+                    <metsRights:RightsDeclarationMD>
+                        <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                            <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                <metsRights:ConstraintDescription>confidentialité 2013-02-14 2017-09-27</metsRights:ConstraintDescription>
+                            </metsRights:Constraints>
+                        </metsRights:Context>
+                        <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                            <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false" />
+                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                <metsRights:ConstraintDescription>confidentialité 2013-02-14 2017-09-27</metsRights:ConstraintDescription>
+                            </metsRights:Constraints>
+                        </metsRights:Context>
+                    </metsRights:RightsDeclarationMD>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:rightsMD>
+    </mets:amdSec>
+    <mets:fileSec>
+        <mets:fileGrp USE="archive" ID="ABES.STAR.THESE_12286.VERSION_COMPLETE.EDITION_ARCHIVAGE.FILEGRP">
+            <mets:file ID="ABES.STAR.THESE_12286.VERSION_COMPLETE.EDITION_ARCHIVAGE.DOSSIER_1.DOSSIER_1.FICHIER_1" ADMID="ABES.STAR.THESE_12286.VERSION_COMPLETE.EDITION_ARCHIVAGE.TECH_FICHIER.DOSSIER_1.DOSSIER_1.FICHIER_1" SEQ="1">
+                <mets:FLocat LOCTYPE="URL" xlink:href="FOR1/THESE_12286/document/0/0/These_Test/These_Test_archivage.pdf" />
+            </mets:file>
+            <mets:file ID="ABES.STAR.THESE_12286.VERSION_COMPLETE.EDITION_ARCHIVAGE.DOSSIER_1.DOSSIER_1.FICHIER_2" ADMID="ABES.STAR.THESE_12286.VERSION_COMPLETE.EDITION_ARCHIVAGE.TECH_FICHIER.DOSSIER_1.DOSSIER_1.FICHIER_2" SEQ="2">
+                <mets:FLocat LOCTYPE="URL" xlink:href="FOR1/THESE_12286/document/0/0/These_Test/These_Test_archivage_annexe.pdf" />
+            </mets:file>
+        </mets:fileGrp>
+    </mets:fileSec>
+    <mets:structMap TYPE="logical">
+        <mets:div TYPE="THESE" CONTENTIDS="CONTENTIDS.ABES.STAR.THESE_12286" DMDID="ABES.STAR.THESE_12286.DESCRIPTION_BIBLIOGRAPHIQUE" ADMID="ABES.STAR.THESE_12286.ADMINISTRATION ABES.STAR.THESE_12286.DROITS_UNIVERSITE ABES.STAR.THESE_12286.DROITS_DOCTORANT">
+            <mets:div TYPE="VERSION_COMPLETE" CONTENTIDS="CONTENTIDS.ABES.STAR.THESE_12286.ABES.STAR.THESE_12286.VERSION_COMPLETE" ADMID="ABES.STAR.THESE_12286.VERSION_COMPLETE.DROITS">
+                <mets:div TYPE="EDITION" CONTENTIDS="CONTENTIDS.ABES.STAR.THESE_12286.VERSION_COMPLETE.EDITION_ARCHIVAGE" DMDID="ABES.STAR.THESE_12286.VERSION_COMPLETE.DESCRIPTION.EDITION_ARCHIVAGE">
+                    <mets:fptr FILEID="ABES.STAR.THESE_12286.VERSION_COMPLETE.EDITION_ARCHIVAGE.FILEGRP" />
+                </mets:div>
+                <mets:div TYPE="EDITION" CONTENTIDS="CONTENTIDS.ABES.STAR.THESE_12286.VERSION_COMPLETE.EDITION_1" DMDID="ABES.STAR.THESE_12286.VERSION_COMPLETE.DESCRIPTION.EDITION_1" />
+            </mets:div>
+            <mets:div TYPE="RESSOURCES_EXTERNES">
+                <mets:div TYPE="TRAVAUX" ID="ABES.STAR.THESE_12286.RESSOURCE_TIERS_1" DMDID="ABES.STAR.THESE_12286.RESSOURCE_TIERS_1.DESCRIPTION" ADMID="ABES.STAR.THESE_12286.RESSOURCE_TIERS_1.DROITS" />
+                <mets:div TYPE="TRAVAUX" ID="ABES.STAR.THESE_12286.RESSOURCE_TIERS_2" DMDID="ABES.STAR.THESE_12286.RESSOURCE_TIERS_2.DESCRIPTION" ADMID="ABES.STAR.THESE_12286.RESSOURCE_TIERS_2.DROITS" />
+            </mets:div>
+            <mets:div TYPE="VERSION_INCOMPLETE" CONTENTIDS="CONTENTIDS.ABES.STAR.THESE_12286.VERSION_INCOMPLETE_1" DMDID="ABES.STAR.THESE_12286.VERSION_INCOMPLETE_1.DESCRIPTION" ADMID="ABES.STAR.THESE_12286.VERSION_INCOMPLETE_1.DROITS">
+                <mets:div TYPE="EDITION" CONTENTIDS="CONTENTIDS.ABES.STAR.THESE_12286.VERSION_INCOMPLETE_1.EDITION_1" DMDID="ABES.STAR.THESE_12286.VERSION_INCOMPLETE_1.DESCRIPTION.EDITION_1" />
+            </mets:div>
+        </mets:div>
+    </mets:structMap>
+</mets:mets>
