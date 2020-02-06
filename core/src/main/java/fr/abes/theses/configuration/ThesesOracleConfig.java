@@ -47,7 +47,8 @@ public class ThesesOracleConfig {
         em.setJpaVendorAdapter(vendorAdapter);
         HashMap<String, Object> properties = new HashMap<>();
         properties.put("spring.jpa.database-platform", platform);
-        properties.put("show-sql", showsql);
+        properties.put("hibernate.show_sql", showsql);
+        properties.put("hibernate.format_sql", true);
         properties.put("hibernate.dialect", dialect);
         properties.put("logging.level.org.hibernate", "DEBUG");
         properties.put("hibernate.type", "trace");

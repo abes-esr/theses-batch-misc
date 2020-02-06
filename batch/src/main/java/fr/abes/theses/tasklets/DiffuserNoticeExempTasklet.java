@@ -2,7 +2,9 @@ package fr.abes.theses.tasklets;
 
 import fr.abes.cbs.exception.CBSException;
 import fr.abes.theses.model.dto.NoticeBiblioDto;
+import fr.abes.theses.model.dto.NoticeBiblioDtoMapper;
 import fr.abes.theses.model.entities.Document;
+import fr.abes.theses.model.entities.NoticeBiblio;
 import fr.abes.theses.service.ServiceProvider;
 import fr.abes.theses.utils.Utilitaire;
 import lombok.Getter;
@@ -35,7 +37,7 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
     Integer jobId;
     private List<NoticeBiblioDto> noticeBiblios;
 
-    @Value("${sudoc.passwd}")
+    @Value("${sudoc.passwdM4001}")
     private String passwd;
 
     public DiffuserNoticeExempTasklet() {
@@ -62,6 +64,7 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
         String previousRcr = "";
         for (NoticeBiblioDto noticeBiblio : noticeBiblios) {
+            log.info("Id de notice : " + noticeBiblio.getId().toString());
             if (noticeBiblio.getCodeEtab() != previousRcr) {
                 authenticate("M" + noticeBiblio.getCodeEtab(), passwd, noticeBiblio);
                 previousRcr = noticeBiblio.getCodeEtab();
@@ -69,12 +72,17 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
             Document doc = getService().getDocumentService().findById(noticeBiblio.getIddoc());
             if (doc == null) {
                 noticeBiblio.setRetourSudoc("These not found");
+
             } else {
                 String marcXml = Utilitaire.getMarcXmlFromTef(doc, cheminXslTef2Marc, fichierXslTef2Marc);
                 NoticeBiblioDto resultatInfoXml = getService().getMajStarSudocService().majStarSudocExemp(marcXml, noticeBiblio);
                 noticeBiblio.setRetourSudoc(resultatInfoXml.getRetourSudoc());
             }
+            noticeBiblio.setDone(1);
+            NoticeBiblio noticeBiblioEntity = NoticeBiblioDtoMapper.getNoticeBiblioEntity(noticeBiblio);
+            getService().getNoticeBiblioService().save(noticeBiblioEntity);
         }
+        disconnect();
         return RepeatStatus.FINISHED;
     }
 
@@ -84,5 +92,9 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
         } catch (CBSException ex) {
             noticeBiblio.setRetourSudoc(ex.getMessage());
         }
+    }
+
+    private void disconnect() {
+        getService().getMajStarSudocService().disconnectExemp();
     }
 }

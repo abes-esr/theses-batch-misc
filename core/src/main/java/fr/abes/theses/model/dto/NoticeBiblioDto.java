@@ -33,7 +33,9 @@ public class NoticeBiblioDto implements Serializable, GenericEntity<Integer> {
 
     private String ppn;
 
-    public NoticeBiblioDto(Integer idJob, Integer iddoc, String codeEtab, Integer done, String retourSudoc, Date dateCreation, Date dateModification, String indicSudoc, String ppn) {
+    private String epn;
+
+    public NoticeBiblioDto(Integer idJob, Integer iddoc, String codeEtab, Integer done, String retourSudoc, Date dateCreation, Date dateModification, String indicSudoc, String ppn, String epn) {
         this.idJob = idJob;
         this.iddoc = iddoc;
         this.codeEtab = codeEtab;
@@ -43,6 +45,7 @@ public class NoticeBiblioDto implements Serializable, GenericEntity<Integer> {
         this.dateModification = dateModification;
         this.indicSudoc = indicSudoc;
         this.ppn = ppn;
+        this.epn = epn;
     }
 
     public NoticeBiblioDto(NoticeBiblio notice) {
@@ -56,6 +59,7 @@ public class NoticeBiblioDto implements Serializable, GenericEntity<Integer> {
         this.dateModification = notice.getDateModification();
         this.indicSudoc = notice.getIndicSudoc();
         this.ppn = notice.getPpn();
+        this.epn = notice.getEpn();
     }
 
     @Override

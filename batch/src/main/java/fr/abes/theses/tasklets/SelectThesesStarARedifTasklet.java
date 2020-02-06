@@ -43,11 +43,11 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
     @Value("${sudoc.loginM4001}")
     private String login;
 
-    @Value("${sudoc.passwd}")
+    @Value("${sudoc.passwdM4001}")
     private String passwd;
 
     private final String urlDiffusionTotale = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=id%20asc&wt=json";
-    private final String urlDiffusionExemp = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui+id:10025+SGRCRSudoc:[''%20TO%20*]&fl=SGRCRSudoc,id&sort=SGRCRSudoc%20asc&wt=json";
+    private final String urlDiffusionExemp = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]&fl=SGRCRSudoc,id&sort=SGRCRSudoc%20asc&wt=json&rows=2";
     @Override
     public void beforeStep(StepExecution stepExecution) {
         log.info("entree dans beforeStep de SelectThesesStarARedifTasklet");
@@ -109,7 +109,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                     if (Integer.parseInt(getService().getMajStarSudocService().getClientBiblio().ilnRattachement(rcr)) > 199
                             && Integer.parseInt(getService().getMajStarSudocService().getClientBiblio().ilnRattachement(rcr)) <= 300)
                         rcr = "341720008";
-                    getService().getNoticeBiblioService().save(new NoticeBiblio(idJob, iddoc, rcr, 0, "", null, null, null, null));
+                    getService().getNoticeBiblioService().save(new NoticeBiblio(idJob, iddoc, rcr, 0, "", null, null, null, null, null));
                 }
             }
             getService().getMajStarSudocService().disconnectBiblio();
@@ -124,7 +124,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
             int iddoc = Integer.parseInt(docs.optJSONObject(i).optString("id"));
             log.info("traite : " + iddoc);
             String codeEtab = docs.optJSONObject(i).optString("SGcodeEtab");
-            getService().getNoticeBiblioService().save(new NoticeBiblio(idJob, iddoc, codeEtab, 0, "", null, null, null, null));
+            getService().getNoticeBiblioService().save(new NoticeBiblio(idJob, iddoc, codeEtab, 0, "", null, null, null, null, null));
         }
     }
 

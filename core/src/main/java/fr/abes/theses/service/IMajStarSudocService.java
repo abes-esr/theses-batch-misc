@@ -17,9 +17,11 @@ public interface IMajStarSudocService {
 
     NoticeBiblioDto majStarSudocBiblio(String marcXml, NoticeBiblioDto noticeBiblioDto);
 
-    NoticeBiblioDto majStarSudocExemp(String marcXml, NoticeBiblioDto noticeBiblioDto);
+    NoticeBiblioDto majStarSudocExemp(String marcXml, NoticeBiblioDto noticeBiblioDto) throws CBSException;
 
     void creerTheseBiblio(NoticeConcrete noticeBiblio, NoticeBiblioDto trace);
 
     String creerExpl(Exemplaire exemplaire, String lePPN, NoticeBiblioDto trace);
+
+    void disconnectExemp();
 }

@@ -24,7 +24,7 @@ public class AuthentifierToSudocTasklet implements Tasklet, StepExecutionListene
     @Value("${sudoc.loginM4001}")
     private String login;
 
-    @Value("${sudoc.passwd}")
+    @Value("${sudoc.passwdM4001}")
     private String passwd;
 
     @Override

@@ -34,11 +34,10 @@ public class GestionTefService implements IGestionTefService {
     }
 
     @Override
-    public void majDonneesGestion(NoticeBiblioDto dto, Integer idDoc, String codeEtab) throws InstantiationException, DocumentException {
-        Document document = getDao().getDocument().findById(idDoc).orElse(null);
+    public void majDonneesGestion(NoticeBiblioDto dto) throws InstantiationException, DocumentException {
+        Document document = getDao().getDocument().findById(dto.getId()).orElse(null);
         Tef documentTef = new Tef(document.getDoc());
         documentTef.setStarGestionAttribut(dto.getDateCreation(), dto.getDateModification(), dto.getRetourSudoc(), dto.getIndicSudoc(), dto.getPpn());
-        //TODO mise à jour des champs concernés
         document.setDoc(documentTef.toString());
         getDao().getDocument().save(document);
 
