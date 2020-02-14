@@ -6,6 +6,7 @@ import fr.abes.theses.model.entities.NoticeBiblio;
 import fr.abes.theses.service.ServiceProvider;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.dom4j.DocumentException;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
@@ -22,8 +23,13 @@ import java.util.List;
 public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExecutionListener {
     private List<NoticeBiblioDto> noticeBiblioDtos;
 
-    @Autowired @Getter
-    ServiceProvider service;
+    @Getter
+    final ServiceProvider service;
+
+    public NoticeBiblioWriter(ServiceProvider service) {
+        this.service = service;
+    }
+
     @Override
     public void beforeStep(StepExecution stepExecution) {
         ExecutionContext executionContext = stepExecution
@@ -51,8 +57,8 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExec
         }
     }
 
-    private void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) {
-
+    private void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) throws DocumentException, InstantiationException {
+        getService().getGestionTefService().majDonneesGestion(noticeBiblioDto, noticeBiblioDto.getId(), noticeBiblioDto.getCodeEtab());
     }
 
     private void majNoticeBiblio(NoticeBiblioDto noticeBiblioDto) throws DataAccessException {
