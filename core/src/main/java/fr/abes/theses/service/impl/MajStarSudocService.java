@@ -287,22 +287,14 @@ public class MajStarSudocService implements IMajStarSudocService {
         String idStar = notice.getNoticeBiblio().findZone("002", 0).findSousZone("$a").getValeur();
         Zone e856 = findE856IntoXml(noticeStarXml);
 
-        this.clientExpl.search("che sou " + idStar);
-        this.clientExpl.affUnma();
-        String resu = clientExpl.editer("1");
+        LinkedList<String> numExemplaires = supprimerExemplaireGenereParStarDansSudoc(idStar);
 
-        List<Exemplaire> exemplaires = NoticeConcrete.listeExemplaireUnimarc(resu);
-        LinkedList<String> numExemplaires = new LinkedList<>();
+        RediffuserExemplaireStarDansSudoc(trace, notice, e856, numExemplaires);
 
-        // Suppression des exemplaires existants
-        for (Exemplaire exemplaire : exemplaires) {
-            if (IsCreatedAutomaticalyByStar(exemplaire)) {
-                String numExemplaire = exemplaire.getNumEx();
-                this.clientExpl.supExemplaire(numExemplaire);
-                numExemplaires.add(numExemplaire);
-            }
-        }
+        return trace;
+    }
 
+    private void RediffuserExemplaireStarDansSudoc(NoticeBiblioDto trace, NoticeConcrete notice, Zone e856, LinkedList<String> numExemplaires) {
         int i = Integer.parseInt(notice.getNumEx() == null ? "1" : notice.getNumEx());
 
         for (Exemplaire exemplaire : notice.getExemplaires()) {
@@ -333,7 +325,24 @@ public class MajStarSudocService implements IMajStarSudocService {
             }
             i++;
         }
-        return trace;
+    }
+
+    private LinkedList<String> supprimerExemplaireGenereParStarDansSudoc(String idStar) throws CBSException {
+        this.clientExpl.search("che sou " + idStar);
+        this.clientExpl.affUnma();
+        String resu = clientExpl.editer("1");
+
+        List<Exemplaire> exemplaires = NoticeConcrete.listeExemplaireUnimarc(resu);
+        LinkedList<String> numExemplaires = new LinkedList<>();
+
+        for (Exemplaire exemplaire : exemplaires) {
+            if (IsCreatedAutomaticalyByStar(exemplaire)) {
+                String numExemplaire = exemplaire.getNumEx();
+                this.clientExpl.supExemplaire(numExemplaire);
+                numExemplaires.add(numExemplaire);
+            }
+        }
+        return numExemplaires;
     }
 
     private boolean IsCreatedAutomaticalyByStar(Exemplaire exemplaire) {

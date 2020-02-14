@@ -35,12 +35,9 @@ public class Tef {
         SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         setDate(formater.format(dateModification));
 
-        if (retourSudoc.contains("NOK"))
-        {
+        if (retourSudoc.contains("NOK")) {
             XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", retourSudoc, documentTef);
-        }
-        else
-        {
+        } else {
             XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "PPN", ppn, documentTef);
             XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", "", documentTef);
         }
@@ -53,16 +50,31 @@ public class Tef {
 
         String codeRetour = setCodeRetour(retour);
 
-        if (codeRetour.contains("NOK"))
-        {
+        if (codeRetour.contains("NOK")) {
             setMessage(retour, "THESE/BIBLIO/MESSAGE", "trace");
-        }
-        else
-        {
+        } else {
             setMessage(retour, "THESE/BIBLIO/PPN", "PPN");
             XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", "", documentTef);
         }
 
+    }
+
+    public void setStarGestionAttributExemplaire(Date updateDate, String indicSudoc, String trace) throws InstantiationException {
+        checkDocumenTef();
+
+        SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        setDate(formater.format(updateDate));
+        setIndicSudoc(indicSudoc);
+        setTrace(trace);
+
+    }
+
+    private void setIndicSudoc(String indicSudoc) {
+        XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "indicSudoc", indicSudoc, documentTef);
+    }
+
+    private void setTrace(String indicSudoc) {
+        XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", indicSudoc, documentTef);
     }
 
     private void setMessage(Document retour, String path, String trace) {
@@ -72,18 +84,15 @@ public class Tef {
 
     private String setCodeRetour(Document retour) {
         String codeRetour = XPathService.getValue("THESE/BIBLIO/CODERETOUR", retour);
-        XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "indicSudoc", codeRetour, documentTef);
+        setIndicSudoc(codeRetour);
         return codeRetour;
     }
 
     private void setDate(String date) {
         String dateSudoc = XPathService.getAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "dateSudoc", documentTef);
-        if (dateSudoc != null && !dateSudoc.isEmpty())
-        {
+        if (dateSudoc != null && !dateSudoc.isEmpty()) {
             XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "majSudoc", date, documentTef);
-        }
-        else
-        {
+        } else {
             XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "dateSudoc", date, documentTef);
         }
     }

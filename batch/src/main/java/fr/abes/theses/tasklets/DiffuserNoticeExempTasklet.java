@@ -17,7 +17,11 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +38,21 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
     @Getter
     ServiceProvider service;
 
+    @Autowired
+    private JpaTransactionManager thesesTransactionManager;
+
     Integer jobId;
     private List<NoticeBiblioDto> noticeBiblios;
 
     @Value("${sudoc.passwdM4001}")
     private String passwd;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    @Qualifier(value = "transactionManager")
+    private PlatformTransactionManager platformTransactionManager;
 
     public DiffuserNoticeExempTasklet() {
         this.noticeBiblios = new ArrayList<>();
@@ -80,10 +94,25 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
             }
             noticeBiblio.setDone(1);
             NoticeBiblio noticeBiblioEntity = NoticeBiblioDtoMapper.getNoticeBiblioEntity(noticeBiblio);
-            getService().getNoticeBiblioService().save(noticeBiblioEntity);
+            updateNoticeBiblio(noticeBiblioEntity);
+
+            getService().getGestionTefService().majDonneesGestionExplenparisation(noticeBiblio);
         }
         disconnect();
         return RepeatStatus.FINISHED;
+    }
+
+    public void updateNoticeBiblio(NoticeBiblio noticeBiblioEntity) {
+        var a = jdbcTemplate.update("UPDATE STAR.T_E_TRAITEMENT_NOTICEBIB_TNB SET " +
+                "TRAITEE = ?, " +
+                "RETOUR_SUDOC = ?, " +
+                "PPN = ? " +
+                "WHERE ID = ?",
+                noticeBiblioEntity.getDone(),
+                noticeBiblioEntity.getRetourSudoc(),
+                noticeBiblioEntity.getEpn(),
+                noticeBiblioEntity.getId());
+        jdbcTemplate.update("commit");
     }
 
     private void authenticate(String login, String passwd, NoticeBiblioDto noticeBiblio) {

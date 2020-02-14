@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -31,6 +32,14 @@ public class GestionTefService implements IGestionTefService {
             tef.setStarGestionAttribut(getDateISO8601(), retour);
             getDao().getDocument().save(document);
         }
+    }
+
+    @Override
+    public void majDonneesGestionExplenparisation(NoticeBiblioDto noticeBiblioDto) throws InstantiationException, DocumentException {
+        Document document = getDao().getDocument().findById(noticeBiblioDto.getIddoc()).orElse(null);
+        Tef tef = new Tef(document.getDoc());
+        tef.setStarGestionAttributExemplaire(new Date(), noticeBiblioDto.getIndicSudoc(), noticeBiblioDto.getRetourSudoc());
+        getDao().getDocument().save(document);
     }
 
     @Override

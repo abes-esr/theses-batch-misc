@@ -47,7 +47,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
     private String passwd;
 
     private final String urlDiffusionTotale = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=id%20asc&wt=json";
-    private final String urlDiffusionExemp = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]&fl=SGRCRSudoc,id&sort=SGRCRSudoc%20asc&wt=json&rows=2";
+    private final String urlDiffusionExemp = "/solr1/select/?q=SGindicCines:OK+SGindicSudoc:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]&fl=SGRCRSudoc,id&sort=SGRCRSudoc%20asc&wt=json&rows=2";
     @Override
     public void beforeStep(StepExecution stepExecution) {
         log.info("entree dans beforeStep de SelectThesesStarARedifTasklet");

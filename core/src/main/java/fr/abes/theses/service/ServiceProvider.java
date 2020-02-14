@@ -16,4 +16,7 @@ public class ServiceProvider {
 
     @Resource
     private IDocumentService documentService;
+
+    @Resource
+    private IGestionTefService gestionTefService;
 }
