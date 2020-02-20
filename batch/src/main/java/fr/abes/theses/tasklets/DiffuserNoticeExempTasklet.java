@@ -9,6 +9,7 @@ import fr.abes.theses.service.ServiceProvider;
 import fr.abes.theses.utils.Utilitaire;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.dom4j.DocumentException;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.StepExecution;
@@ -23,6 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,28 +77,34 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
     }
 
     @Override
-    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
+    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws DocumentException, InstantiationException, CBSException, TransformerException, InterruptedException {
         String previousRcr = "";
         for (NoticeBiblioDto noticeBiblio : noticeBiblios) {
             log.info("Id de notice : " + noticeBiblio.getId().toString());
-            if (noticeBiblio.getCodeEtab() != previousRcr) {
-                authenticate("M" + noticeBiblio.getCodeEtab(), passwd, noticeBiblio);
-                previousRcr = noticeBiblio.getCodeEtab();
-            }
-            Document doc = getService().getDocumentService().findById(noticeBiblio.getIddoc());
-            if (doc == null) {
-                noticeBiblio.setRetourSudoc("These not found");
+            NoticeBiblio noticeBiblioEntity = new NoticeBiblio();
+            try {
+                if (noticeBiblio.getCodeEtab() != previousRcr) {
+                    authenticate("M" + noticeBiblio.getCodeEtab(), passwd, noticeBiblio);
+                    previousRcr = noticeBiblio.getCodeEtab();
+                }
+                Document doc = getService().getDocumentService().findById(noticeBiblio.getIddoc());
+                if (doc == null) {
+                    noticeBiblio.setRetourSudoc("These not found");
 
-            } else {
-                String marcXml = Utilitaire.getMarcXmlFromTef(doc, cheminXslTef2Marc, fichierXslTef2Marc);
-                NoticeBiblioDto resultatInfoXml = getService().getMajStarSudocService().majStarSudocExemp(marcXml, noticeBiblio);
-                noticeBiblio.setRetourSudoc(resultatInfoXml.getRetourSudoc());
+                } else {
+                    String marcXml = Utilitaire.getMarcXmlFromTef(doc, cheminXslTef2Marc, fichierXslTef2Marc);
+                    NoticeBiblioDto resultatInfoXml = getService().getMajStarSudocService().majStarSudocExemp(marcXml, noticeBiblio);
+                    noticeBiblio.setRetourSudoc(resultatInfoXml.getRetourSudoc());
+                }
+                noticeBiblio.setDone(1);
+                noticeBiblioEntity = NoticeBiblioDtoMapper.getNoticeBiblioEntity(noticeBiblio);
+                getService().getGestionTefService().majDonneesGestionExemplarisation(noticeBiblio);
+            } catch (Exception e){
+                noticeBiblioEntity.setRetourSudoc(noticeBiblioEntity.getRetourSudoc() + " : " + e.getMessage());
             }
-            noticeBiblio.setDone(1);
-            NoticeBiblio noticeBiblioEntity = NoticeBiblioDtoMapper.getNoticeBiblioEntity(noticeBiblio);
             updateNoticeBiblio(noticeBiblioEntity);
 
-            getService().getGestionTefService().majDonneesGestionExplenparisation(noticeBiblio);
+            Thread.sleep(200);
         }
         disconnect();
         return RepeatStatus.FINISHED;

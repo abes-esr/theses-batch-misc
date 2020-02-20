@@ -47,7 +47,8 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
     private String passwd;
 
     private final String urlDiffusionTotale = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=id%20asc&wt=json";
-    private final String urlDiffusionExemp = "/solr1/select/?q=SGindicCines:OK+SGindicSudoc:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]&fl=SGRCRSudoc,id&sort=SGRCRSudoc%20asc&wt=json&rows=2";
+    private final String urlDiffusionExemp = "/solr1/select/?q=SGindicCines:OK+SGindicSudoc:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]&fl=SGRCRSudoc,id&sort=SGRCRSudoc%20asc&wt=json";
+    //private final String urlDiffusionExemp = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui+id:3803&fl=SGRCRSudoc,id&sort=SGRCRSudoc%20asc&wt=json&rows=2000";
     @Override
     public void beforeStep(StepExecution stepExecution) {
         log.info("entree dans beforeStep de SelectThesesStarARedifTasklet");
@@ -88,7 +89,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
             }
         }
         catch (Exception e) {
-            log.error(e.toString());
+            log.error(e.getMessage());
 //            mailer.mailEchecTraitement(
 //                    this.email,
 //                    this.demande.getId()
@@ -105,6 +106,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                 int iddoc = Integer.parseInt(docs.optJSONObject(i).optString("id"));
                 for (int j = 0; j < docs.optJSONObject(i).optJSONArray("SGRCRSudoc").length(); j++) {
                     String rcr = docs.optJSONObject(i).optJSONArray("SGRCRSudoc").getString(j);
+                    log.info("rcr n° "+ rcr);
                     //si le rcr appartient un ILN d'établissement non déployé, on se connectera avec un login de rcr spécifique pour l'exemplarisation
                     if (Integer.parseInt(getService().getMajStarSudocService().getClientBiblio().ilnRattachement(rcr)) > 199
                             && Integer.parseInt(getService().getMajStarSudocService().getClientBiblio().ilnRattachement(rcr)) <= 300)

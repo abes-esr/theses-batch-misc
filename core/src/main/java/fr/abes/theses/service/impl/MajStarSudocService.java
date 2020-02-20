@@ -287,15 +287,21 @@ public class MajStarSudocService implements IMajStarSudocService {
         String idStar = notice.getNoticeBiblio().findZone("002", 0).findSousZone("$a").getValeur();
         Zone e856 = findE856IntoXml(noticeStarXml);
 
-        LinkedList<String> numExemplaires = supprimerExemplaireGenereParStarDansSudoc(idStar);
+        try {
+            LinkedList<String> numExemplaires = supprimerExemplaireGenereParStarDansSudoc(idStar);
+            RediffuserExemplaireStarDansSudoc(trace, notice, e856, numExemplaires);
+        } catch (CBSException e) {
+            trace.setRetourSudoc(e.getMessage());
+        } catch (IllegalStateException e){
+            trace.setRetourSudoc(e.getMessage());
+        }
 
-        RediffuserExemplaireStarDansSudoc(trace, notice, e856, numExemplaires);
 
         return trace;
     }
 
     private void RediffuserExemplaireStarDansSudoc(NoticeBiblioDto trace, NoticeConcrete notice, Zone e856, LinkedList<String> numExemplaires) {
-        int i = Integer.parseInt(notice.getNumEx() == null ? "1" : notice.getNumEx());
+        int i = Integer.parseInt(notice.getNumEx() == null ? "1" : notice.getNumEx()+1);
 
         for (Exemplaire exemplaire : notice.getExemplaires()) {
 
@@ -311,14 +317,21 @@ public class MajStarSudocService implements IMajStarSudocService {
 
             try {
                 this.clientExpl.creerExemplaire(numExemplaireCurrent);
-
-                this.clientExpl.newExemplaire(exemplaire.toString().substring(1, exemplaire.toString().length() - 1));
+                String exempToWrite = exemplaire.toString().substring(1, exemplaire.toString().length() - 1);
+                this.clientExpl.newExemplaire(exempToWrite);
                 String resultatCreation = this.clientExpl.editer("1");
                 List<Exemplaire> exemplairesCree = NoticeConcrete.listeExemplaireUnimarc(resultatCreation);
                 Exemplaire exemplaireCree = exemplairesCree.stream().filter(e -> e.getNumEx().equals(numExemplaireCurrent)).findFirst().orElse(null);
-                String ePN = exemplaireCree.findZone("A99", 0).getValeur();
-                trace.setEpn(ePN);
-                trace.setRetourSudoc("Exemplaire créé");
+
+                if (exemplaireCree != null){
+                    String ePN = exemplaireCree.findZone("A99", 0).getValeur();
+                    trace.setEpn(ePN);
+                    trace.setIndicSudoc("OK");
+                    trace.setRetourSudoc("Exemplaire créé");
+                } else {
+                    trace.setRetourSudoc("Exemplaire non créé");
+                    trace.setIndicSudoc("KO");
+                }
 
             } catch (CBSException e) {
                 trace.setRetourSudoc(e.getMessage());
@@ -329,20 +342,26 @@ public class MajStarSudocService implements IMajStarSudocService {
 
     private LinkedList<String> supprimerExemplaireGenereParStarDansSudoc(String idStar) throws CBSException {
         this.clientExpl.search("che sou " + idStar);
-        this.clientExpl.affUnma();
-        String resu = clientExpl.editer("1");
+        if (this.clientExpl.getNbNotices() == 1) {
+            this.clientExpl.affUnma();
+            String resu = clientExpl.editer("1");
 
-        List<Exemplaire> exemplaires = NoticeConcrete.listeExemplaireUnimarc(resu);
-        LinkedList<String> numExemplaires = new LinkedList<>();
+            List<Exemplaire> exemplaires = NoticeConcrete.listeExemplaireUnimarc(resu);
+            LinkedList<String> numExemplaires = new LinkedList<>();
 
-        for (Exemplaire exemplaire : exemplaires) {
-            if (IsCreatedAutomaticalyByStar(exemplaire)) {
-                String numExemplaire = exemplaire.getNumEx();
-                this.clientExpl.supExemplaire(numExemplaire);
-                numExemplaires.add(numExemplaire);
+            for (Exemplaire exemplaire : exemplaires) {
+                if (IsCreatedAutomaticalyByStar(exemplaire)) {
+                    String numExemplaire = exemplaire.getNumEx();
+                    this.clientExpl.supExemplaire(numExemplaire);
+                    numExemplaires.add(numExemplaire);
+                }
             }
+            return numExemplaires;
         }
-        return numExemplaires;
+        else {
+            throw new IllegalStateException("Plusieurs notice pour l'ID star " + idStar);
+        }
+
     }
 
     private boolean IsCreatedAutomaticalyByStar(Exemplaire exemplaire) {

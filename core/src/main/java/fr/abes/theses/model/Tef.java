@@ -16,7 +16,7 @@ public class Tef {
 
     private static final String ERROR_MSG_EMPTY_TEF = "Erreur : le champ documentTef dans MajDonneesGestionTef est null.";
 
-    private Document documentTef = null;
+    public Document documentTef = null;
 
 
     public Tef(String document) throws DocumentException, InstantiationException {
