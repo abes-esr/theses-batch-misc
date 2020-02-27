@@ -40,6 +40,9 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
     @Value("${solr.url}")
     private String urlSolr;
 
+    @Value("${idThese}")
+    private String idThese;
+
     @Value("${sudoc.loginM4001}")
     private String login;
 
@@ -47,8 +50,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
     private String passwd;
 
     private final String urlDiffusionTotale = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=id%20asc&wt=json";
-    private final String urlDiffusionExemp = "/solr1/select/?q=SGindicCines:OK+SGindicSudoc:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]&fl=SGRCRSudoc,id&sort=SGRCRSudoc%20asc&wt=json";
-    //private final String urlDiffusionExemp = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui+id:3803&fl=SGRCRSudoc,id&sort=SGRCRSudoc%20asc&wt=json&rows=2000";
+    private final String urlDiffusionExemp = "/solr1/select/?q=SGindicCines:OK+SGindicSudoc:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]&fl=SGRCRSudoc,id&wt=json";
     @Override
     public void beforeStep(StepExecution stepExecution) {
         log.info("entree dans beforeStep de SelectThesesStarARedifTasklet");
@@ -70,6 +72,14 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
             }
             requete += "&start=" + startRow + "&rows=" + rowsNumber;
 
+            if (!idThese.equals("null"))
+            {
+                requete = urlSolr +"/solr1/select/?" +
+                        "q=SGindicCines:OK+SGindicSudoc:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]" + "+id:" + idThese +
+                        "&fl=SGRCRSudoc,id" +
+                        "&wt=json";
+            }
+
             JSONArray docs = getJson(requete);
 
             if (docs.isEmpty())
@@ -90,10 +100,6 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
         }
         catch (Exception e) {
             log.error(e.getMessage());
-//            mailer.mailEchecTraitement(
-//                    this.email,
-//                    this.demande.getId()
-//            );
             stepContribution.setExitStatus(ExitStatus.FAILED);
         }
         return RepeatStatus.FINISHED;
@@ -132,14 +138,15 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
 
     private JSONArray getJson(String requete) throws IOException {
         URL url = new URL(requete);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
-        String ligne = "";
-        StringBuilder builder = new StringBuilder();
-        while ((ligne = reader.readLine()) != null)
-        {
-            builder.append(ligne);
+        JSONObject json;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"))) {
+            String ligne = "";
+            StringBuilder builder = new StringBuilder();
+            while ((ligne = reader.readLine()) != null) {
+                builder.append(ligne);
+            }
+            json = new JSONObject(builder.toString());
         }
-        JSONObject json = new JSONObject(builder.toString());
         return json.optJSONObject("response").optJSONArray("docs");
     }
 

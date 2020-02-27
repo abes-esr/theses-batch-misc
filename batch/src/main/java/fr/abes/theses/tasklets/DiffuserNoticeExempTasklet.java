@@ -25,7 +25,9 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.xml.transform.TransformerException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -40,9 +42,6 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
     @Getter
     ServiceProvider service;
 
-    @Autowired
-    private JpaTransactionManager thesesTransactionManager;
-
     Integer jobId;
     private List<NoticeBiblioDto> noticeBiblios;
 
@@ -51,10 +50,6 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    @Qualifier(value = "transactionManager")
-    private PlatformTransactionManager platformTransactionManager;
 
     public DiffuserNoticeExempTasklet() {
         this.noticeBiblios = new ArrayList<>();
@@ -77,13 +72,16 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
     }
 
     @Override
-    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws DocumentException, InstantiationException, CBSException, TransformerException, InterruptedException {
+    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) {
         String previousRcr = "";
+        boolean premiereExemplarisationRcrNonDeploye = true;
+
         for (NoticeBiblioDto noticeBiblio : noticeBiblios) {
             log.info("Id de notice : " + noticeBiblio.getId().toString());
             NoticeBiblio noticeBiblioEntity = new NoticeBiblio();
             try {
-                if (noticeBiblio.getCodeEtab() != previousRcr) {
+                if (!noticeBiblio.getCodeEtab().equals(previousRcr)) {
+                    getService().getMajStarSudocService().disconnectExemp();
                     authenticate("M" + noticeBiblio.getCodeEtab(), passwd, noticeBiblio);
                     previousRcr = noticeBiblio.getCodeEtab();
                 }
@@ -93,32 +91,38 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
 
                 } else {
                     String marcXml = Utilitaire.getMarcXmlFromTef(doc, cheminXslTef2Marc, fichierXslTef2Marc);
-                    NoticeBiblioDto resultatInfoXml = getService().getMajStarSudocService().majStarSudocExemp(marcXml, noticeBiblio);
+                    NoticeBiblioDto resultatInfoXml = getService().getMajStarSudocService().majStarSudocExemp(marcXml, noticeBiblio, premiereExemplarisationRcrNonDeploye);
                     noticeBiblio.setRetourSudoc(resultatInfoXml.getRetourSudoc());
                 }
                 noticeBiblio.setDone(1);
+                noticeBiblio.setDateModification(new Date());
                 noticeBiblioEntity = NoticeBiblioDtoMapper.getNoticeBiblioEntity(noticeBiblio);
                 getService().getGestionTefService().majDonneesGestionExemplarisation(noticeBiblio);
+
+                if (noticeBiblio.getCodeEtab().equals("341720008")){
+                    premiereExemplarisationRcrNonDeploye = false;
+                }
+
             } catch (Exception e){
                 noticeBiblioEntity.setRetourSudoc(noticeBiblioEntity.getRetourSudoc() + " : " + e.getMessage());
             }
             updateNoticeBiblio(noticeBiblioEntity);
-
-            Thread.sleep(200);
         }
         disconnect();
         return RepeatStatus.FINISHED;
     }
 
     public void updateNoticeBiblio(NoticeBiblio noticeBiblioEntity) {
-        var a = jdbcTemplate.update("UPDATE STAR.T_E_TRAITEMENT_NOTICEBIB_TNB SET " +
+        jdbcTemplate.update("UPDATE STAR.T_E_TRAITEMENT_NOTICEBIB_TNB SET " +
                 "TRAITEE = ?, " +
                 "RETOUR_SUDOC = ?, " +
-                "PPN = ? " +
+                "PPN = ?, " +
+                "DATE_MODIFICATION = ? "+
                 "WHERE ID = ?",
                 noticeBiblioEntity.getDone(),
                 noticeBiblioEntity.getRetourSudoc(),
                 noticeBiblioEntity.getEpn(),
+                noticeBiblioEntity.getDateModification(),
                 noticeBiblioEntity.getId());
         jdbcTemplate.update("commit");
     }

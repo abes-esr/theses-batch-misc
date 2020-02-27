@@ -6,7 +6,6 @@ import fr.abes.cbs.process.ProcessCBS;
 import fr.abes.cbs.utilitaire.Constants;
 import fr.abes.cbs.zones.enumSousZones.Zone_214;
 import fr.abes.cbs.zones.enumSousZones.Zone_219;
-import fr.abes.cbs.zones.enumSousZones.Zone_exx;
 import fr.abes.cbs.zones.enumZones.EnumZones;
 import fr.abes.theses.dao.impl.DaoProvider;
 import fr.abes.theses.model.dto.NoticeBiblioDto;
@@ -16,28 +15,20 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import java.io.StringReader;
-import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -282,17 +273,18 @@ public class MajStarSudocService implements IMajStarSudocService {
     }
 
     @Override
-    public NoticeBiblioDto majStarSudocExemp(String noticeStarXml, NoticeBiblioDto trace) throws CBSException {
+    public NoticeBiblioDto majStarSudocExemp(String noticeStarXml, NoticeBiblioDto trace, boolean premiereExemplarisationRcrNonDeploye) throws CBSException {
         NoticeConcrete notice = new NoticeConcrete(noticeStarXml);
         String idStar = notice.getNoticeBiblio().findZone("002", 0).findSousZone("$a").getValeur();
         Zone e856 = findE856IntoXml(noticeStarXml);
+        authenticateBiblio(login, passwd);
 
         try {
-            LinkedList<String> numExemplaires = supprimerExemplaireGenereParStarDansSudoc(idStar);
-            RediffuserExemplaireStarDansSudoc(trace, notice, e856, numExemplaires);
+            supprimerExemplaireGenereParStarDansSudoc(idStar);
+            rediffuserExemplaireStarDansSudoc(trace, notice, e856, premiereExemplarisationRcrNonDeploye);
         } catch (CBSException e) {
             trace.setRetourSudoc(e.getMessage());
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             trace.setRetourSudoc(e.getMessage());
         }
 
@@ -300,13 +292,14 @@ public class MajStarSudocService implements IMajStarSudocService {
         return trace;
     }
 
-    private void RediffuserExemplaireStarDansSudoc(NoticeBiblioDto trace, NoticeConcrete notice, Zone e856, LinkedList<String> numExemplaires) {
-        int i = Integer.parseInt(notice.getNumEx() == null ? "1" : notice.getNumEx()+1);
+
+    private void rediffuserExemplaireStarDansSudoc(NoticeBiblioDto trace, NoticeConcrete notice, Zone e856, boolean premiereExemplarisationRcrNonDeploye) throws CBSException {
+
 
         for (Exemplaire exemplaire : notice.getExemplaires()) {
 
-            String numExemplairePoll = numExemplaires.pollFirst();
-            String numExemplaireCurrent = numExemplairePoll != null ? numExemplairePoll : String.format("%02d", i);
+
+            String numExemplaireCurrent = clientExpl.getNvNumEx().substring(1);
 
             exemplaire.addZone("e" + numExemplaireCurrent, "$b", "x");
             exemplaire.addZone("991", "$a", "exemplaire créé automatiquement par STAR");
@@ -315,56 +308,85 @@ public class MajStarSudocService implements IMajStarSudocService {
                 exemplaire.addZone(e856);
             }
 
-            try {
-                this.clientExpl.creerExemplaire(numExemplaireCurrent);
-                String exempToWrite = exemplaire.toString().substring(1, exemplaire.toString().length() - 1);
-                this.clientExpl.newExemplaire(exempToWrite);
-                String resultatCreation = this.clientExpl.editer("1");
-                List<Exemplaire> exemplairesCree = NoticeConcrete.listeExemplaireUnimarc(resultatCreation);
-                Exemplaire exemplaireCree = exemplairesCree.stream().filter(e -> e.getNumEx().equals(numExemplaireCurrent)).findFirst().orElse(null);
+            if (estExemplaireDuRcr(exemplaire, trace, premiereExemplarisationRcrNonDeploye)) {
+                try {
+                    this.clientExpl.creerExemplaire(numExemplaireCurrent);
+                    String exempToWrite = exemplaire.toString().substring(1, exemplaire.toString().length() - 1);
+                    this.clientExpl.newExemplaire(exempToWrite);
+                    String resultatCreation = this.clientExpl.editer("1");
+                    List<Exemplaire> exemplairesCree = NoticeConcrete.listeExemplaireUnimarc(resultatCreation);
+                    Exemplaire exemplaireCree = exemplairesCree.stream().filter(e -> e.getNumEx().equals(numExemplaireCurrent)).findFirst().orElse(null);
 
-                if (exemplaireCree != null){
-                    String ePN = exemplaireCree.findZone("A99", 0).getValeur();
-                    trace.setEpn(ePN);
-                    trace.setIndicSudoc("OK");
-                    trace.setRetourSudoc("Exemplaire créé");
-                } else {
-                    trace.setRetourSudoc("Exemplaire non créé");
-                    trace.setIndicSudoc("KO");
+                    if (exemplaireCree != null) {
+                        String ePN = exemplaireCree.findZone("A99", 0).getValeur();
+                        trace.setEpn(ePN);
+                        trace.setIndicSudoc("OK");
+                        trace.setRetourSudoc("Exemplaire créé");
+                    } else {
+                        trace.setRetourSudoc("Exemplaire non créé");
+                        trace.setIndicSudoc("KO");
+                    }
+
+                } catch (CBSException e) {
+                    trace.setRetourSudoc(e.getMessage());
                 }
-
-            } catch (CBSException e) {
-                trace.setRetourSudoc(e.getMessage());
             }
-            i++;
         }
     }
 
-    private LinkedList<String> supprimerExemplaireGenereParStarDansSudoc(String idStar) throws CBSException {
+    private boolean estExemplaireDuRcr(Exemplaire exemplaire, NoticeBiblioDto trace, boolean premiereExemplarisationRcrNonDeploye) throws CBSException {
+        String rcrExemplaire = exemplaire.findZone("930", 0).findSousZone("$b").getValeur();
+        if (rcrExemplaire.equals(trace.getCodeEtab())) {
+            return true;
+        } else {
+            if (Integer.parseInt(this.clientBiblio.ilnRattachement(rcrExemplaire)) > 199
+                    && Integer.parseInt(this.clientBiblio.ilnRattachement(rcrExemplaire)) <= 300 && premiereExemplarisationRcrNonDeploye) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    private Integer supprimerExemplaireGenereParStarDansSudoc(String idStar) throws CBSException {
         this.clientExpl.search("che sou " + idStar);
         if (this.clientExpl.getNbNotices() == 1) {
             this.clientExpl.affUnma();
             String resu = clientExpl.editer("1");
 
             List<Exemplaire> exemplaires = NoticeConcrete.listeExemplaireUnimarc(resu);
-            LinkedList<String> numExemplaires = new LinkedList<>();
+            Integer indexExemplaire = 1;
 
             for (Exemplaire exemplaire : exemplaires) {
-                if (IsCreatedAutomaticalyByStar(exemplaire)) {
-                    String numExemplaire = exemplaire.getNumEx();
-                    this.clientExpl.supExemplaire(numExemplaire);
-                    numExemplaires.add(numExemplaire);
+                if (procesCbsPeutModifierExemplaire(clientExpl, exemplaire)){
+                    if (Integer.parseInt(exemplaire.getNumEx()) > indexExemplaire) {
+                        indexExemplaire = Integer.parseInt(exemplaire.getNumEx());
+                    }
+                    if (estCreeAutomatiquementParStar(exemplaire)) {
+                        String numExemplaire = exemplaire.getNumEx();
+                        this.clientExpl.supExemplaire(numExemplaire);
+                    }
+                } else {
+                    if (Integer.parseInt(exemplaire.getNumEx()) > indexExemplaire) {
+                        indexExemplaire = Integer.parseInt(exemplaire.getNumEx())+1;
+                    }
                 }
             }
-            return numExemplaires;
-        }
-        else {
+            return indexExemplaire;
+        } else {
             throw new IllegalStateException("Plusieurs notice pour l'ID star " + idStar);
         }
 
     }
 
-    private boolean IsCreatedAutomaticalyByStar(Exemplaire exemplaire) {
+    private boolean procesCbsPeutModifierExemplaire(ProcessCBS clientExpl, Exemplaire exemplaire) {
+        String a98 = exemplaire.findZone("A98", 0).getValeur();
+        String rcrExemplaire = a98.split(":")[0];
+
+        return rcrExemplaire.equals(clientExpl.getRcr());
+    }
+
+    private boolean estCreeAutomatiquementParStar(Exemplaire exemplaire) {
         List<Zone> zones = exemplaire.findZoneWithPattern("991", "$a", "exemplaire créé automatiquement par STAR");
         return !zones.isEmpty();
     }
@@ -384,7 +406,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             zoneE856 = new Zone(EnumZones.E856, Notice.getIndicateurs(tag));
 
             for (int i = 0; i < tag.getChildNodes().getLength(); i++) {
-                if (tag.getChildNodes().item(i).getNodeName() == "subfield") {
+                if (tag.getChildNodes().item(i).getNodeName().equals("subfield")) {
                     zoneE856.ajoutSousZone("$" + tag.getChildNodes().item(i).getAttributes().getNamedItem("code").getTextContent(),
                             tag.getChildNodes().item(i).getTextContent());
                 }
@@ -398,8 +420,7 @@ public class MajStarSudocService implements IMajStarSudocService {
         DocumentBuilder builder;
         try {
             builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(new InputSource(new StringReader(xmlStr)));
-            return doc;
+            return builder.parse(new InputSource(new StringReader(xmlStr)));
         } catch (Exception e) {
             e.printStackTrace();
         }
