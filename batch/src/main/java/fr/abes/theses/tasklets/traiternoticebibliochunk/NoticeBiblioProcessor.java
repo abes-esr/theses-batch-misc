@@ -53,6 +53,7 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, Not
             NoticeBiblioDto resultatInfoXml = getService().getMajStarSudocService().majStarSudocBiblio(marcXml, noticeBiblioDto);
             noticeBiblioDto.setRetourSudoc(resultatInfoXml.getRetourSudoc());
         }
+        log.info("Processor " + noticeBiblioDto.getRetourSudoc());
         return noticeBiblioDto;
     }
 

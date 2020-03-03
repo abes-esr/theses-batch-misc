@@ -50,7 +50,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
     private String passwd;
 
     private final String urlDiffusionTotale = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=id%20asc&wt=json";
-    private final String urlDiffusionExemp = "/solr1/select/?q=SGindicCines:OK+SGindicSudoc:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]&fl=SGRCRSudoc,id&wt=json";
+    private final String urlDiffusionExemp = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]+id:12427&fl=SGRCRSudoc,id&wt=json";
     @Override
     public void beforeStep(StepExecution stepExecution) {
         log.info("entree dans beforeStep de SelectThesesStarARedifTasklet");
@@ -74,10 +74,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
 
             if (!idThese.equals("null"))
             {
-                requete = urlSolr +"/solr1/select/?" +
-                        "q=SGindicCines:OK+SGindicSudoc:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]" + "+id:" + idThese +
-                        "&fl=SGRCRSudoc,id" +
-                        "&wt=json";
+                requete = getRequeteParIdThese();
             }
 
             JSONArray docs = getJson(requete);
@@ -103,6 +100,23 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
             stepContribution.setExitStatus(ExitStatus.FAILED);
         }
         return RepeatStatus.FINISHED;
+    }
+
+    private String getRequeteParIdThese() {
+        String requete;
+        if(jobName.equals("diffuserThesesVersSudoc")){
+            requete = urlSolr + "/solr1/select/?" +
+                    "q=SGindicCines:OK+SGetabProd:oui" + "+id:" + idThese +
+                    "&fl=id,SGetatWF,SGcodeEtab" +
+                    "&sort=id%20asc" +
+                    "&wt=json";
+        } else {
+            requete = urlSolr +"/solr1/select/?" +
+                    "q=SGindicCines:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]" + "+id:" + idThese +
+                    "&fl=SGRCRSudoc,id" +
+                    "&wt=json";
+        }
+        return requete;
     }
 
     private void extractJsonExemp(JSONArray docs) {

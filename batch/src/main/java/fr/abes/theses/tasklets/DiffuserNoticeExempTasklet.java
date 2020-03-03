@@ -76,6 +76,8 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
         String previousRcr = "";
         boolean premiereExemplarisationRcrNonDeploye = true;
 
+        log.info("Size noticeBib : " + noticeBiblios.size());
+
         for (NoticeBiblioDto noticeBiblio : noticeBiblios) {
             log.info("Id de notice : " + noticeBiblio.getId().toString());
             NoticeBiblio noticeBiblioEntity = new NoticeBiblio();

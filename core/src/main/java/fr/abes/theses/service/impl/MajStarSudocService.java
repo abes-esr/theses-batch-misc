@@ -147,6 +147,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             trace.setDateCreation(new Date());
             trace.setDateModification(new Date());
         } catch (CBSException ex) {
+            log.info(ex.getMessage());
             trace.setIndicSudoc("NOK - Notice non créée</CODERETOUR>");
             trace.setRetourSudoc(ex.getMessage());
         }
@@ -173,6 +174,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             trace.setRetourSudoc("Notice biblio fusionnée");
             trace.setDateModification(new Date());
         } catch (Exception ex) {
+            log.info("fusionNoticeStarEtSudoc" + ex.getMessage());
             trace.setIndicSudoc("NOK");
             trace.setRetourSudoc(ex.getMessage());
         }
@@ -374,7 +376,11 @@ public class MajStarSudocService implements IMajStarSudocService {
             }
             return indexExemplaire;
         } else {
-            throw new IllegalStateException("Plusieurs notice pour l'ID star " + idStar);
+            if (this.clientExpl.getNbNotices() > 1){
+                throw new IllegalStateException("Plusieurs notice pour l'ID star " + idStar);
+            } else {
+                throw new IllegalStateException("Pas de notice pour l'ID star " + idStar);
+            }
         }
 
     }
