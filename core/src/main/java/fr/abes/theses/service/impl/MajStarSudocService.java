@@ -292,6 +292,7 @@ public class MajStarSudocService implements IMajStarSudocService {
         authenticateBiblio(login, passwd);
 
         try {
+            this.clientExpl.search("che sou " + idStar);
             if (!getNumThesePrecedent().equals(idStar)){
                 supprimerExemplaireGenereParStarDansSudoc(idStar);
             }
@@ -362,7 +363,6 @@ public class MajStarSudocService implements IMajStarSudocService {
     }
 
     private void supprimerExemplaireGenereParStarDansSudoc(String idStar) throws CBSException {
-        this.clientExpl.search("che sou " + idStar);
         if (this.clientExpl.getNbNotices() == 1) {
 
             //String resu = clientExpl.editer("1");
