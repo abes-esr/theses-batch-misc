@@ -20,7 +20,7 @@ public class NoticeBiblioReader implements ItemReader<NoticeBiblioDto>, StepExec
     private List<NoticeBiblioDto> noticeBiblios;
     private AtomicInteger i = new AtomicInteger();
 
-    public NoticeBiblioReader(ServiceProvider serviceProvider) {
+    public NoticeBiblioReader() {
     }
 
     @Override

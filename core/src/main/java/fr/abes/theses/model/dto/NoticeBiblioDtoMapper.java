@@ -14,6 +14,7 @@ public class NoticeBiblioDtoMapper {
                 noticeBiblioDto.getDateCreation(),
                 noticeBiblioDto.getDateModification(),
                 noticeBiblioDto.getIndicSudoc(),
-                noticeBiblioDto.getPpn());
+                noticeBiblioDto.getPpn(),
+                noticeBiblioDto.getEpn());
     }
 }

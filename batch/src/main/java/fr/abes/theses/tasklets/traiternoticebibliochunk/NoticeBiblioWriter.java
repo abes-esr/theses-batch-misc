@@ -58,15 +58,15 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExec
     }
 
     private void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) throws DocumentException, InstantiationException {
-        getService().getGestionTefService().majDonneesGestion(noticeBiblioDto, noticeBiblioDto.getId(), noticeBiblioDto.getCodeEtab());
+        getService().getGestionTefService().majDonneesGestion(noticeBiblioDto);
     }
 
     private void majNoticeBiblio(NoticeBiblioDto noticeBiblioDto) throws DataAccessException {
         noticeBiblioDto.setDone(1);
         NoticeBiblio noticeBiblio = NoticeBiblioDtoMapper.getNoticeBiblioEntity(noticeBiblioDto);
+        log.info("majNoticeBiblio RetourSudoc : " + noticeBiblio.getRetourSudoc());
         service.getNoticeBiblioService().save(noticeBiblio);
         log.info("notice traitée : " + noticeBiblio.getIddoc());
-        //TODO Gestion Tef : maj du bloc Sudoc de traitement
     }
 
     @Override

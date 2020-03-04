@@ -7,5 +7,7 @@ public interface IGestionTefService {
 
     void majTraitementSortieSudoc(NoticeBiblioDto noticeBiblioDto, Integer idDoc, String codeEtab) throws InstantiationException, DocumentException;
 
-    void majDonneesGestion(NoticeBiblioDto dto, Integer idDoc, String codeEtab) throws InstantiationException, DocumentException;
+    void majDonneesGestionExemplarisation(NoticeBiblioDto noticeBiblioDto) throws InstantiationException, DocumentException;
+
+    void majDonneesGestion(NoticeBiblioDto dto) throws InstantiationException, DocumentException;
 }

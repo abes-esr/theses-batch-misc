@@ -48,8 +48,12 @@ public class NoticeBiblio implements Serializable,GenericEntity<Integer> {
     @Column(name = "PPN")
     private String ppn;
 
+    @Column(name = "EPN")
+    private String epn;
 
-    public NoticeBiblio(Integer id, Integer idJob, Integer iddoc, String codeEtab, Integer done, String retourSudoc, Date dateCreation, Date dateModification, String indicSudoc, String ppn) {
+
+
+    public NoticeBiblio(Integer id, Integer idJob, Integer iddoc, String codeEtab, Integer done, String retourSudoc, Date dateCreation, Date dateModification, String indicSudoc, String ppn, String epn) {
         this.id = id;
         this.idJob = idJob;
         this.iddoc = iddoc;
@@ -60,8 +64,9 @@ public class NoticeBiblio implements Serializable,GenericEntity<Integer> {
         this.dateModification = dateModification;
         this.indicSudoc = indicSudoc;
         this.ppn = ppn;
+        this.epn = epn;
     }
-    public NoticeBiblio(Integer idJob, Integer iddoc, String codeEtab, Integer done, String retourSudoc, Date dateCreation, Date dateModification, String indicSudoc, String ppn) {
+    public NoticeBiblio(Integer idJob, Integer iddoc, String codeEtab, Integer done, String retourSudoc, Date dateCreation, Date dateModification, String indicSudoc, String ppn, String epn) {
         this.idJob = idJob;
         this.iddoc = iddoc;
         this.codeEtab = codeEtab;
@@ -71,6 +76,7 @@ public class NoticeBiblio implements Serializable,GenericEntity<Integer> {
         this.dateModification = dateModification;
         this.indicSudoc = indicSudoc;
         this.ppn = ppn;
+        this.epn = epn;
     }
 
     @Override

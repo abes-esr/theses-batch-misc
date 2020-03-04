@@ -12,18 +12,23 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
 @Slf4j
 public class AuthentifierToSudocTasklet implements Tasklet, StepExecutionListener {
-    private List<NoticeBiblio> lignesFichier;
     @Autowired
     ProxyRetry proxyRetry;
 
+    @Value("${sudoc.loginM4001}")
+    private String login;
+
+    @Value("${sudoc.passwdM4001}")
+    private String passwd;
+
     @Override
     public void beforeStep(StepExecution stepExecution) {
-
     }
 
     /**
@@ -40,7 +45,7 @@ public class AuthentifierToSudocTasklet implements Tasklet, StepExecutionListene
 
         try
         {
-            this.proxyRetry.authenticate();
+            this.proxyRetry.authenticate(login, passwd);
             log.info("connexion OK");
         }
         catch (CBSException e)

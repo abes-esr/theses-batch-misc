@@ -11,9 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -29,19 +29,29 @@ public class GestionTefService implements IGestionTefService {
         if (document != null) {
             Tef tef = new Tef(document.getDoc());
             tef.setStarGestionAttribut(getDateISO8601(), retour);
-            getDao().getDocument().save(document);
+            document.setDoc(tef.documentTef.asXML());
+            getDao().getDocument().saveAndFlush(document);
         }
     }
 
     @Override
-    public void majDonneesGestion(NoticeBiblioDto dto, Integer idDoc, String codeEtab) throws InstantiationException, DocumentException {
-        Document document = getDao().getDocument().findById(idDoc).orElse(null);
-        Tef documentTef = new Tef(document.getDoc());
-        documentTef.setStarGestionAttribut(dto.getDateCreation(), dto.getDateModification(), dto.getRetourSudoc(), dto.getIndicSudoc(), dto.getPpn());
-        //TODO mise à jour des champs concernés
-        document.setDoc(documentTef.toString());
-        getDao().getDocument().save(document);
+    public void majDonneesGestionExemplarisation(NoticeBiblioDto noticeBiblioDto) throws InstantiationException, DocumentException {
+        Document document = getDao().getDocument().findById(noticeBiblioDto.getIddoc()).orElse(null);
+            Tef tef = new Tef(document.getDoc());
+            tef.setStarGestionAttributExemplaire(new Date(), noticeBiblioDto.getIndicSudoc(), noticeBiblioDto.getRetourSudoc());
+            document.setDoc(tef.documentTef.asXML());
+            getDao().getDocument().saveAndFlush(document);
+    }
 
+    @Override
+    public void majDonneesGestion(NoticeBiblioDto dto) throws InstantiationException, DocumentException {
+        Document document = getDao().getDocument().findById(dto.getId()).orElse(null);
+        if (document != null) {
+            Tef documentTef = new Tef(document.getDoc());
+            documentTef.setStarGestionAttribut(dto.getDateCreation(), dto.getDateModification(), dto.getRetourSudoc(), dto.getIndicSudoc(), dto.getPpn());
+            document.setDoc(documentTef.documentTef.asXML());
+            getDao().getDocument().saveAndFlush(document);
+        }
     }
 
     private String getDateISO8601() {
