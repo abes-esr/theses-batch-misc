@@ -289,15 +289,13 @@ public class MajStarSudocService implements IMajStarSudocService {
         NoticeConcrete notice = new NoticeConcrete(noticeStarXml);
         String idStar = notice.getNoticeBiblio().findZone("002", 0).findSousZone("$a").getValeur();
         Zone e856 = findE856IntoXml(noticeStarXml);
-        authenticateBiblio(login, passwd);
 
         try {
-            this.clientExpl.search("che sou " + idStar);
-            if (!getNumThesePrecedent().equals(idStar)){
+            if (!getNumThesePrecedent().equals(idStar)) {
                 supprimerExemplaireGenereParStarDansSudoc(idStar);
             }
             setNumThesePrecedent(idStar);
-            rediffuserExemplaireStarDansSudoc(trace, notice, e856, premiereExemplarisationRcrNonDeploye);
+            rediffuserExemplaireStarDansSudoc(trace, notice, e856, premiereExemplarisationRcrNonDeploye, idStar);
         } catch (CBSException e) {
             trace.setRetourSudoc(e.getMessage());
         } catch (IllegalStateException e) {
@@ -309,11 +307,13 @@ public class MajStarSudocService implements IMajStarSudocService {
     }
 
 
-    private void rediffuserExemplaireStarDansSudoc(NoticeBiblioDto trace, NoticeConcrete notice, Zone e856, boolean premiereExemplarisationRcrNonDeploye) throws CBSException {
+    private void rediffuserExemplaireStarDansSudoc(NoticeBiblioDto trace, NoticeConcrete notice, Zone e856, boolean premiereExemplarisationRcrNonDeploye, String idStar) throws CBSException {
 
+        this.clientExpl.search("che sou " + idStar);
+        clientExpl.editer("1");
         for (Exemplaire exemplaire : notice.getExemplaires()) {
 
-            String numExemplaireCurrent = clientExpl.getNvNumEx()==null ? "01" : clientExpl.getNvNumEx().substring(1);
+            String numExemplaireCurrent = clientExpl.getNvNumEx() == null ? "01" : clientExpl.getNvNumEx().substring(1);
 
             exemplaire.addZone("e" + numExemplaireCurrent, "$b", "x");
             exemplaire.addZone("991", "$a", "exemplaire créé automatiquement par STAR");
@@ -363,9 +363,8 @@ public class MajStarSudocService implements IMajStarSudocService {
     }
 
     private void supprimerExemplaireGenereParStarDansSudoc(String idStar) throws CBSException {
+        this.clientExpl.search("che sou " + idStar);
         if (this.clientExpl.getNbNotices() == 1) {
-
-            //String resu = clientExpl.editer("1");
 
             String resu = this.clientExpl.affUnma();
             List<Exemplaire> exemplaires = new ArrayList<>();
@@ -378,24 +377,28 @@ public class MajStarSudocService implements IMajStarSudocService {
             while (matcher.find()) {
                 Exemplaire exemplaire = new Exemplaire();
                 exemplaire.addZone(matcher.group("numEx"), "$bx");
-                exemplaire.addZone("991", "$a", matcher.group("autoStar"), new char[]{'#', '#'} );
+                exemplaire.addZone("991", "$a", matcher.group("autoStar"), new char[]{'#', '#'});
                 exemplaire.addZone("A98", matcher.group("rcr") + ":");
                 exemplaires.add(exemplaire);
             }
 
-
-            for (Exemplaire exemplaire : exemplaires) {
-                if (estCreeAutomatiquementParStar(exemplaire)) {
-                    String a98 = exemplaire.findZone("A98", 0).getValeur();
-                    String rcrExemplaire = a98.split(":")[0];
-                    authenticateExempSupp("M" + rcrExemplaire, passwd);
-                    clientExemplSupp.search("che sou " + idStar);
-                    clientExemplSupp.supExemplaire(exemplaire.getNumEx());
-                    clientExemplSupp.disconnect();
+            try {
+                for (Exemplaire exemplaire : exemplaires) {
+                    if (estCreeAutomatiquementParStar(exemplaire)) {
+                        String a98 = exemplaire.findZone("A98", 0).getValeur();
+                        String rcrExemplaire = a98.split(":")[0];
+                        authenticateExempSupp("M" + rcrExemplaire, passwd);
+                        clientExemplSupp.search("che sou " + idStar);
+                        clientExemplSupp.supExemplaire(exemplaire.getNumEx());
+                        clientExemplSupp.disconnect();
+                    }
                 }
+            } catch (Exception e){
+                clientExemplSupp.disconnect();
+                throw e;
             }
         } else {
-            if (this.clientExpl.getNbNotices() > 1){
+            if (this.clientExpl.getNbNotices() > 1) {
                 throw new IllegalStateException("Plusieurs notice pour l'ID star " + idStar);
             } else {
                 throw new IllegalStateException("Pas de notice pour l'ID star " + idStar);
@@ -494,8 +497,12 @@ public class MajStarSudocService implements IMajStarSudocService {
 
     @Override
     public void disconnectExemp() {
-        log.info("Déconnexion du client exemplarisation");
-        this.clientExpl.disconnect();
+        if (this.clientExpl.getClientCBS().isConnected()) {
+            log.info("Déconnexion du client exemplarisation");
+            this.clientExpl.disconnect();
+        } else {
+            log.info("Client exemplarisation déjà déconnecté");
+        }
     }
 }
 
