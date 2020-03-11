@@ -369,7 +369,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             String resu = this.clientExpl.affUnma();
             List<Exemplaire> exemplaires = new ArrayList<>();
 
-            String regex = "<BR>(?<numEx>e\\d{2}).*?<BR>991 ##\\$a(?<autoStar>exemplaire créé automatiquement par STAR).*?<BR>A98 (?<rcr>\\d*)";
+            String regex = "<BR>(?<numEx>e\\d{2}).*?<BR>A98 (?<rcr>\\d*)";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(resu);
 
@@ -377,7 +377,9 @@ public class MajStarSudocService implements IMajStarSudocService {
             while (matcher.find()) {
                 Exemplaire exemplaire = new Exemplaire();
                 exemplaire.addZone(matcher.group("numEx"), "$bx");
-                exemplaire.addZone("991", "$a", matcher.group("autoStar"), new char[]{'#', '#'});
+                if (matcher.group(0).contains("exemplaire créé automatiquement par")){
+                    exemplaire.addZone("991", "$a", "exemplaire créé automatiquement par STAR", new char[]{'#', '#'});
+                }
                 exemplaire.addZone("A98", matcher.group("rcr") + ":");
                 exemplaires.add(exemplaire);
             }
@@ -415,7 +417,7 @@ public class MajStarSudocService implements IMajStarSudocService {
     }
 
     private boolean estCreeAutomatiquementParStar(Exemplaire exemplaire) {
-        List<Zone> zones = exemplaire.findZoneWithPattern("991", "$a", "exemplaire créé automatiquement par STAR");
+        List<Zone> zones = exemplaire.findZoneWithPattern("991", "$a", "exemplaire créé automatiquement par");
         return !zones.isEmpty();
     }
 
