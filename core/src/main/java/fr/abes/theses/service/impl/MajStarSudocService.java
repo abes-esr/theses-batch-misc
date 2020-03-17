@@ -174,9 +174,10 @@ public class MajStarSudocService implements IMajStarSudocService {
     private void fusionNoticeStarEtSudoc(NoticeConcrete theseStar, NoticeBiblioDto trace) throws CBSException {
         clientBiblio.affUnma();
         String resu = clientBiblio.editer("1");
-        Biblio noticeBiblio = new Biblio(resu.substring(resu.indexOf(Constants.STR_1F), resu.indexOf(Constants.STR_1E, resu.indexOf(Constants.STR_1F)) + 1));
-        String fusion = fusionThese(theseStar.getNoticeBiblio(), noticeBiblio);
         try {
+            Biblio noticeBiblio = new Biblio(resu.substring(resu.indexOf(Constants.STR_1F), resu.indexOf(Constants.STR_1E, resu.indexOf(Constants.STR_1F)) + 1));
+            String fusion = fusionThese(theseStar.getNoticeBiblio(), noticeBiblio);
+
             clientBiblio.modifierNotice("1", fusion);
             //création notice biblio ok
             trace.setIndicSudoc("OK");
@@ -184,7 +185,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             trace.setRetourSudoc("Notice biblio fusionnée");
             trace.setDateModification(new Date());
         } catch (Exception ex) {
-            log.info("fusionNoticeStarEtSudoc" + ex.getMessage());
+            log.info("fusionNoticeStarEtSudoc " + ex.getMessage());
             trace.setIndicSudoc("NOK");
             trace.setRetourSudoc(ex.getMessage());
         }
@@ -377,7 +378,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             while (matcher.find()) {
                 Exemplaire exemplaire = new Exemplaire();
                 exemplaire.addZone(matcher.group("numEx"), "$bx");
-                if (matcher.group(0).contains("exemplaire créé automatiquement par")){
+                if (matcher.group(0).contains("exemplaire créé automatiquement par")) {
                     exemplaire.addZone("991", "$a", "exemplaire créé automatiquement par STAR", new char[]{'#', '#'});
                 }
                 exemplaire.addZone("A98", matcher.group("rcr") + ":");
@@ -395,7 +396,7 @@ public class MajStarSudocService implements IMajStarSudocService {
                         clientExemplSupp.disconnect();
                     }
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 clientExemplSupp.disconnect();
                 throw e;
             }

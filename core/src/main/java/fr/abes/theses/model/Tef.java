@@ -33,7 +33,11 @@ public class Tef {
     public void setStarGestionAttribut(Date dateCreation, Date dateModification, String retourSudoc, String indicSudoc, String ppn) throws InstantiationException {
         checkDocumenTef();
         SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        setDate(formater.format(dateModification));
+        try{
+            setDate(formater.format(dateModification));
+        } catch (Exception e){
+            log.info(e.getMessage());
+        }
 
         if (retourSudoc.contains("NOK")) {
             XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", retourSudoc, documentTef);

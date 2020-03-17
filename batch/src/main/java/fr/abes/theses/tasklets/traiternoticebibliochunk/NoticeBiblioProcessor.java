@@ -43,16 +43,21 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, Not
      * @throws
      */
     @Override
-    public NoticeBiblioDto process(NoticeBiblioDto noticeBiblioDto) throws TransformerException, ExecutionControl.NotImplementedException {
-        Document doc = getService().getDocumentService().findById(noticeBiblioDto.getIddoc());
-        log.info("chunk processor for iddoc : " + noticeBiblioDto.getIddoc());
-        if (doc == null) {
-            noticeBiblioDto.setRetourSudoc("These not found");
-        } else {
-            String marcXml = Utilitaire.getMarcXmlFromTef(doc, cheminXslTef2Marc, fichierXslTef2Marc);
-            NoticeBiblioDto resultatInfoXml = getService().getMajStarSudocService().majStarSudocBiblio(marcXml, noticeBiblioDto);
-            noticeBiblioDto.setRetourSudoc(resultatInfoXml.getRetourSudoc());
+    public NoticeBiblioDto process(NoticeBiblioDto noticeBiblioDto) throws TransformerException {
+        try {
+            Document doc = getService().getDocumentService().findById(noticeBiblioDto.getIddoc());
+            log.info("chunk processor for iddoc : " + noticeBiblioDto.getIddoc());
+            if (doc == null) {
+                noticeBiblioDto.setRetourSudoc("These not found");
+            } else {
+                String marcXml = Utilitaire.getMarcXmlFromTef(doc, cheminXslTef2Marc, fichierXslTef2Marc);
+                NoticeBiblioDto resultatInfoXml = getService().getMajStarSudocService().majStarSudocBiblio(marcXml, noticeBiblioDto);
+                noticeBiblioDto.setRetourSudoc(resultatInfoXml.getRetourSudoc());
+            }
+        } catch (Exception e){
+            noticeBiblioDto.setRetourSudoc("Processor " + e.getMessage());
         }
+
         log.info("Processor " + noticeBiblioDto.getRetourSudoc());
         return noticeBiblioDto;
     }
