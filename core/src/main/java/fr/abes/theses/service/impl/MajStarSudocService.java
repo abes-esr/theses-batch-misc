@@ -1,5 +1,8 @@
 package fr.abes.theses.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import fr.abes.cbs.exception.CBSException;
 import fr.abes.cbs.notices.*;
 import fr.abes.cbs.process.ProcessCBS;
@@ -111,31 +114,42 @@ public class MajStarSudocService implements IMajStarSudocService {
             this.setNumSource(notice.getNoticeBiblio().findZones("002").get(0).findSousZone("$a").getValeur());
             this.setNumThese(notice.getNoticeBiblio().findZones("029").get(0).findSousZone("$b").getValeur());
 
-            if (!noticeBiblioElecFinded(notice)) {
-                creerTheseBiblio(notice, trace);
-            } else {
+            if (noticeBiblioElecFinded(notice)) {
                 fusionNoticeStarEtSudoc(notice, trace);
+            } else {
+                creerTheseBiblio(notice, trace);
             }
-        } catch (CBSException ex) {
+        } catch (CBSException | JsonProcessingException ex) {
             log.error("Erreur dans la création de la notice bibliographique " + ex.getMessage());
+            trace.setIndicSudoc("NOK");
+            trace.setRetourSudoc(ex.getMessage());
         }
         return trace;
     }
 
-    private boolean noticeBiblioElecFinded(NoticeConcrete notice) throws CBSException {
+    private boolean noticeBiblioElecFinded(NoticeConcrete notice) throws CBSException, JsonProcessingException {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(clientBiblio);
+        log.info("ClientBiblio : " + json);
         //on cherche si la thèse STAR est dans le Sudoc en utilisant le numéro source (zone unimarc 002)
-        clientBiblio.search("che sou " + getNumSource());
-        if (clientBiblio.getNbNotices() == 0) {
-            //pas de notice avec recherche sur le num. source donc on lance la recherche sur le num. de thèse (zone unimarc 029)
-            clientBiblio.search("che num " + getNumThese());
-            if (clientBiblio.getNbNotices() >= 1) {
-                //quand la notice trouvée est une thèse papier, on doit créer la notice biblio electronique
-                if (!notice.getNoticeBiblio().isTheseElectronique()) {
-                    return false;
+        try {
+            clientBiblio.search("che sou " + getNumSource());
+            if (clientBiblio.getNbNotices() == 0) {
+                //pas de notice avec recherche sur le num. source donc on lance la recherche sur le num. de thèse (zone unimarc 029)
+                clientBiblio.search("che num " + getNumThese());
+                if (clientBiblio.getNbNotices() >= 1) {
+                    //quand la notice trouvée est une thèse papier, on doit créer la notice biblio electronique
+                    if (!notice.getNoticeBiblio().isTheseElectronique()) {
+                        return false;
+                    }
                 }
             }
+            return true;
+        } catch (Exception e) {
+            log.info("getNumSource() : " + getNumSource());
+            log.info(e.getMessage());
+            throw e;
         }
-        return true;
     }
 
 
