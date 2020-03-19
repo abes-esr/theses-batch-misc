@@ -1,8 +1,5 @@
 package fr.abes.theses.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import fr.abes.cbs.exception.CBSException;
 import fr.abes.cbs.notices.*;
 import fr.abes.cbs.process.ProcessCBS;
@@ -119,7 +116,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             } else {
                 creerTheseBiblio(notice, trace);
             }
-        } catch (CBSException | JsonProcessingException ex) {
+        } catch (CBSException ex) {
             log.error("Erreur dans la création de la notice bibliographique " + ex.getMessage());
             trace.setIndicSudoc("NOK");
             trace.setRetourSudoc(ex.getMessage());
@@ -127,10 +124,7 @@ public class MajStarSudocService implements IMajStarSudocService {
         return trace;
     }
 
-    private boolean noticeBiblioElecFinded(NoticeConcrete notice) throws CBSException, JsonProcessingException {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(clientBiblio);
-        log.info("ClientBiblio : " + json);
+    private boolean noticeBiblioElecFinded(NoticeConcrete notice) throws CBSException {
         //on cherche si la thèse STAR est dans le Sudoc en utilisant le numéro source (zone unimarc 002)
         try {
             clientBiblio.search("che sou " + getNumSource());
