@@ -362,8 +362,8 @@ public class MajStarSudocService implements IMajStarSudocService {
         if (rcrExemplaire.equals(trace.getCodeEtab())) {
             return true;
         } else {
-            if (Integer.parseInt(this.clientBiblio.ilnRattachement(rcrExemplaire)) > 199
-                    && Integer.parseInt(this.clientBiblio.ilnRattachement(rcrExemplaire)) <= 300 && premiereExemplarisationRcrNonDeploye) {
+            if (Integer.parseInt(this.clientExpl.ilnRattachement(rcrExemplaire)) > 199
+                    && Integer.parseInt(this.clientExpl.ilnRattachement(rcrExemplaire)) <= 300 && premiereExemplarisationRcrNonDeploye) {
                 return true;
             } else {
                 return false;
