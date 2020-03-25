@@ -50,7 +50,8 @@ public class SelectNoticesBibliosATraiter implements Tasklet, StepExecutionListe
         log.info("Lancement Job n° " + jobId);
         log.info("SNBTT size noticebib : " + this.noticeBiblioDtos.size());
         this.noticeBiblioDtos = new ArrayList<>();
-        for (NoticeBiblio noticeBiblio : getService().getNoticeBiblioService().getNoticesNonTraiteByJobId(jobId)) {
+        List<NoticeBiblio> NoticeBiblios = getService().getNoticeBiblioService().getNoticesNonTraiteByJobId(jobId);
+        for (NoticeBiblio noticeBiblio : NoticeBiblios) {
             this.noticeBiblioDtos.add(new NoticeBiblioDto(noticeBiblio));
         }
         if (this.noticeBiblioDtos.isEmpty()) {
