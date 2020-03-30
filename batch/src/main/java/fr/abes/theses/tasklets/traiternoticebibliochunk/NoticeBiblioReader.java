@@ -30,6 +30,8 @@ public class NoticeBiblioReader implements ItemReader<NoticeBiblioDto>, StepExec
                 .getJobExecution()
                 .getExecutionContext();
         this.noticeBiblios = (List<NoticeBiblioDto>) executionContext.get("noticesBiblio");
+
+        log.info("NoticeBibReader beforeStep size noticebib : " + this.noticeBiblios.size());
     }
 
     /**
