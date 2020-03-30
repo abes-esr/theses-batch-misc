@@ -53,7 +53,8 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExec
                 if ("OK".equals(noticeBiblioDto.getIndicSudoc())){
                     this.majDonneesGestion(noticeBiblioDto);
                 }
-            } catch (DataAccessException e) {
+            } catch (Exception e) {
+                log.error(e.getMessage());
                 log.error("Erreur dans la mise à jour de la ligne " + noticeBiblioDto.getId());
             }
         }
