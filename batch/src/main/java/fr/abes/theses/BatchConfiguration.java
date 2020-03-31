@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -109,18 +110,20 @@ public class BatchConfiguration {
     }
 
     @Bean
-/*    @Retryable(
-            value = { SQLException.class },
-            maxAttempts = 3,
-            backoff = @Backoff(delay = 1000))*/
     public Step stepDiffuserNoticeBiblio(ItemReader reader, ItemProcessor processor, ItemWriter writer) {
+
+        ExponentialBackOffPolicy exponentialBackOffPolicy = new ExponentialBackOffPolicy();
+        exponentialBackOffPolicy.setInitialInterval(2000);
+        exponentialBackOffPolicy.setMultiplier(3);
+
         return steps.get("diffuserNoticeBiblio").chunk(10)
                 .reader(reader) //on lit iddoc dans star
                 .processor(processor) //on transfo tef to unimarc
                 .writer(writer) //ecrire dans le sudoc + dire dans bdd
                 .faultTolerant()
                 .retry(Exception.class)
-                .retryLimit(3)
+                .retryLimit(6)
+                .backOffPolicy(exponentialBackOffPolicy)
                 .build();
     }
 
