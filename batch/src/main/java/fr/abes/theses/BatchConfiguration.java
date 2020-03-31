@@ -109,11 +109,18 @@ public class BatchConfiguration {
     }
 
     @Bean
+/*    @Retryable(
+            value = { SQLException.class },
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 1000))*/
     public Step stepDiffuserNoticeBiblio(ItemReader reader, ItemProcessor processor, ItemWriter writer) {
         return steps.get("diffuserNoticeBiblio").chunk(10)
                 .reader(reader) //on lit iddoc dans star
                 .processor(processor) //on transfo tef to unimarc
                 .writer(writer) //ecrire dans le sudoc + dire dans bdd
+                .faultTolerant()
+                .retry(Exception.class)
+                .retryLimit(3)
                 .build();
     }
 
