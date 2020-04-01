@@ -115,6 +115,7 @@ public class BatchConfiguration {
         ExponentialBackOffPolicy exponentialBackOffPolicy = new ExponentialBackOffPolicy();
         exponentialBackOffPolicy.setInitialInterval(2000);
         exponentialBackOffPolicy.setMultiplier(3);
+        exponentialBackOffPolicy.setMaxInterval(500000);
 
         return steps.get("diffuserNoticeBiblio").chunk(10)
                 .reader(reader) //on lit iddoc dans star
@@ -129,7 +130,8 @@ public class BatchConfiguration {
 
     public Step stepDiffuserExemp() {
         return steps.get("diffuserNoticeExemp")
-                .tasklet(diffuserNoticeExempTasklet()).build();
+                .tasklet(diffuserNoticeExempTasklet())
+                .build();
     }
 
     @Bean

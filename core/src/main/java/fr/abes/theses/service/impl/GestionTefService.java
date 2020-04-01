@@ -45,7 +45,7 @@ public class GestionTefService implements IGestionTefService {
 
     @Override
     public void majDonneesGestion(NoticeBiblioDto dto) throws InstantiationException, DocumentException {
-        Document document = getDao().getDocument().findById(dto.getId()).orElse(null);
+        Document document = getDao().getDocument().findById(dto.getIddoc()).orElse(null);
         if (document != null) {
             Tef documentTef = new Tef(document.getDoc());
             documentTef.setStarGestionAttribut(dto.getDateCreation(), dto.getDateModification(), dto.getRetourSudoc(), dto.getIndicSudoc(), dto.getPpn());
