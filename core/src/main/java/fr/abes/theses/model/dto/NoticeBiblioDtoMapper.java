@@ -10,10 +10,10 @@ public class NoticeBiblioDtoMapper {
                 noticeBiblioDto.getIddoc(),
                 shorten(noticeBiblioDto.getCodeEtab(), 49),
                 noticeBiblioDto.getDone(),
-                noticeBiblioDto.getRetourSudoc(),
+                shorten(noticeBiblioDto.getRetourSudoc(), 200),
                 noticeBiblioDto.getDateCreation(),
                 noticeBiblioDto.getDateModification(),
-                noticeBiblioDto.getIndicSudoc(),
+                shorten(noticeBiblioDto.getIndicSudoc(), 254),
                 noticeBiblioDto.getPpn(),
                 noticeBiblioDto.getEpn());
     }
