@@ -39,7 +39,7 @@ public class Tef {
             log.info(e.getMessage());
         }
 
-        if (retourSudoc.contains("NOK")) {
+        if (retourSudoc.contains("KO")) {
             XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", retourSudoc, documentTef);
         } else {
             XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "PPN", ppn, documentTef);
@@ -54,7 +54,7 @@ public class Tef {
 
         String codeRetour = setCodeRetour(retour);
 
-        if (codeRetour.contains("NOK")) {
+        if (codeRetour.contains("KO")) {
             setMessage(retour, "THESE/BIBLIO/MESSAGE", "trace");
         } else {
             setMessage(retour, "THESE/BIBLIO/PPN", "PPN");

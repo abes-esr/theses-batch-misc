@@ -118,7 +118,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             }
         } catch (CBSException ex) {
             log.error("Erreur dans la création de la notice bibliographique " + ex.getMessage());
-            trace.setIndicSudoc("NOK");
+            trace.setIndicSudoc("KO");
             trace.setRetourSudoc(ex.getMessage());
         }
         return trace;
@@ -136,11 +136,13 @@ public class MajStarSudocService implements IMajStarSudocService {
                     if (!notice.getNoticeBiblio().isTheseElectronique()) {
                         return false;
                     }
+                } else{
+                    return false;
                 }
             }
             return true;
         } catch (Exception e) {
-            log.info("getNumSource() : " + getNumSource());
+            log.info("Erreur lors de la recherche de notice biblio electronique : " + getNumSource());
             log.info(e.getMessage());
             throw e;
         }
@@ -166,7 +168,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             trace.setDateModification(new Date());
         } catch (CBSException ex) {
             log.info(ex.getMessage());
-            trace.setIndicSudoc("NOK - Notice non créée</CODERETOUR>");
+            trace.setIndicSudoc("KO");
             trace.setRetourSudoc(ex.getMessage());
         }
     }
@@ -194,7 +196,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             trace.setDateModification(new Date());
         } catch (Exception ex) {
             log.info("fusionNoticeStarEtSudoc " + ex.getMessage());
-            trace.setIndicSudoc("NOK");
+            trace.setIndicSudoc("KO");
             trace.setRetourSudoc(ex.getMessage());
         }
 
