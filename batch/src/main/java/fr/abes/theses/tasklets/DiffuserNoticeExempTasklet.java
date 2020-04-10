@@ -98,13 +98,18 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
                 }
                 noticeBiblio.setDone(1);
                 noticeBiblio.setDateModification(new Date());
-                noticeBiblioEntity = NoticeBiblioDtoMapper.getNoticeBiblioEntity(noticeBiblio);
-                getService().getGestionTefService().majDonneesGestionExemplarisation(noticeBiblio);
 
                 if (noticeBiblio.getCodeEtab().equals("341720008")){
                     premiereExemplarisationRcrNonDeploye = false;
                 }
 
+            } catch (Exception e){
+                noticeBiblioEntity.setRetourSudoc(noticeBiblioEntity.getRetourSudoc() + " : " + e.getMessage());
+            }
+
+            try{
+                noticeBiblioEntity = NoticeBiblioDtoMapper.getNoticeBiblioEntity(noticeBiblio);
+                getService().getGestionTefService().majDonneesGestionExemplarisation(noticeBiblio);
             } catch (Exception e){
                 noticeBiblioEntity.setRetourSudoc(noticeBiblioEntity.getRetourSudoc() + " : " + e.getMessage());
             }
@@ -119,12 +124,14 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
                 "TRAITEE = ?, " +
                 "RETOUR_SUDOC = ?, " +
                 "PPN = ?, " +
-                "DATE_MODIFICATION = ? "+
+                "DATE_MODIFICATION = ?, "+
+                "INDIC_SUDOC = ? "+
                 "WHERE ID = ?",
                 noticeBiblioEntity.getDone(),
                 noticeBiblioEntity.getRetourSudoc(),
                 noticeBiblioEntity.getEpn(),
                 noticeBiblioEntity.getDateModification(),
+                noticeBiblioEntity.getIndicSudoc(),
                 noticeBiblioEntity.getId());
         jdbcTemplate.update("commit");
     }

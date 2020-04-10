@@ -309,8 +309,10 @@ public class MajStarSudocService implements IMajStarSudocService {
             rediffuserExemplaireStarDansSudoc(trace, notice, e856, premiereExemplarisationRcrNonDeploye, idStar);
         } catch (CBSException e) {
             trace.setRetourSudoc(e.getMessage());
+            trace.setIndicSudoc("KO");
         } catch (IllegalStateException e) {
             trace.setRetourSudoc(e.getMessage());
+            trace.setIndicSudoc("KO");
         }
 
 
@@ -354,6 +356,7 @@ public class MajStarSudocService implements IMajStarSudocService {
 
                 } catch (CBSException e) {
                     trace.setRetourSudoc(e.getMessage());
+                    trace.setIndicSudoc("KO");
                 }
             }
         }

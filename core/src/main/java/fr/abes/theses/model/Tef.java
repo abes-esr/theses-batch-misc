@@ -77,8 +77,8 @@ public class Tef {
         XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "indicSudoc", indicSudoc, documentTef);
     }
 
-    private void setTrace(String indicSudoc) {
-        XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", indicSudoc, documentTef);
+    private void setTrace(String trace) {
+        XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", trace, documentTef);
     }
 
     private void setMessage(Document retour, String path, String trace) {

@@ -128,9 +128,13 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                     String rcr = docs.optJSONObject(i).optJSONArray("SGRCRSudoc").getString(j);
                     log.info("rcr n° "+ rcr);
                     //si le rcr appartient un ILN d'établissement non déployé, on se connectera avec un login de rcr spécifique pour l'exemplarisation
-                    if (Integer.parseInt(getService().getMajStarSudocService().getClientBiblio().ilnRattachement(rcr)) > 199
-                            && Integer.parseInt(getService().getMajStarSudocService().getClientBiblio().ilnRattachement(rcr)) <= 300)
-                        rcr = "341720008";
+                    try {
+                        if (Integer.parseInt(getService().getMajStarSudocService().getClientBiblio().ilnRattachement(rcr)) > 199
+                                && Integer.parseInt(getService().getMajStarSudocService().getClientBiblio().ilnRattachement(rcr)) <= 300)
+                            rcr = "341720008";
+                    } catch (NumberFormatException e){
+                        log.warn("Impossible de verrifier l'ILN de rattachement pour le rcr :" + rcr);
+                    }
                     getService().getNoticeBiblioService().save(new NoticeBiblio(idJob, iddoc, rcr, 0, "", null, null, null, null, null));
                 }
             }
