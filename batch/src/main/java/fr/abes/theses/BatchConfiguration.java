@@ -13,7 +13,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -51,7 +51,9 @@ public class BatchConfiguration {
      * @return
      */
     @Bean
-    public Job jobRediffusionNoticesBiblio(ItemReader itemReader, ItemProcessor itemProcessor, ItemWriter itemWriter) {
+    public Job jobRediffusionNoticesBiblio(@Qualifier("noticeBiblioReader") ItemReader reader,
+                                           @Qualifier("noticeBiblioProcessor") ItemProcessor processor,
+                                           @Qualifier("noticeBiblioWriter") ItemWriter writer) {
         log.info("Début du batch de rediffusion des notices de STAR en notices bibliographique Sudoc");
 
         return jobs
@@ -62,15 +64,17 @@ public class BatchConfiguration {
                 .from(stepSelectNoticesBibliosATraiter()).on("FAILED").end()
                 .from(stepSelectNoticesBibliosATraiter()).on("COMPLETED").to(stepAuthentifierToSudoc())
                 .from(stepAuthentifierToSudoc()).on("FAILED").end()
-                .from(stepAuthentifierToSudoc()).on("COMPLETED").to(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter))
-                .from(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter)).on("FAILED").to(stepDisconnect())
-                .from(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter)).on("COMPLETED").to(stepGenererFichier())
+                .from(stepAuthentifierToSudoc()).on("COMPLETED").to(stepDiffuserNoticeBiblio(reader, processor, writer))
+                .from(stepDiffuserNoticeBiblio(reader, processor, writer)).on("FAILED").to(stepDisconnect())
+                .from(stepDiffuserNoticeBiblio(reader, processor, writer)).on("COMPLETED").to(stepGenererFichier())
                 .from(stepGenererFichier()).next(stepDisconnect())
                 .build().build();
     }
 
     @Bean
-    public Job jobRediffusionNoticesExemplaires() {
+    public Job jobRediffusionNoticesExemplaires(@Qualifier("exemplaireReader") ItemReader reader,
+                                                @Qualifier("exemplaireProcessor") ItemProcessor processor,
+                                                @Qualifier("exemplaireWriter") ItemWriter writer) {
         log.info("Début du batch de rediffusion des exemplaires de notices star dans le Sudoc");
 
         return jobs
@@ -79,9 +83,9 @@ public class BatchConfiguration {
                 .from(stepSelectThesesStarARediff()).on("AUCUNE NOTICE").end()
                 .from(stepSelectThesesStarARediff()).on("COMPLETED").to(stepSelectNoticesBibliosATraiter())
                 .from(stepSelectNoticesBibliosATraiter()).on("FAILED").end()
-                .from(stepSelectNoticesBibliosATraiter()).on("COMPLETED").to(stepDiffuserExemp())
-                .from(stepDiffuserExemp()).on("FAILED").end()
-                .from(stepDiffuserExemp()).on("COMPLETED").to(stepGenererFichier())
+                .from(stepSelectNoticesBibliosATraiter()).on("COMPLETED").to(stepDiffuserExemp(reader, processor, writer))
+                .from(stepDiffuserExemp(reader, processor, writer)).on("FAILED").end()
+                .from(stepDiffuserExemp(reader, processor, writer)).on("COMPLETED").to(stepGenererFichier())
                 .from(stepGenererFichier()).end()
                 .build();
     }
@@ -110,7 +114,9 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Step stepDiffuserNoticeBiblio(ItemReader reader, ItemProcessor processor, ItemWriter writer) {
+    public Step stepDiffuserNoticeBiblio(@Qualifier("noticeBiblioReader") ItemReader reader,
+                                         @Qualifier("noticeBiblioProcessor") ItemProcessor processor,
+                                         @Qualifier("noticeBiblioWriter") ItemWriter writer) {
 
         ExponentialBackOffPolicy exponentialBackOffPolicy = new ExponentialBackOffPolicy();
         exponentialBackOffPolicy.setInitialInterval(2000);
@@ -128,9 +134,25 @@ public class BatchConfiguration {
                 .build();
     }
 
-    public Step stepDiffuserExemp() {
+    @Bean
+    public Step stepDiffuserExemp(@Qualifier("exemplaireReader") ItemReader reader,
+                                  @Qualifier("exemplaireProcessor") ItemProcessor processor,
+                                  @Qualifier("exemplaireWriter") ItemWriter writer) {
+
+        ExponentialBackOffPolicy exponentialBackOffPolicy = new ExponentialBackOffPolicy();
+        exponentialBackOffPolicy.setInitialInterval(2000);
+        exponentialBackOffPolicy.setMultiplier(3);
+        exponentialBackOffPolicy.setMaxInterval(500000);
+
         return steps.get("diffuserNoticeExemp")
-                .tasklet(diffuserNoticeExempTasklet())
+                .chunk(10)
+                .reader(reader)
+                .processor(processor)
+                .writer(writer)
+                .faultTolerant()
+                .retry(Exception.class)
+                .retryLimit(6)
+                .backOffPolicy(exponentialBackOffPolicy)
                 .build();
     }
 
