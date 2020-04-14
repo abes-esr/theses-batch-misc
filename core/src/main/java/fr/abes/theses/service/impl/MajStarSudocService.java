@@ -69,10 +69,18 @@ public class MajStarSudocService implements IMajStarSudocService {
     @Setter
     private String numThesePrecedent = "";
 
+    /**
+     * Permet de ne pas créer d'exemplaires, de rcr non déployé, en trop
+     */
+    @Setter
+    @Getter
+    private boolean premiereExemplarisationRcrNonDeploye;
+
     public MajStarSudocService() {
         this.clientBiblio = new ProcessCBS();
         this.clientExpl = new ProcessCBS();
         this.clientExemplSupp = new ProcessCBS();
+        setPremiereExemplarisationRcrNonDeploye(true);
     }
 
     @Override
@@ -82,7 +90,10 @@ public class MajStarSudocService implements IMajStarSudocService {
 
     @Override
     public void authenticateExemp(String login, String passwd) throws CBSException {
-        this.clientExpl.authenticate(serveurIp, serveurPort, login, passwd);
+        if (!login.substring(1).equals(this.clientExpl.getRcr())){
+            disconnectExemp();
+            this.clientExpl.authenticate(serveurIp, serveurPort, login, passwd);
+        }
     }
 
     public void authenticateExempSupp(String login, String passwd) throws CBSException {
@@ -519,6 +530,11 @@ public class MajStarSudocService implements IMajStarSudocService {
         } else {
             log.info("Client exemplarisation déjà déconnecté");
         }
+    }
+
+    @Override
+    public boolean getPremiereExemplarisationRcrNonDeploye() {
+        return premiereExemplarisationRcrNonDeploye;
     }
 }
 

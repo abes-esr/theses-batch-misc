@@ -12,7 +12,6 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +40,7 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExec
 
     /**
      * This method deals with the rebroadcasting and allows the writing of the marc transformed noticeBibio data from sudoc into STAR.Document table
+     *
      * @param
      * @return
      * @throws
@@ -50,9 +50,7 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExec
         for (NoticeBiblioDto noticeBiblioDto : list) {
             try {
                 this.majNoticeBiblio(noticeBiblioDto);
-                if ("OK".equals(noticeBiblioDto.getIndicSudoc())){
-                    this.majDonneesGestion(noticeBiblioDto);
-                }
+                this.majDonneesGestion(noticeBiblioDto);
             } catch (Exception e) {
                 log.error(e.getMessage());
                 log.error("Erreur dans la mise à jour de la ligne " + noticeBiblioDto.getId());
