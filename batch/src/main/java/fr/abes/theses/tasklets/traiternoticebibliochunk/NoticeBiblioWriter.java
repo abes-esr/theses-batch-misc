@@ -20,7 +20,6 @@ import java.util.List;
 @Slf4j
 @Component
 public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExecutionListener {
-    private List<NoticeBiblioDto> noticeBiblioDtos;
 
     @Getter
     final ServiceProvider service;
@@ -31,11 +30,6 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExec
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
-        ExecutionContext executionContext = stepExecution
-                .getJobExecution()
-                .getExecutionContext();
-        this.noticeBiblioDtos = (List<NoticeBiblioDto>) executionContext.get("noticesBiblio");
-
     }
 
     /**
@@ -72,7 +66,6 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExec
 
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
-        stepExecution.getJobExecution().getExecutionContext().put("noticesBiblio", this.noticeBiblioDtos);
         return ExitStatus.COMPLETED;
     }
 }

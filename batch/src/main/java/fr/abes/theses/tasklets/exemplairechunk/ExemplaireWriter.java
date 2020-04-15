@@ -21,8 +21,6 @@ import java.util.List;
 @Component
 public class ExemplaireWriter implements ItemWriter<NoticeBiblioDto>, StepExecutionListener {
 
-    private List<NoticeBiblioDto> noticeBiblioDtos;
-
     @Getter
     final ServiceProvider service;
 
@@ -32,16 +30,10 @@ public class ExemplaireWriter implements ItemWriter<NoticeBiblioDto>, StepExecut
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
-        ExecutionContext executionContext = stepExecution
-                .getJobExecution()
-                .getExecutionContext();
-        this.noticeBiblioDtos = (List<NoticeBiblioDto>) executionContext.get("noticesBiblio");
-
     }
 
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
-        stepExecution.getJobExecution().getExecutionContext().put("noticesBiblio", this.noticeBiblioDtos);
         return ExitStatus.COMPLETED;
     }
 

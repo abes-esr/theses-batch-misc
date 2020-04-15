@@ -34,6 +34,7 @@ public class ExemplaireProcessor implements ItemProcessor<NoticeBiblioDto, Notic
     public NoticeBiblioDto process(NoticeBiblioDto noticeBiblio) throws Exception {
 
         log.info("Id de notice : " + noticeBiblio.getId().toString());
+        log.info("RCR n° " + noticeBiblio.getCodeEtab());
 
         try {
             getService().getMajStarSudocService().authenticateExemp("M" + noticeBiblio.getCodeEtab(), passwd);

@@ -28,7 +28,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
     @Autowired @Getter
     ServiceProvider service;
 
-    private Integer idJob;
+    private Integer jobId;
     private String jobName;
     
     @Value("${rowsNumber}")
@@ -54,7 +54,8 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
     @Override
     public void beforeStep(StepExecution stepExecution) {
         log.info("entree dans beforeStep de SelectThesesStarARedifTasklet");
-        idJob = stepExecution.getJobExecutionId().intValue();
+        jobId = stepExecution.getJobExecutionId().intValue();
+        log.info("Lancement Job n° " + jobId);
         jobName = stepExecution.getJobExecution().getJobInstance().getJobName();
     }
 
@@ -135,7 +136,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                     } catch (NumberFormatException e){
                         log.warn("Impossible de verrifier l'ILN de rattachement pour le rcr :" + rcr);
                     }
-                    getService().getNoticeBiblioService().save(new NoticeBiblio(idJob, iddoc, rcr, 0, "", null, null, null, null, null));
+                    getService().getNoticeBiblioService().save(new NoticeBiblio(jobId, iddoc, rcr, 0, "", null, null, null, null, null));
                 }
             }
             getService().getMajStarSudocService().disconnectBiblio();
@@ -150,7 +151,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
             int iddoc = Integer.parseInt(docs.optJSONObject(i).optString("id"));
             log.info("traite : " + iddoc);
             String codeEtab = docs.optJSONObject(i).optString("SGcodeEtab");
-            getService().getNoticeBiblioService().save(new NoticeBiblio(idJob, iddoc, codeEtab, 0, "", null, null, null, null, null));
+            getService().getNoticeBiblioService().save(new NoticeBiblio(jobId, iddoc, codeEtab, 0, "", null, null, null, null, null));
         }
     }
 

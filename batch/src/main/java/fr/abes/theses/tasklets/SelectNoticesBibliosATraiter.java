@@ -39,7 +39,7 @@ public class SelectNoticesBibliosATraiter implements Tasklet, StepExecutionListe
     public ExitStatus afterStep(StepExecution stepExecution) {
         if (ExitStatus.COMPLETED.equals(stepExecution.getExitStatus())) {
             stepExecution.getJobExecution().getExecutionContext().put("noticesBiblio", new ArrayList<NoticeBiblioDto>());
-            stepExecution.getJobExecution().getExecutionContext().put("noticesBiblio", this.noticeBiblioDtos);
+            //stepExecution.getJobExecution().getExecutionContext().put("noticesBiblio", this.noticeBiblioDtos);
             stepExecution.getJobExecution().getExecutionContext().put("login", this.login);
         }
         return stepExecution.getExitStatus();
@@ -47,7 +47,6 @@ public class SelectNoticesBibliosATraiter implements Tasklet, StepExecutionListe
 
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-        log.info("Lancement Job n° " + jobId);
         log.info("SNBTT size noticebib : " + this.noticeBiblioDtos.size());
         this.noticeBiblioDtos = new ArrayList<>();
         List<NoticeBiblio> NoticeBiblios = getService().getNoticeBiblioService().getNoticesNonTraiteByJobId(jobId);

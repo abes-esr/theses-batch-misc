@@ -1,15 +1,19 @@
 package fr.abes.theses.tasklets.traiternoticebibliochunk;
 
 import fr.abes.theses.model.dto.NoticeBiblioDto;
+import fr.abes.theses.model.entities.NoticeBiblio;
 import fr.abes.theses.service.ServiceProvider;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -20,16 +24,22 @@ public class NoticeBiblioReader implements ItemReader<NoticeBiblioDto>, StepExec
     private List<NoticeBiblioDto> noticeBiblios;
     private AtomicInteger i = new AtomicInteger();
 
-    public NoticeBiblioReader() {
+    @Getter
+    final ServiceProvider service;
+
+    public NoticeBiblioReader(ServiceProvider service) {
+        this.service = service;
     }
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
         log.info("entree dans beforeStep de NoticeBiblioReader");
-        ExecutionContext executionContext = stepExecution
-                .getJobExecution()
-                .getExecutionContext();
-        this.noticeBiblios = (List<NoticeBiblioDto>) executionContext.get("noticesBiblio");
+        this.noticeBiblios = new ArrayList<>();
+        Integer jobId = stepExecution.getJobExecutionId().intValue();
+        List<NoticeBiblio> NoticeBiblios = getService().getNoticeBiblioService().getNoticesNonTraiteByJobId(jobId);
+        for (NoticeBiblio noticeBiblio : NoticeBiblios) {
+            this.noticeBiblios.add(new NoticeBiblioDto(noticeBiblio));
+        }
     }
 
     /**
