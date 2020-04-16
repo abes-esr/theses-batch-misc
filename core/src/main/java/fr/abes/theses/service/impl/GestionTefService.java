@@ -37,20 +37,26 @@ public class GestionTefService implements IGestionTefService {
     @Override
     public void majDonneesGestionExemplarisation(NoticeBiblioDto noticeBiblioDto) throws InstantiationException, DocumentException {
         Document document = getDao().getDocument().findById(noticeBiblioDto.getIddoc()).orElse(null);
+        if (document != null) {
             Tef tef = new Tef(document.getDoc());
             tef.setStarGestionAttributExemplaire(new Date(), noticeBiblioDto.getIndicSudoc(), noticeBiblioDto.getRetourSudoc());
             document.setDoc(tef.documentTef.asXML());
             getDao().getDocument().saveAndFlush(document);
+        } else {
+            log.error("These not found in Document table, id : " + noticeBiblioDto.getIddoc());
+        }
     }
 
     @Override
-    public void majDonneesGestion(NoticeBiblioDto dto) throws InstantiationException, DocumentException {
-        Document document = getDao().getDocument().findById(dto.getIddoc()).orElse(null);
+    public void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) throws InstantiationException, DocumentException {
+        Document document = getDao().getDocument().findById(noticeBiblioDto.getIddoc()).orElse(null);
         if (document != null) {
             Tef documentTef = new Tef(document.getDoc());
-            documentTef.setStarGestionAttribut(dto.getDateCreation(), dto.getDateModification(), dto.getRetourSudoc(), dto.getIndicSudoc(), dto.getPpn());
+            documentTef.setStarGestionAttribut(noticeBiblioDto.getDateCreation(), noticeBiblioDto.getDateModification(), noticeBiblioDto.getRetourSudoc(), noticeBiblioDto.getIndicSudoc(), noticeBiblioDto.getPpn());
             document.setDoc(documentTef.documentTef.asXML());
             getDao().getDocument().saveAndFlush(document);
+        } else {
+            log.error("These not found in Document table, id : " + noticeBiblioDto.getIddoc());
         }
     }
 

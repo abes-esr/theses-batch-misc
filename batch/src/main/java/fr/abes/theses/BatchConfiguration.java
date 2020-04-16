@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -81,9 +82,7 @@ public class BatchConfiguration {
                 .get("diffuserExemplairesThesesVersSudoc").incrementer(incrementer())
                 .start(stepSelectThesesStarARediff()).on("FAILED").end()
                 .from(stepSelectThesesStarARediff()).on("AUCUNE NOTICE").end()
-                .from(stepSelectThesesStarARediff()).on("COMPLETED").to(stepSelectNoticesBibliosATraiter())
-                .from(stepSelectNoticesBibliosATraiter()).on("FAILED").end()
-                .from(stepSelectNoticesBibliosATraiter()).on("COMPLETED").to(stepDiffuserExemp(reader, processor, writer))
+                .from(stepSelectThesesStarARediff()).on("COMPLETED").to(stepDiffuserExemp(reader, processor, writer))
                 .from(stepDiffuserExemp(reader, processor, writer)).on("FAILED").end()
                 .from(stepDiffuserExemp(reader, processor, writer)).on("COMPLETED").to(stepGenererFichier())
                 .from(stepGenererFichier()).end()
@@ -140,7 +139,7 @@ public class BatchConfiguration {
                                   @Qualifier("exemplaireWriter") ItemWriter writer) {
 
         ExponentialBackOffPolicy exponentialBackOffPolicy = new ExponentialBackOffPolicy();
-        exponentialBackOffPolicy.setInitialInterval(2000);
+        exponentialBackOffPolicy.setInitialInterval(500);
         exponentialBackOffPolicy.setMultiplier(3);
         exponentialBackOffPolicy.setMaxInterval(500000);
 
@@ -153,6 +152,8 @@ public class BatchConfiguration {
                 .retry(Exception.class)
                 .retryLimit(6)
                 .backOffPolicy(exponentialBackOffPolicy)
+                .skip(Exception.class)
+                .skipLimit(1000)
                 .build();
     }
 
