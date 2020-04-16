@@ -1,6 +1,7 @@
 package fr.abes.theses;
 
 import fr.abes.theses.configuration.ThesesOracleConfig;
+import fr.abes.theses.listener.DefaultListenerSupport;
 import fr.abes.theses.tasklets.*;
 import lombok.extern.log4j.Log4j;
 import org.springframework.batch.core.Job;
@@ -19,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
-import org.springframework.retry.policy.SimpleRetryPolicy;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -43,12 +43,13 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public BatchConfigurer configurer(EntityManagerFactory entityManagerFactory) throws Exception{
+    public BatchConfigurer configurer(EntityManagerFactory entityManagerFactory) throws Exception {
         return new ThesesBatchConfigurer(thesesDatasource, entityManagerFactory);
     }
 
     /**
      * Job de rediffusion des notices de STAR dans le Sudoc (uniquement notices bibliographiques)
+     *
      * @return
      */
     @Bean
@@ -129,6 +130,10 @@ public class BatchConfiguration {
                 .faultTolerant()
                 .retry(Exception.class)
                 .retryLimit(6)
+                .listener(new DefaultListenerSupport())
+                .backOffPolicy(exponentialBackOffPolicy)
+                .skip(Exception.class)
+                .skipLimit(1000)
                 .backOffPolicy(exponentialBackOffPolicy)
                 .build();
     }
@@ -139,7 +144,7 @@ public class BatchConfiguration {
                                   @Qualifier("exemplaireWriter") ItemWriter writer) {
 
         ExponentialBackOffPolicy exponentialBackOffPolicy = new ExponentialBackOffPolicy();
-        exponentialBackOffPolicy.setInitialInterval(500);
+        exponentialBackOffPolicy.setInitialInterval(2000);
         exponentialBackOffPolicy.setMultiplier(3);
         exponentialBackOffPolicy.setMaxInterval(500000);
 
@@ -151,6 +156,7 @@ public class BatchConfiguration {
                 .faultTolerant()
                 .retry(Exception.class)
                 .retryLimit(6)
+                .listener(new DefaultListenerSupport())
                 .backOffPolicy(exponentialBackOffPolicy)
                 .skip(Exception.class)
                 .skipLimit(1000)
@@ -174,21 +180,33 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public SelectThesesStarARedifTasklet selectThesesStarARedifTasklet() { return new SelectThesesStarARedifTasklet(); }
+    public SelectThesesStarARedifTasklet selectThesesStarARedifTasklet() {
+        return new SelectThesesStarARedifTasklet();
+    }
 
     @Bean
-    public SelectNoticesBibliosATraiter selectNoticesBibliosATraiter() { return new SelectNoticesBibliosATraiter(); }
+    public SelectNoticesBibliosATraiter selectNoticesBibliosATraiter() {
+        return new SelectNoticesBibliosATraiter();
+    }
 
     @Bean
-    public AuthentifierToSudocTasklet authentifierToSudocTasklet() { return new AuthentifierToSudocTasklet(); }
+    public AuthentifierToSudocTasklet authentifierToSudocTasklet() {
+        return new AuthentifierToSudocTasklet();
+    }
 
     @Bean
-    public GenererFichierTasklet genererFichierTasklet() { return new GenererFichierTasklet(); }
+    public GenererFichierTasklet genererFichierTasklet() {
+        return new GenererFichierTasklet();
+    }
 
     @Bean
-    public DisconnectTasklet disconnectTasklet() {return new DisconnectTasklet();}
+    public DisconnectTasklet disconnectTasklet() {
+        return new DisconnectTasklet();
+    }
 
     @Bean
-    public DiffuserNoticeExempTasklet diffuserNoticeExempTasklet() {return new DiffuserNoticeExempTasklet(); }
+    public DiffuserNoticeExempTasklet diffuserNoticeExempTasklet() {
+        return new DiffuserNoticeExempTasklet();
+    }
 
 }

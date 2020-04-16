@@ -38,7 +38,7 @@ public class ExemplaireWriter implements ItemWriter<NoticeBiblioDto>, StepExecut
     }
 
     @Override
-    public void write(List<? extends NoticeBiblioDto> list) throws Exception {
+    public void write(List<? extends NoticeBiblioDto> list) throws InstantiationException, DocumentException {
         for (NoticeBiblioDto noticeBiblioDto : list) {
             try {
                 this.majNoticeBiblio(noticeBiblioDto);
