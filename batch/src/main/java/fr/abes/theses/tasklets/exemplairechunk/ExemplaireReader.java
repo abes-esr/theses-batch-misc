@@ -10,6 +10,7 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @Component
 public class ExemplaireReader implements ItemReader<NoticeBiblioDto>, StepExecutionListener {
+
+    @Value("${previousJobIdToRestartFrom}")
+    private Integer previousJobIdToRestartFrom;
 
     private List<NoticeBiblioDto> noticeBiblios;
     private AtomicInteger i = new AtomicInteger();
@@ -38,7 +42,10 @@ public class ExemplaireReader implements ItemReader<NoticeBiblioDto>, StepExecut
     public void beforeStep(StepExecution stepExecution) {
 
         Integer jobId = stepExecution.getJobExecutionId().intValue();
-        updateNoticesAlreadyTraitee(jobId);
+
+        if (previousJobIdToRestartFrom != -1){
+            updateNoticesAlreadyTraitee(jobId);
+        }
 
         log.info("BeforeStep de ExemplaireReader");
         this.noticeBiblios = new ArrayList<>();
@@ -66,8 +73,9 @@ public class ExemplaireReader implements ItemReader<NoticeBiblioDto>, StepExecut
     private void updateNoticesAlreadyTraitee(Integer jobId) {
         jdbcTemplate.update("update T_E_TRAITEMENT_NOTICEBIB_TNB set TRAITEE=1 " +
                         "WHERE JOB_ID= ? " +
-                        "and THE_ID in (select the_id from T_E_TRAITEMENT_NOTICEBIB_TNB where job_id=782 and traitee=1)",
-                jobId);
+                        "and THE_ID in (select the_id from T_E_TRAITEMENT_NOTICEBIB_TNB where job_id= ? and traitee=1)",
+                jobId,
+                previousJobIdToRestartFrom);
         jdbcTemplate.update("commit");
 
     }
