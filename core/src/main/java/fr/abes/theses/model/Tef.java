@@ -35,6 +35,7 @@ public class Tef {
         SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         try{
             setDate(formater.format(dateModification));
+            setIndicSudoc(indicSudoc);
         } catch (Exception e){
             log.info(e.getMessage());
         }
