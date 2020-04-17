@@ -90,7 +90,7 @@ public class MajStarSudocService implements IMajStarSudocService {
 
     @Override
     public void authenticateExemp(String login, String passwd) throws CBSException {
-        if (!login.substring(1).equals(this.clientExpl.getRcr())){
+        if (!login.substring(1).equals(this.clientExpl.getRcr())) {
             disconnectExemp();
             this.clientExpl.authenticate(serveurIp, serveurPort, login, passwd);
         }
@@ -132,6 +132,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             trace.setIndicSudoc("KO");
             trace.setRetourSudoc(ex.getMessage());
         }
+        trace.setDateModification(new Date());
         return trace;
     }
 
@@ -147,7 +148,7 @@ public class MajStarSudocService implements IMajStarSudocService {
                     if (!notice.getNoticeBiblio().isTheseElectronique()) {
                         return false;
                     }
-                } else{
+                } else {
                     return false;
                 }
             }
@@ -171,16 +172,16 @@ public class MajStarSudocService implements IMajStarSudocService {
     @Override
     public void creerTheseBiblio(NoticeConcrete noticeBiblio, NoticeBiblioDto trace) {
         try {
-            clientBiblio.enregistrerNew(noticeBiblio.toString());
+            clientBiblio.enregistrerNew(
+                    noticeBiblio.toString().substring(noticeBiblio.toString().indexOf(Constants.STR_1F)+1, noticeBiblio.toString().indexOf(Constants.STR_1E))
+            );
             trace.setIndicSudoc("OK");
             trace.setPpn(clientBiblio.getPpnEncours());
             trace.setRetourSudoc("Notice biblio créée");
-            trace.setDateCreation(new Date());
-            trace.setDateModification(new Date());
         } catch (CBSException ex) {
             log.info(ex.getMessage());
             trace.setIndicSudoc("KO");
-            trace.setRetourSudoc(ex.getMessage());
+            trace.setRetourSudoc("Notice biblio non créée : " + ex.getMessage());
         }
     }
 

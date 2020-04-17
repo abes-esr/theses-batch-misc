@@ -30,7 +30,7 @@ public class Tef {
     }
 
 
-    public void setStarGestionAttribut(Date dateCreation, Date dateModification, String retourSudoc, String indicSudoc, String ppn) throws InstantiationException {
+    public void setStarGestionAttribut(Date dateModification, String retourSudoc, String indicSudoc, String ppn) throws InstantiationException {
         checkDocumenTef();
         SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         try{
