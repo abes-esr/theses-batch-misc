@@ -1,6 +1,7 @@
 package fr.abes.theses;
 
 import fr.abes.theses.configuration.ThesesOracleConfig;
+import fr.abes.theses.listener.DefaultListenerSupport;
 import fr.abes.theses.tasklets.*;
 import lombok.extern.log4j.Log4j;
 import org.springframework.batch.core.Job;
@@ -13,11 +14,12 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -41,16 +43,19 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public BatchConfigurer configurer(EntityManagerFactory entityManagerFactory) throws Exception{
+    public BatchConfigurer configurer(EntityManagerFactory entityManagerFactory) throws Exception {
         return new ThesesBatchConfigurer(thesesDatasource, entityManagerFactory);
     }
 
     /**
      * Job de rediffusion des notices de STAR dans le Sudoc (uniquement notices bibliographiques)
+     *
      * @return
      */
     @Bean
-    public Job jobRediffusionNoticesBiblio(ItemReader itemReader, ItemProcessor itemProcessor, ItemWriter itemWriter) {
+    public Job jobRediffusionNoticesBiblio(@Qualifier("noticeBiblioReader") ItemReader reader,
+                                           @Qualifier("noticeBiblioProcessor") ItemProcessor processor,
+                                           @Qualifier("noticeBiblioWriter") ItemWriter writer) {
         log.info("Début du batch de rediffusion des notices de STAR en notices bibliographique Sudoc");
 
         return jobs
@@ -61,26 +66,26 @@ public class BatchConfiguration {
                 .from(stepSelectNoticesBibliosATraiter()).on("FAILED").end()
                 .from(stepSelectNoticesBibliosATraiter()).on("COMPLETED").to(stepAuthentifierToSudoc())
                 .from(stepAuthentifierToSudoc()).on("FAILED").end()
-                .from(stepAuthentifierToSudoc()).on("COMPLETED").to(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter))
-                .from(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter)).on("FAILED").to(stepDisconnect())
-                .from(stepDiffuserNoticeBiblio(itemReader, itemProcessor, itemWriter)).on("COMPLETED").to(stepGenererFichier())
+                .from(stepAuthentifierToSudoc()).on("COMPLETED").to(stepDiffuserNoticeBiblio(reader, processor, writer))
+                .from(stepDiffuserNoticeBiblio(reader, processor, writer)).on("FAILED").to(stepDisconnect())
+                .from(stepDiffuserNoticeBiblio(reader, processor, writer)).on("COMPLETED").to(stepGenererFichier())
                 .from(stepGenererFichier()).next(stepDisconnect())
                 .build().build();
     }
 
     @Bean
-    public Job jobRediffusionNoticesExemplaires() {
+    public Job jobRediffusionNoticesExemplaires(@Qualifier("exemplaireReader") ItemReader reader,
+                                                @Qualifier("exemplaireProcessor") ItemProcessor processor,
+                                                @Qualifier("exemplaireWriter") ItemWriter writer) {
         log.info("Début du batch de rediffusion des exemplaires de notices star dans le Sudoc");
 
         return jobs
                 .get("diffuserExemplairesThesesVersSudoc").incrementer(incrementer())
                 .start(stepSelectThesesStarARediff()).on("FAILED").end()
                 .from(stepSelectThesesStarARediff()).on("AUCUNE NOTICE").end()
-                .from(stepSelectThesesStarARediff()).on("COMPLETED").to(stepSelectNoticesBibliosATraiter())
-                .from(stepSelectNoticesBibliosATraiter()).on("FAILED").end()
-                .from(stepSelectNoticesBibliosATraiter()).on("COMPLETED").to(stepDiffuserExemp())
-                .from(stepDiffuserExemp()).on("FAILED").end()
-                .from(stepDiffuserExemp()).on("COMPLETED").to(stepGenererFichier())
+                .from(stepSelectThesesStarARediff()).on("COMPLETED").to(stepDiffuserExemp(reader, processor, writer))
+                .from(stepDiffuserExemp(reader, processor, writer)).on("FAILED").end()
+                .from(stepDiffuserExemp(reader, processor, writer)).on("COMPLETED").to(stepGenererFichier())
                 .from(stepGenererFichier()).end()
                 .build();
     }
@@ -109,17 +114,53 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Step stepDiffuserNoticeBiblio(ItemReader reader, ItemProcessor processor, ItemWriter writer) {
+    public Step stepDiffuserNoticeBiblio(@Qualifier("noticeBiblioReader") ItemReader reader,
+                                         @Qualifier("noticeBiblioProcessor") ItemProcessor processor,
+                                         @Qualifier("noticeBiblioWriter") ItemWriter writer) {
+
+        ExponentialBackOffPolicy exponentialBackOffPolicy = new ExponentialBackOffPolicy();
+        exponentialBackOffPolicy.setInitialInterval(2000);
+        exponentialBackOffPolicy.setMultiplier(3);
+        exponentialBackOffPolicy.setMaxInterval(500000);
+
         return steps.get("diffuserNoticeBiblio").chunk(10)
                 .reader(reader) //on lit iddoc dans star
                 .processor(processor) //on transfo tef to unimarc
                 .writer(writer) //ecrire dans le sudoc + dire dans bdd
+                .faultTolerant()
+                .retry(Exception.class)
+                .retryLimit(6)
+                .listener(new DefaultListenerSupport())
+                .backOffPolicy(exponentialBackOffPolicy)
+                .skip(Exception.class)
+                .skipLimit(1000)
+                .backOffPolicy(exponentialBackOffPolicy)
                 .build();
     }
 
-    public Step stepDiffuserExemp() {
+    @Bean
+    public Step stepDiffuserExemp(@Qualifier("exemplaireReader") ItemReader reader,
+                                  @Qualifier("exemplaireProcessor") ItemProcessor processor,
+                                  @Qualifier("exemplaireWriter") ItemWriter writer) {
+
+        ExponentialBackOffPolicy exponentialBackOffPolicy = new ExponentialBackOffPolicy();
+        exponentialBackOffPolicy.setInitialInterval(2000);
+        exponentialBackOffPolicy.setMultiplier(3);
+        exponentialBackOffPolicy.setMaxInterval(500000);
+
         return steps.get("diffuserNoticeExemp")
-                .tasklet(diffuserNoticeExempTasklet()).build();
+                .chunk(10)
+                .reader(reader)
+                .processor(processor)
+                .writer(writer)
+                .faultTolerant()
+                .retry(Exception.class)
+                .retryLimit(6)
+                .listener(new DefaultListenerSupport())
+                .backOffPolicy(exponentialBackOffPolicy)
+                .skip(Exception.class)
+                .skipLimit(1000)
+                .build();
     }
 
     @Bean
@@ -139,21 +180,33 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public SelectThesesStarARedifTasklet selectThesesStarARedifTasklet() { return new SelectThesesStarARedifTasklet(); }
+    public SelectThesesStarARedifTasklet selectThesesStarARedifTasklet() {
+        return new SelectThesesStarARedifTasklet();
+    }
 
     @Bean
-    public SelectNoticesBibliosATraiter selectNoticesBibliosATraiter() { return new SelectNoticesBibliosATraiter(); }
+    public SelectNoticesBibliosATraiter selectNoticesBibliosATraiter() {
+        return new SelectNoticesBibliosATraiter();
+    }
 
     @Bean
-    public AuthentifierToSudocTasklet authentifierToSudocTasklet() { return new AuthentifierToSudocTasklet(); }
+    public AuthentifierToSudocTasklet authentifierToSudocTasklet() {
+        return new AuthentifierToSudocTasklet();
+    }
 
     @Bean
-    public GenererFichierTasklet genererFichierTasklet() { return new GenererFichierTasklet(); }
+    public GenererFichierTasklet genererFichierTasklet() {
+        return new GenererFichierTasklet();
+    }
 
     @Bean
-    public DisconnectTasklet disconnectTasklet() {return new DisconnectTasklet();}
+    public DisconnectTasklet disconnectTasklet() {
+        return new DisconnectTasklet();
+    }
 
     @Bean
-    public DiffuserNoticeExempTasklet diffuserNoticeExempTasklet() {return new DiffuserNoticeExempTasklet(); }
+    public DiffuserNoticeExempTasklet diffuserNoticeExempTasklet() {
+        return new DiffuserNoticeExempTasklet();
+    }
 
 }

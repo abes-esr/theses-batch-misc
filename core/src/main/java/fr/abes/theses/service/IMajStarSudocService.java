@@ -24,4 +24,10 @@ public interface IMajStarSudocService {
     String creerExpl(Exemplaire exemplaire, String lePPN, NoticeBiblioDto trace);
 
     void disconnectExemp();
+
+    boolean getPremiereExemplarisationRcrNonDeploye();
+
+    void setPremiereExemplarisationRcrNonDeploye(boolean PremiereExemplarisationRcrNonDeploye);
+
+
 }

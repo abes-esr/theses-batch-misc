@@ -4,7 +4,6 @@ import fr.abes.theses.model.dto.NoticeBiblioDto;
 import fr.abes.theses.model.entities.Document;
 import fr.abes.theses.service.ServiceProvider;
 import fr.abes.theses.utils.Utilitaire;
-import jdk.jshell.spi.ExecutionControl;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
@@ -14,8 +13,6 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.xml.transform.TransformerException;
 
 @Slf4j
 @Component
@@ -43,7 +40,7 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, Not
      * @throws
      */
     @Override
-    public NoticeBiblioDto process(NoticeBiblioDto noticeBiblioDto) throws TransformerException {
+    public NoticeBiblioDto process(NoticeBiblioDto noticeBiblioDto) {
         try {
             Document doc = getService().getDocumentService().findById(noticeBiblioDto.getIddoc());
             log.info("chunk processor for iddoc : " + noticeBiblioDto.getIddoc());
@@ -54,7 +51,7 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, Not
                 NoticeBiblioDto resultatInfoXml = getService().getMajStarSudocService().majStarSudocBiblio(marcXml, noticeBiblioDto);
                 noticeBiblioDto.setRetourSudoc(resultatInfoXml.getRetourSudoc());
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             noticeBiblioDto.setRetourSudoc("Processor " + e.getMessage());
         }
 

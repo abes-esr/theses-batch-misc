@@ -18,39 +18,37 @@ import java.util.Date;
 @Service
 @Slf4j
 public class GestionTefService implements IGestionTefService {
-    @Autowired @Getter
+    @Getter
+    final
     DaoProvider dao;
 
-    @Override
-    public void majTraitementSortieSudoc(NoticeBiblioDto noticeBiblioDto, Integer idDoc, String codeEtab) throws InstantiationException, DocumentException {
-        Document document = getDao().getDocument().findById(idDoc).orElse(null);
-
-        org.dom4j.Document retour = null;
-        if (document != null) {
-            Tef tef = new Tef(document.getDoc());
-            tef.setStarGestionAttribut(getDateISO8601(), retour);
-            document.setDoc(tef.documentTef.asXML());
-            getDao().getDocument().saveAndFlush(document);
-        }
+    public GestionTefService(DaoProvider dao) {
+        this.dao = dao;
     }
 
     @Override
     public void majDonneesGestionExemplarisation(NoticeBiblioDto noticeBiblioDto) throws InstantiationException, DocumentException {
         Document document = getDao().getDocument().findById(noticeBiblioDto.getIddoc()).orElse(null);
+        if (document != null) {
             Tef tef = new Tef(document.getDoc());
             tef.setStarGestionAttributExemplaire(new Date(), noticeBiblioDto.getIndicSudoc(), noticeBiblioDto.getRetourSudoc());
             document.setDoc(tef.documentTef.asXML());
             getDao().getDocument().saveAndFlush(document);
+        } else {
+            log.error("These not found in Document table, id : " + noticeBiblioDto.getIddoc());
+        }
     }
 
     @Override
-    public void majDonneesGestion(NoticeBiblioDto dto) throws InstantiationException, DocumentException {
-        Document document = getDao().getDocument().findById(dto.getId()).orElse(null);
+    public void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) throws InstantiationException, DocumentException {
+        Document document = getDao().getDocument().findById(noticeBiblioDto.getIddoc()).orElse(null);
         if (document != null) {
             Tef documentTef = new Tef(document.getDoc());
-            documentTef.setStarGestionAttribut(dto.getDateCreation(), dto.getDateModification(), dto.getRetourSudoc(), dto.getIndicSudoc(), dto.getPpn());
+            documentTef.setStarGestionAttribut(new Date(), noticeBiblioDto.getRetourSudoc(), noticeBiblioDto.getIndicSudoc(), noticeBiblioDto.getPpn());
             document.setDoc(documentTef.documentTef.asXML());
             getDao().getDocument().saveAndFlush(document);
+        } else {
+            log.error("These not found in Document table, id : " + noticeBiblioDto.getIddoc());
         }
     }
 

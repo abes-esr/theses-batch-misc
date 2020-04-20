@@ -1,4 +1,4 @@
-package fr.abes.theses.tasklets.traiternoticebibliochunk;
+package fr.abes.theses.tasklets.exemplairechunk;
 
 import fr.abes.theses.model.dto.NoticeBiblioDto;
 import fr.abes.theses.model.dto.NoticeBiblioDtoMapper;
@@ -19,12 +19,12 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExecutionListener {
+public class ExemplaireWriter implements ItemWriter<NoticeBiblioDto>, StepExecutionListener {
 
     @Getter
     final ServiceProvider service;
 
-    public NoticeBiblioWriter(ServiceProvider service) {
+    public ExemplaireWriter(ServiceProvider service) {
         this.service = service;
     }
 
@@ -32,15 +32,13 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExec
     public void beforeStep(StepExecution stepExecution) {
     }
 
-    /**
-     * This method deals with the rebroadcasting and allows the writing of the marc transformed noticeBibio data from sudoc into STAR.Document table
-     *
-     * @param
-     * @return
-     * @throws
-     */
     @Override
-    public void write(List<? extends NoticeBiblioDto> list) throws Exception {
+    public ExitStatus afterStep(StepExecution stepExecution) {
+        return ExitStatus.COMPLETED;
+    }
+
+    @Override
+    public void write(List<? extends NoticeBiblioDto> list) throws InstantiationException, DocumentException {
         for (NoticeBiblioDto noticeBiblioDto : list) {
             try {
                 this.majNoticeBiblio(noticeBiblioDto);
@@ -48,12 +46,13 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExec
             } catch (Exception e) {
                 log.error(e.getMessage());
                 log.error("Erreur dans la mise à jour de la ligne " + noticeBiblioDto.getId());
+                throw e;
             }
         }
     }
 
     private void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) throws DocumentException, InstantiationException {
-        getService().getGestionTefService().majDonneesGestion(noticeBiblioDto);
+        getService().getGestionTefService().majDonneesGestionExemplarisation(noticeBiblioDto);
     }
 
     private void majNoticeBiblio(NoticeBiblioDto noticeBiblioDto) throws DataAccessException {
@@ -61,11 +60,6 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExec
         NoticeBiblio noticeBiblio = NoticeBiblioDtoMapper.getNoticeBiblioEntity(noticeBiblioDto);
         log.info("majNoticeBiblio RetourSudoc : " + noticeBiblio.getRetourSudoc());
         service.getNoticeBiblioService().save(noticeBiblio);
-        log.info("notice traitée : " + noticeBiblio.getIddoc());
-    }
-
-    @Override
-    public ExitStatus afterStep(StepExecution stepExecution) {
-        return ExitStatus.COMPLETED;
+        log.info("Exemplaire traité : " + noticeBiblio.getIddoc());
     }
 }

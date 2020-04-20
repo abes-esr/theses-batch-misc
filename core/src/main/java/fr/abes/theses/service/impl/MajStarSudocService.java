@@ -69,10 +69,18 @@ public class MajStarSudocService implements IMajStarSudocService {
     @Setter
     private String numThesePrecedent = "";
 
+    /**
+     * Permet de ne pas créer d'exemplaires, de rcr non déployé, en trop
+     */
+    @Setter
+    @Getter
+    private boolean premiereExemplarisationRcrNonDeploye;
+
     public MajStarSudocService() {
         this.clientBiblio = new ProcessCBS();
         this.clientExpl = new ProcessCBS();
         this.clientExemplSupp = new ProcessCBS();
+        setPremiereExemplarisationRcrNonDeploye(true);
     }
 
     @Override
@@ -82,7 +90,10 @@ public class MajStarSudocService implements IMajStarSudocService {
 
     @Override
     public void authenticateExemp(String login, String passwd) throws CBSException {
-        this.clientExpl.authenticate(serveurIp, serveurPort, login, passwd);
+        if (!login.substring(1).equals(this.clientExpl.getRcr())) {
+            disconnectExemp();
+            this.clientExpl.authenticate(serveurIp, serveurPort, login, passwd);
+        }
     }
 
     public void authenticateExempSupp(String login, String passwd) throws CBSException {
@@ -118,9 +129,10 @@ public class MajStarSudocService implements IMajStarSudocService {
             }
         } catch (CBSException ex) {
             log.error("Erreur dans la création de la notice bibliographique " + ex.getMessage());
-            trace.setIndicSudoc("NOK");
+            trace.setIndicSudoc("KO");
             trace.setRetourSudoc(ex.getMessage());
         }
+        trace.setDateModification(new Date());
         return trace;
     }
 
@@ -136,11 +148,13 @@ public class MajStarSudocService implements IMajStarSudocService {
                     if (!notice.getNoticeBiblio().isTheseElectronique()) {
                         return false;
                     }
+                } else {
+                    return false;
                 }
             }
             return true;
         } catch (Exception e) {
-            log.info("getNumSource() : " + getNumSource());
+            log.info("Erreur lors de la recherche de notice biblio electronique : " + getNumSource());
             log.info(e.getMessage());
             throw e;
         }
@@ -158,16 +172,16 @@ public class MajStarSudocService implements IMajStarSudocService {
     @Override
     public void creerTheseBiblio(NoticeConcrete noticeBiblio, NoticeBiblioDto trace) {
         try {
-            clientBiblio.enregistrerNew(noticeBiblio.toString());
+            clientBiblio.enregistrerNew(
+                    noticeBiblio.toString().substring(noticeBiblio.toString().indexOf(Constants.STR_1F)+1, noticeBiblio.toString().indexOf(Constants.STR_1E))
+            );
             trace.setIndicSudoc("OK");
             trace.setPpn(clientBiblio.getPpnEncours());
             trace.setRetourSudoc("Notice biblio créée");
-            trace.setDateCreation(new Date());
-            trace.setDateModification(new Date());
         } catch (CBSException ex) {
             log.info(ex.getMessage());
-            trace.setIndicSudoc("NOK - Notice non créée</CODERETOUR>");
-            trace.setRetourSudoc(ex.getMessage());
+            trace.setIndicSudoc("KO");
+            trace.setRetourSudoc("Notice biblio non créée : " + ex.getMessage());
         }
     }
 
@@ -194,7 +208,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             trace.setDateModification(new Date());
         } catch (Exception ex) {
             log.info("fusionNoticeStarEtSudoc " + ex.getMessage());
-            trace.setIndicSudoc("NOK");
+            trace.setIndicSudoc("KO");
             trace.setRetourSudoc(ex.getMessage());
         }
 
@@ -307,8 +321,10 @@ public class MajStarSudocService implements IMajStarSudocService {
             rediffuserExemplaireStarDansSudoc(trace, notice, e856, premiereExemplarisationRcrNonDeploye, idStar);
         } catch (CBSException e) {
             trace.setRetourSudoc(e.getMessage());
+            trace.setIndicSudoc("KO");
         } catch (IllegalStateException e) {
             trace.setRetourSudoc(e.getMessage());
+            trace.setIndicSudoc("KO");
         }
 
 
@@ -352,6 +368,7 @@ public class MajStarSudocService implements IMajStarSudocService {
 
                 } catch (CBSException e) {
                     trace.setRetourSudoc(e.getMessage());
+                    trace.setIndicSudoc("KO");
                 }
             }
         }
@@ -514,6 +531,11 @@ public class MajStarSudocService implements IMajStarSudocService {
         } else {
             log.info("Client exemplarisation déjà déconnecté");
         }
+    }
+
+    @Override
+    public boolean getPremiereExemplarisationRcrNonDeploye() {
+        return premiereExemplarisationRcrNonDeploye;
     }
 }
 
