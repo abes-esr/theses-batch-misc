@@ -12,5 +12,7 @@ public interface INoticeBiblioService {
 
     NoticeBiblio findById(Integer id);
 
-    List<NoticeBiblio> getNoticesNonTraite();
+    List<NoticeBiblio> getNoticesNonTraiteByJobId(Integer jobId);
+
+    List<NoticeBiblio> getAllNoticesByJobId(Integer idJob);
 }

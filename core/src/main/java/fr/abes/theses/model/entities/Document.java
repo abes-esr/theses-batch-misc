@@ -21,7 +21,7 @@ public class Document implements Serializable, GenericEntity<Integer> {
 
     @ColumnTransformer(read = "NVL2(DOC, (DOC).getClobVal(), NULL)", write = "NULLSAFE_XMLTYPE(?)")
     @Lob
-    @Column(name = "DOC")
+    @Column(name = "DOC", columnDefinition = "XMLType")
     private String doc;
 
     @Column(name = "TEXTE")

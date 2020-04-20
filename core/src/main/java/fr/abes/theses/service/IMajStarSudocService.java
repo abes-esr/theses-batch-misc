@@ -1,15 +1,33 @@
 package fr.abes.theses.service;
 
 import fr.abes.cbs.exception.CBSException;
+import fr.abes.cbs.notices.Exemplaire;
+import fr.abes.cbs.notices.NoticeConcrete;
+import fr.abes.cbs.process.ProcessCBS;
+import fr.abes.theses.model.dto.NoticeBiblioDto;
 
 public interface IMajStarSudocService {
-    void authenticateBiblio() throws CBSException;
+    ProcessCBS getClientBiblio();
 
-    String majStarSudoc(String marcXml, String xslStar);
+    void authenticateBiblio(String login, String passwd) throws CBSException;
 
-    String creerTheseBiblio(String noticeBiblio);
+    void authenticateExemp(String login, String passwd) throws CBSException;
 
-    String majTheseBiblio(String notice);
+    void disconnectBiblio();
 
-    String creerExpl(String exemplaire, String lePPN);
+    NoticeBiblioDto majStarSudocBiblio(String marcXml, NoticeBiblioDto noticeBiblioDto);
+
+    NoticeBiblioDto majStarSudocExemp(String marcXml, NoticeBiblioDto noticeBiblioDto, boolean premiereExemplarisationRcrNonDeploye) throws CBSException;
+
+    void creerTheseBiblio(NoticeConcrete noticeBiblio, NoticeBiblioDto trace);
+
+    String creerExpl(Exemplaire exemplaire, String lePPN, NoticeBiblioDto trace);
+
+    void disconnectExemp();
+
+    boolean getPremiereExemplarisationRcrNonDeploye();
+
+    void setPremiereExemplarisationRcrNonDeploye(boolean PremiereExemplarisationRcrNonDeploye);
+
+
 }

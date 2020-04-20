@@ -3,8 +3,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>fr.abes</groupId>
-        <artifactId>theses-batch</artifactId>
+        <groupId>fr.abes.these-batch</groupId>
+        <artifactId>batch-rediffusion</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>batch</artifactId>
@@ -28,4 +28,23 @@
             <version>20190722</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>fr.abes.theses.ThesesBatchApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

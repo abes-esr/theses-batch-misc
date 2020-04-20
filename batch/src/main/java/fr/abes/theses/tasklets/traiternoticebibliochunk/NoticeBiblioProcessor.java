@@ -1,8 +1,9 @@
 package fr.abes.theses.tasklets.traiternoticebibliochunk;
 
+import fr.abes.theses.model.dto.NoticeBiblioDto;
 import fr.abes.theses.model.entities.Document;
-import fr.abes.theses.model.entities.NoticeBiblio;
 import fr.abes.theses.service.ServiceProvider;
+import fr.abes.theses.utils.Utilitaire;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
@@ -10,31 +11,25 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblio, NoticeBiblio>, StepExecutionListener {
+public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, NoticeBiblioDto>, StepExecutionListener {
+    @Value("${star.xsl}")
+    private String cheminXslTef2Marc;
 
-   /* @Autowired
-    StrategyFactory factory;
+    @Value("${star.xsl.tef2marc}")
+    private String fichierXslTef2Marc;
 
-    @Autowired
-    ProxyRetry proxyRetry;*/
     @Autowired
     @Getter
-   ServiceProvider service;
-
-    private NoticeBiblio noticeBiblio;
-
+    ServiceProvider service;
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
-       /* ExecutionContext executionContext = stepExecution
-                .getJobExecution()
-                .getExecutionContext();
-        this.noticeBiblio = (NoticeBiblio) executionContext.get("noticeBiblio");
-        //log.info("...pour la noticeBiblio " + this.noticeBiblio.getId());*/
+
     }
 
     /**
@@ -44,27 +39,25 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblio, Notice
      * @return
      * @throws
      */
-
     @Override
-    public NoticeBiblio process(NoticeBiblio noticeBiblio) throws Exception {
-
-      /*  try {
-            int iddoc = ligneFichierDto.getIddoc();
-
-        } catch (CBSException e) {
-            log.error("erreur lors de la requête au Sudoc ou du saveExemplaire" + e.toString());
-            ligneFichierDto.setRetourSudoc(e.getMessage());
+    public NoticeBiblioDto process(NoticeBiblioDto noticeBiblioDto) {
+        try {
+            Document doc = getService().getDocumentService().findById(noticeBiblioDto.getIddoc());
+            log.info("chunk processor for iddoc : " + noticeBiblioDto.getIddoc());
+            if (doc == null) {
+                noticeBiblioDto.setRetourSudoc("These not found");
+            } else {
+                String marcXml = Utilitaire.getMarcXmlFromTef(doc, cheminXslTef2Marc, fichierXslTef2Marc);
+                NoticeBiblioDto resultatInfoXml = getService().getMajStarSudocService().majStarSudocBiblio(marcXml, noticeBiblioDto);
+                noticeBiblioDto.setRetourSudoc(resultatInfoXml.getRetourSudoc());
+            }
         } catch (Exception e) {
-            log.error("erreur lors de la recup de la noticetraitee : " + e.toString());
-            ligneFichierDto.setRetourSudoc(e.getMessage());
-        }*/
+            noticeBiblioDto.setRetourSudoc("Processor " + e.getMessage());
+        }
 
-        Document doc = getService().getDocumentService().findById(noticeBiblio.getId());
-
-        log.info("dans le process = " + noticeBiblio + " Doc:" + doc.getDoc());
-        return noticeBiblio;
+        log.info("Processor " + noticeBiblioDto.getRetourSudoc());
+        return noticeBiblioDto;
     }
-
 
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
