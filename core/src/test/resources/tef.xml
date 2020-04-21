@@ -24,7 +24,7 @@
                         <invalidation indicInvalidation="sansObjet" date="" note="" />
                         <sorties date="">
                             <cines numeroPAC="" dateCines="" indicCines="sansObjet" trace="" />
-                            <sudoc PPN="" dateSudoc="" indicSudoc="sansObjet" majSudoc="" trace="">
+                            <sudoc PPN="" dateSudoc="2011-11-08T11:45:36Z" indicSudoc="KO" majSudoc="2020-04-21T10:37:22Z" trace="">
                                 <RCR code="999000008">ABES. Corinne 2</RCR>
                                 <EPN />
                             </sudoc>

@@ -12,11 +12,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +22,7 @@ import java.util.List;
 public class TefTest {
 
     @Test
-    void tefTest(){
+    void tefTest() {
         String fileName = getClass().getClassLoader().getResource("tef.xml").getPath();
 
         org.jdom2.Document jdomDoc;
@@ -37,8 +35,7 @@ public class TefTest {
 
             List<Element> empListElements = root.getChildren("metsHdr", Namespace.getNamespace("http://www.loc.gov/METS/"));
             var a = 0;
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
         }
     }
 
@@ -56,7 +53,7 @@ public class TefTest {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
         String dateStr = simpleDateFormat.format(new Date());
 
-        tef.setStarGestionAttribut(new Date(), "retourSudoc", "indicSudoc", "5205");
+        tef.setStarGestionAttribut(LocalDateTime.now(), "retourSudoc", "indicSudoc", "5205");
 
         var a = 0;
     }
@@ -69,7 +66,21 @@ public class TefTest {
 
         Mets mets = new MarshallingService().chargerMets(inputStream);
 
-        var a= 0;
+        var a = 0;
+    }
+
+    @Test
+    void updateDate() throws Exception {
+        String filePath = getClass().getClassLoader().getResource("tef.xml").getPath();
+
+        SAXReader xmlReader = new SAXReader();
+        Document document = xmlReader.read(filePath);
+
+        Tef tef = new Tef(document.asXML());
+
+        tef.setStarGestionAttribut(LocalDateTime.now(), "Notice créé", "OK", "");
+
+        var str = tef.documentTef.asXML();
     }
 
 
