@@ -53,6 +53,7 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, Not
             }
         } catch (Exception e) {
             noticeBiblioDto.setRetourSudoc("Processor " + e.getMessage());
+            noticeBiblioDto.setIndicSudoc("KO");
         }
 
         log.info("Processor " + noticeBiblioDto.getRetourSudoc());

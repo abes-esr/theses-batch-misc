@@ -40,16 +40,20 @@ public class Tef {
                 setPpn(ppn);
                 setTrace(retourSudoc, indicSudoc);
             } else {
-                if ("OK".equals(getIndicSudoc())) {
+                if ("OK".equals(getIndicSudoc()) || getIndicSudoc().isEmpty()) {
+                    // OK bib
                     setIndicSudoc(indicSudoc);
                     setTrace(retourSudoc, indicSudoc);
                     setPpn(ppn);
                 } else {
-                    if ("KO".equals(indicSudoc)) {
+                    // KO bib
+                    if ("KO".equals(indicSudoc) || indicSudoc.isEmpty()) {
+                        // KO exemp
                         String previousTrace = getTrace();
                         setTrace(previousTrace + ". " + retourSudoc);
                         setPpn(ppn);
                     }
+                    // OK exemp rien faire
                 }
             }
         } catch (Exception e) {
@@ -74,9 +78,14 @@ public class Tef {
 
 
     private boolean isLongerThan3Minutes(LocalDateTime toUpdate) {
-        Duration diff = getPeridDiff(toUpdate, getDateInTef());
-        Duration duration3Minute = Duration.ZERO.plusMinutes(3);
-        return diff.toMinutes() > duration3Minute.toMinutes();
+        try {
+            Duration diff = getPeridDiff(toUpdate, getDateInTef());
+            Duration duration3Minute = Duration.ZERO.plusMinutes(3);
+            return diff.toMinutes() > duration3Minute.toMinutes();
+        } catch (Exception e) {
+            return true;
+        }
+
     }
 
     private Duration getPeridDiff(LocalDateTime firstDate, LocalDateTime secondDate) {
@@ -85,12 +94,26 @@ public class Tef {
 
     private LocalDateTime getDateInTef() {
         DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        LocalDateTime majSudoc = LocalDateTime.parse(XPathService.getAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "majSudoc", documentTef), formater);
-        LocalDateTime dateSudoc = LocalDateTime.parse(XPathService.getAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "dateSudoc", documentTef), formater);
-        if (majSudoc.isAfter(dateSudoc)) {
-            return majSudoc;
+        String majSudocString = XPathService.getAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "majSudoc", documentTef);
+        String dateSudocString = XPathService.getAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "dateSudoc", documentTef);
+        if (majSudocString.isEmpty()) {
+            if (dateSudocString.isEmpty()) {
+                throw new NullPointerException("No date set in Tef");
+            } else {
+                return LocalDateTime.parse(dateSudocString);
+            }
         } else {
-            return dateSudoc;
+            if (dateSudocString.isEmpty()) {
+                return LocalDateTime.parse(majSudocString);
+            } else {
+                LocalDateTime majSudoc = LocalDateTime.parse(majSudocString, formater);
+                LocalDateTime dateSudoc = LocalDateTime.parse(dateSudocString, formater);
+                if (majSudoc.isAfter(dateSudoc)) {
+                    return majSudoc;
+                } else {
+                    return dateSudoc;
+                }
+            }
         }
     }
 
@@ -120,7 +143,9 @@ public class Tef {
     }
 
     private void setPpn(String ppn) {
-        XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "PPN", ppn, documentTef);
+        if (ppn != null && !ppn.isEmpty()) {
+            XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "PPN", ppn, documentTef);
+        }
     }
 
 
