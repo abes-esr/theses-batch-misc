@@ -59,6 +59,7 @@ public class ExemplaireProcessor implements ItemProcessor<NoticeBiblioDto, Notic
 
         } catch (Exception e) {
             noticeBiblio.setRetourSudoc(noticeBiblio.getRetourSudoc() + " : " + e.getMessage());
+            noticeBiblio.setIndicSudoc("KO");
         }
 
         return noticeBiblio;
