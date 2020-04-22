@@ -204,9 +204,4 @@ public class BatchConfiguration {
         return new DisconnectTasklet();
     }
 
-    @Bean
-    public DiffuserNoticeExempTasklet diffuserNoticeExempTasklet() {
-        return new DiffuserNoticeExempTasklet();
-    }
-
 }

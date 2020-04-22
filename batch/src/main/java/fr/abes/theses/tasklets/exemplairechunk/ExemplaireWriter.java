@@ -52,7 +52,7 @@ public class ExemplaireWriter implements ItemWriter<NoticeBiblioDto>, StepExecut
     }
 
     private void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) throws DocumentException, InstantiationException {
-        getService().getGestionTefService().majDonneesGestionExemplarisation(noticeBiblioDto);
+        getService().getGestionTefService().majDonneesGestion(noticeBiblioDto);
     }
 
     private void majNoticeBiblio(NoticeBiblioDto noticeBiblioDto) throws DataAccessException {
