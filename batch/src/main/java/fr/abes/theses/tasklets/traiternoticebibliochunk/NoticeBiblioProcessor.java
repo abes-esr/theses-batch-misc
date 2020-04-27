@@ -1,8 +1,8 @@
 package fr.abes.theses.tasklets.traiternoticebibliochunk;
 
 import fr.abes.theses.model.dto.NoticeBiblioDto;
-import fr.abes.theses.model.entities.Document;
 import fr.abes.theses.service.ServiceProvider;
+import fr.abes.theses.thesesAccessLayer.model.entities.star.DocumentStar;
 import fr.abes.theses.utils.Utilitaire;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +42,7 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, Not
     @Override
     public NoticeBiblioDto process(NoticeBiblioDto noticeBiblioDto) {
         try {
-            Document doc = getService().getDocumentService().findById(noticeBiblioDto.getIddoc());
+            DocumentStar doc = getService().getDocumentService().findById(noticeBiblioDto.getIddoc());
             log.info("chunk processor for iddoc : " + noticeBiblioDto.getIddoc());
             if (doc == null) {
                 noticeBiblioDto.setRetourSudoc("These not found");

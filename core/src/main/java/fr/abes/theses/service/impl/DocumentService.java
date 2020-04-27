@@ -1,8 +1,8 @@
 package fr.abes.theses.service.impl;
 
-import fr.abes.theses.dao.impl.DaoProvider;
-import fr.abes.theses.model.entities.Document;
 import fr.abes.theses.service.IDocumentService;
+import fr.abes.theses.thesesAccessLayer.dao.impl.DaoStarProvider;
+import fr.abes.theses.thesesAccessLayer.model.entities.star.DocumentStar;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,15 +14,15 @@ public class DocumentService implements IDocumentService {
 
     @Autowired
     @Getter
-    private DaoProvider dao;
+    private DaoStarProvider dao;
 
     @Override
-    public List<Document> findAll() {
+    public List<DocumentStar> findAll() {
         return getDao().getDocument().findAll();
     }
 
     @Override
-    public Document findById(Integer id) {
+    public DocumentStar findById(Integer id) {
         return getDao().getDocument().findById(id).orElse(null);
     }
 }

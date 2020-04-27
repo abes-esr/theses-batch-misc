@@ -1,7 +1,7 @@
 package fr.abes.theses.model.dto;
 
-import fr.abes.theses.model.entities.GenericEntity;
-import fr.abes.theses.model.entities.NoticeBiblio;
+import fr.abes.theses.thesesAccessLayer.model.entities.GenericEntity;
+import fr.abes.theses.thesesAccessLayer.model.entities.star.NoticeBiblio;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

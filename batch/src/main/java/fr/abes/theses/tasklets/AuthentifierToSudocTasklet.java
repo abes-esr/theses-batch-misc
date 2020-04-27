@@ -1,7 +1,6 @@
 package fr.abes.theses.tasklets;
 
 import fr.abes.cbs.exception.CBSException;
-import fr.abes.theses.model.entities.NoticeBiblio;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepContribution;
@@ -9,12 +8,9 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
-import java.util.List;
 
 @Slf4j
 public class AuthentifierToSudocTasklet implements Tasklet, StepExecutionListener {

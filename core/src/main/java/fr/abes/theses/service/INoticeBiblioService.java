@@ -1,6 +1,6 @@
 package fr.abes.theses.service;
 
-import fr.abes.theses.model.entities.NoticeBiblio;
+import fr.abes.theses.thesesAccessLayer.model.entities.star.NoticeBiblio;
 
 import java.util.List;
 

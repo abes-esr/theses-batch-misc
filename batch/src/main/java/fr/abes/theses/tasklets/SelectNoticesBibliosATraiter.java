@@ -1,8 +1,8 @@
 package fr.abes.theses.tasklets;
 
 import fr.abes.theses.model.dto.NoticeBiblioDto;
-import fr.abes.theses.model.entities.NoticeBiblio;
 import fr.abes.theses.service.ServiceProvider;
+import fr.abes.theses.thesesAccessLayer.model.entities.star.NoticeBiblio;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;

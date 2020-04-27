@@ -1,8 +1,7 @@
 package fr.abes.theses.utils;
 
-import fr.abes.theses.model.entities.Document;
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Value;
+import fr.abes.theses.thesesAccessLayer.model.entities.star.DocumentStar;
+import fr.abes.theses.thesesAccessLayer.model.types.HibernateXMLType;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -16,11 +15,11 @@ import java.io.StringWriter;
 
 public class Utilitaire {
 
-    public static String getMarcXmlFromTef(Document doc, String cheminXslTef2Marc, String fichierXslTef2Marc) throws TransformerException {
+    public static String getMarcXmlFromTef(DocumentStar doc, String cheminXslTef2Marc, String fichierXslTef2Marc) throws TransformerException {
 
         try {
             Source stylesheet = new StreamSource(new File(cheminXslTef2Marc + fichierXslTef2Marc));
-            StreamSource stream = new StreamSource(new StringReader(doc.getDoc()));
+            StreamSource stream = new StreamSource(new StringReader(HibernateXMLType.domToString(doc.getDoc())));
             TransformerFactory tFactory = TransformerFactory.newInstance();
             Transformer transformer = tFactory.newTransformer(stylesheet);
             final StringWriter writer = new StringWriter();

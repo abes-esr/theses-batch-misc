@@ -31,6 +31,12 @@
             <artifactId>AccesCbs</artifactId>
             <version>2.2.11-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>fr.abes.theses</groupId>
+            <artifactId>theses-dataAccessLayer</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- TEST -->
         <!-- Provide JUnit 5 API -->
         <dependency>

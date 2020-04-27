@@ -1,6 +1,7 @@
 package fr.abes.theses.model.dto;
 
-import fr.abes.theses.model.entities.NoticeBiblio;
+
+import fr.abes.theses.thesesAccessLayer.model.entities.star.NoticeBiblio;
 
 public class NoticeBiblioDtoMapper {
     public static NoticeBiblio getNoticeBiblioEntity(NoticeBiblioDto noticeBiblioDto) {

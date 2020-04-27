@@ -2,7 +2,6 @@ package fr.abes.theses.tasklets.traiternoticebibliochunk;
 
 import fr.abes.theses.model.dto.NoticeBiblioDto;
 import fr.abes.theses.model.dto.NoticeBiblioDtoMapper;
-import fr.abes.theses.model.entities.NoticeBiblio;
 import fr.abes.theses.service.ServiceProvider;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -10,11 +9,11 @@ import org.dom4j.DocumentException;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 
+import fr.abes.theses.thesesAccessLayer.model.entities.star.NoticeBiblio;
 import java.util.List;
 
 @Slf4j

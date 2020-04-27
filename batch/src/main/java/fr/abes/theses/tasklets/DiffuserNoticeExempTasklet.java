@@ -3,13 +3,12 @@ package fr.abes.theses.tasklets;
 import fr.abes.cbs.exception.CBSException;
 import fr.abes.theses.model.dto.NoticeBiblioDto;
 import fr.abes.theses.model.dto.NoticeBiblioDtoMapper;
-import fr.abes.theses.model.entities.Document;
-import fr.abes.theses.model.entities.NoticeBiblio;
 import fr.abes.theses.service.ServiceProvider;
+import fr.abes.theses.thesesAccessLayer.model.entities.star.DocumentStar;
+import fr.abes.theses.thesesAccessLayer.model.entities.star.NoticeBiblio;
 import fr.abes.theses.utils.Utilitaire;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.dom4j.DocumentException;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.StepExecution;
@@ -18,14 +17,9 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.xml.transform.TransformerException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -87,7 +81,7 @@ public class DiffuserNoticeExempTasklet implements Tasklet, StepExecutionListene
                     authenticate("M" + noticeBiblio.getCodeEtab(), passwd, noticeBiblio);
                     previousRcr = noticeBiblio.getCodeEtab();
                 }
-                Document doc = getService().getDocumentService().findById(noticeBiblio.getIddoc());
+                DocumentStar doc = getService().getDocumentService().findById(noticeBiblio.getIddoc());
                 if (doc == null) {
                     noticeBiblio.setRetourSudoc("These not found");
 

@@ -1,8 +1,8 @@
 package fr.abes.theses;
 
-import fr.abes.theses.configuration.ThesesOracleConfig;
 import fr.abes.theses.listener.DefaultListenerSupport;
 import fr.abes.theses.tasklets.*;
+import fr.abes.theses.thesesAccessLayer.configuration.StarConfig;
 import lombok.extern.log4j.Log4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersIncrementer;
@@ -27,7 +27,7 @@ import javax.sql.DataSource;
 @Log4j
 @Configuration
 @EnableBatchProcessing
-@Import(ThesesOracleConfig.class)
+@Import(StarConfig.class)
 @EnableRetry
 public class BatchConfiguration {
     private final JobBuilderFactory jobs;

@@ -1,10 +1,10 @@
 package fr.abes.theses.service;
 
-import fr.abes.theses.model.entities.Document;
+import fr.abes.theses.thesesAccessLayer.model.entities.star.DocumentStar;
 
 import java.util.List;
 
 public interface IDocumentService {
-    List<Document> findAll();
-    Document findById(Integer id);
+    List<DocumentStar> findAll();
+    DocumentStar findById(Integer id);
 }
