@@ -1,16 +1,20 @@
 package fr.abes.theses.service.impl;
 
-
-import fr.abes.theses.dao.impl.DaoProvider;
 import fr.abes.theses.model.Tef;
 import fr.abes.theses.model.dto.NoticeBiblioDto;
-import fr.abes.theses.model.entities.Document;
 import fr.abes.theses.service.IGestionTefService;
+import fr.abes.theses.thesesAccessLayer.dao.impl.DaoStarProvider;
+import fr.abes.theses.thesesAccessLayer.model.entities.star.DocumentStar;
+import fr.abes.theses.thesesAccessLayer.model.types.HibernateXMLType;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.DocumentException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -20,19 +24,19 @@ import java.util.Date;
 public class GestionTefService implements IGestionTefService {
     @Getter
     final
-    DaoProvider dao;
+    DaoStarProvider dao;
 
-    public GestionTefService(DaoProvider dao) {
+    public GestionTefService(DaoStarProvider dao) {
         this.dao = dao;
     }
 
     @Override
-    public void majDonneesGestionExemplarisation(NoticeBiblioDto noticeBiblioDto) throws InstantiationException, DocumentException {
-        Document document = getDao().getDocument().findById(noticeBiblioDto.getIddoc()).orElse(null);
+    public void majDonneesGestionExemplarisation(NoticeBiblioDto noticeBiblioDto) throws InstantiationException, DocumentException, IOException, SAXException, ParserConfigurationException, TransformerException {
+        DocumentStar document = getDao().getDocument().findById(noticeBiblioDto.getIddoc()).orElse(null);
         if (document != null) {
-            Tef tef = new Tef(document.getDoc());
+            Tef tef = new Tef(HibernateXMLType.domToString(document.getDoc()));
             tef.setStarGestionAttributExemplaire(new Date(), noticeBiblioDto.getIndicSudoc(), noticeBiblioDto.getRetourSudoc());
-            document.setDoc(tef.documentTef.asXML());
+            document.setDoc(HibernateXMLType.stringToDom(tef.documentTef.asXML()));
             getDao().getDocument().saveAndFlush(document);
         } else {
             log.error("These not found in Document table, id : " + noticeBiblioDto.getIddoc());
@@ -40,12 +44,12 @@ public class GestionTefService implements IGestionTefService {
     }
 
     @Override
-    public void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) throws InstantiationException, DocumentException {
-        Document document = getDao().getDocument().findById(noticeBiblioDto.getIddoc()).orElse(null);
+    public void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) throws InstantiationException, DocumentException, TransformerException, IOException, SAXException, ParserConfigurationException {
+        DocumentStar document = getDao().getDocument().findById(noticeBiblioDto.getIddoc()).orElse(null);
         if (document != null) {
-            Tef documentTef = new Tef(document.getDoc());
+            Tef documentTef = new Tef(HibernateXMLType.domToString(document.getDoc()));
             documentTef.setStarGestionAttribut(new Date(), noticeBiblioDto.getRetourSudoc(), noticeBiblioDto.getIndicSudoc(), noticeBiblioDto.getPpn());
-            document.setDoc(documentTef.documentTef.asXML());
+            document.setDoc(HibernateXMLType.stringToDom(documentTef.documentTef.asXML()));
             getDao().getDocument().saveAndFlush(document);
         } else {
             log.error("These not found in Document table, id : " + noticeBiblioDto.getIddoc());

@@ -2,19 +2,22 @@ package fr.abes.theses.tasklets.exemplairechunk;
 
 import fr.abes.theses.model.dto.NoticeBiblioDto;
 import fr.abes.theses.model.dto.NoticeBiblioDtoMapper;
-import fr.abes.theses.model.entities.NoticeBiblio;
 import fr.abes.theses.service.ServiceProvider;
+import fr.abes.theses.thesesAccessLayer.model.entities.star.NoticeBiblio;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.DocumentException;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -38,7 +41,7 @@ public class ExemplaireWriter implements ItemWriter<NoticeBiblioDto>, StepExecut
     }
 
     @Override
-    public void write(List<? extends NoticeBiblioDto> list) throws InstantiationException, DocumentException {
+    public void write(List<? extends NoticeBiblioDto> list) throws InstantiationException, DocumentException, SAXException, ParserConfigurationException, IOException, TransformerException {
         for (NoticeBiblioDto noticeBiblioDto : list) {
             try {
                 this.majNoticeBiblio(noticeBiblioDto);
@@ -51,7 +54,7 @@ public class ExemplaireWriter implements ItemWriter<NoticeBiblioDto>, StepExecut
         }
     }
 
-    private void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) throws DocumentException, InstantiationException {
+    private void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) throws DocumentException, InstantiationException, SAXException, TransformerException, ParserConfigurationException, IOException {
         getService().getGestionTefService().majDonneesGestionExemplarisation(noticeBiblioDto);
     }
 

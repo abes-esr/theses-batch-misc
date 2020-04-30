@@ -14,6 +14,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 
 import fr.abes.theses.thesesAccessLayer.model.entities.star.NoticeBiblio;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -51,7 +56,7 @@ public class NoticeBiblioWriter implements ItemWriter<NoticeBiblioDto>, StepExec
         }
     }
 
-    private void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) throws DocumentException, InstantiationException {
+    private void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) throws DocumentException, InstantiationException, IOException, ParserConfigurationException, SAXException, TransformerException {
         getService().getGestionTefService().majDonneesGestion(noticeBiblioDto);
     }
 

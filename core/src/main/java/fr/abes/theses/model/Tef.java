@@ -2,14 +2,14 @@ package fr.abes.theses.model;
 
 import fr.abes.theses.service.XPathService;
 import lombok.extern.slf4j.Slf4j;
-import org.dom4j.*;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
-import static fr.abes.theses.service.XPathService.*;
+import static fr.abes.theses.service.XPathService.XPATH_STAR_GEST_TRTS_SORTIES_SUDOC;
 
 @Slf4j
 public class Tef {

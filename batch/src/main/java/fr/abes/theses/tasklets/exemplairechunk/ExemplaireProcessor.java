@@ -1,8 +1,8 @@
 package fr.abes.theses.tasklets.exemplairechunk;
 
 import fr.abes.theses.model.dto.NoticeBiblioDto;
-import fr.abes.theses.model.entities.Document;
 import fr.abes.theses.service.ServiceProvider;
+import fr.abes.theses.thesesAccessLayer.model.entities.star.DocumentStar;
 import fr.abes.theses.utils.Utilitaire;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +39,7 @@ public class ExemplaireProcessor implements ItemProcessor<NoticeBiblioDto, Notic
         try {
             getService().getMajStarSudocService().authenticateExemp("M" + noticeBiblio.getCodeEtab(), passwd);
 
-            Document doc = getService().getDocumentService().findById(noticeBiblio.getIddoc());
+            DocumentStar doc = getService().getDocumentService().findById(noticeBiblio.getIddoc());
             boolean premiereExemplarisationRcrNonDeploye = getService().getMajStarSudocService().getPremiereExemplarisationRcrNonDeploye();
             if (doc == null) {
                 noticeBiblio.setRetourSudoc("These not found");

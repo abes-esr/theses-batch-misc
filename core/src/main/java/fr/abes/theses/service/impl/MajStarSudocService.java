@@ -7,9 +7,9 @@ import fr.abes.cbs.utilitaire.Constants;
 import fr.abes.cbs.zones.enumSousZones.Zone_214;
 import fr.abes.cbs.zones.enumSousZones.Zone_219;
 import fr.abes.cbs.zones.enumZones.EnumZones;
-import fr.abes.theses.dao.impl.DaoProvider;
 import fr.abes.theses.model.dto.NoticeBiblioDto;
 import fr.abes.theses.service.IMajStarSudocService;
+import fr.abes.theses.thesesAccessLayer.dao.impl.DaoStarProvider;
 import jdk.jshell.spi.ExecutionControl;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,7 +40,7 @@ import org.xml.sax.InputSource;
 public class MajStarSudocService implements IMajStarSudocService {
     @Autowired
     @Getter
-    private DaoProvider dao;
+    private DaoStarProvider dao;
 
     @Getter
     private ProcessCBS clientBiblio;
