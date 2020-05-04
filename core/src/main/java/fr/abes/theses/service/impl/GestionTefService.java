@@ -27,35 +27,16 @@ public class GestionTefService implements IGestionTefService {
     }
 
     @Override
-    public void majDonneesGestionExemplarisation(NoticeBiblioDto noticeBiblioDto) throws InstantiationException, DocumentException {
-        Document document = getDao().getDocument().findById(noticeBiblioDto.getIddoc()).orElse(null);
-        if (document != null) {
-            Tef tef = new Tef(document.getDoc());
-            tef.setStarGestionAttributExemplaire(new Date(), noticeBiblioDto.getIndicSudoc(), noticeBiblioDto.getRetourSudoc());
-            document.setDoc(tef.documentTef.asXML());
-            getDao().getDocument().saveAndFlush(document);
-        } else {
-            log.error("These not found in Document table, id : " + noticeBiblioDto.getIddoc());
-        }
-    }
-
-    @Override
     public void majDonneesGestion(NoticeBiblioDto noticeBiblioDto) throws InstantiationException, DocumentException {
         Document document = getDao().getDocument().findById(noticeBiblioDto.getIddoc()).orElse(null);
         if (document != null) {
             Tef documentTef = new Tef(document.getDoc());
-            documentTef.setStarGestionAttribut(new Date(), noticeBiblioDto.getRetourSudoc(), noticeBiblioDto.getIndicSudoc(), noticeBiblioDto.getPpn());
+            documentTef.setStarGestionAttribut(LocalDateTime.now(), noticeBiblioDto.getRetourSudoc(), noticeBiblioDto.getIndicSudoc(), noticeBiblioDto.getPpn());
             document.setDoc(documentTef.documentTef.asXML());
             getDao().getDocument().saveAndFlush(document);
         } else {
             log.error("These not found in Document table, id : " + noticeBiblioDto.getIddoc());
         }
-    }
-
-    private String getDateISO8601() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        LocalDateTime now = LocalDateTime.now();
-        return dtf.format(now);
     }
 }
 

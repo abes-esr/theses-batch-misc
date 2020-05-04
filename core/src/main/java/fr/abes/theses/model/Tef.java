@@ -5,8 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.dom4j.*;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalAmount;
 import java.util.Date;
 
 import static fr.abes.theses.service.XPathService.*;
@@ -24,73 +30,107 @@ public class Tef {
         checkDocumenTef();
     }
 
-    public Tef(Document document) throws InstantiationException {
-        this.documentTef = document;
-        checkDocumenTef();
-    }
 
-
-    public void setStarGestionAttribut(Date dateModification, String retourSudoc, String indicSudoc, String ppn) throws InstantiationException {
+    public void setStarGestionAttribut(LocalDateTime dateModification, String retourSudoc, String indicSudoc, String ppn) throws InstantiationException {
         checkDocumenTef();
-        SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        try{
-            setDate(formater.format(dateModification));
-            setIndicSudoc(indicSudoc);
-        } catch (Exception e){
+
+        try {
+            if (isLongerThan3Minutes(dateModification)) {
+                setIndicSudoc(indicSudoc);
+                setPpn(ppn);
+                setTrace(retourSudoc, indicSudoc);
+            } else {
+                if ("OK".equals(getIndicSudoc()) || getIndicSudoc().isEmpty()) {
+                    // OK bib
+                    setIndicSudoc(indicSudoc);
+                    setTrace(retourSudoc, indicSudoc);
+                    setPpn(ppn);
+                } else {
+                    // KO bib
+                    if ("KO".equals(indicSudoc) || indicSudoc.isEmpty()) {
+                        // KO exemp
+                        String previousTrace = getTrace();
+                        setTrace(previousTrace + ". " + retourSudoc);
+                        setPpn(ppn);
+                    }
+                    // OK exemp rien faire
+                }
+            }
+        } catch (Exception e) {
             log.info(e.getMessage());
         }
 
-        if (retourSudoc.contains("KO")) {
-            XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", retourSudoc, documentTef);
-        } else {
-            XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "PPN", ppn, documentTef);
-            XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", "", documentTef);
+        try {
+            DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            setDate(formater.format(dateModification));
+        } catch (Exception e) {
+            log.info(e.getMessage());
         }
     }
 
-    public void setStarGestionAttribut(String date, Document retour) throws InstantiationException {
-        checkDocumenTef();
+    private String getTrace() {
+        return XPathService.getAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", documentTef);
+    }
 
-        setDate(date);
+    private String getIndicSudoc() {
+        return XPathService.getAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "indicSudoc", documentTef);
+    }
 
-        String codeRetour = setCodeRetour(retour);
 
-        if (codeRetour.contains("KO")) {
-            setMessage(retour, "THESE/BIBLIO/MESSAGE", "trace");
-        } else {
-            setMessage(retour, "THESE/BIBLIO/PPN", "PPN");
-            XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", "", documentTef);
+    private boolean isLongerThan3Minutes(LocalDateTime toUpdate) {
+        try {
+            Duration diff = getPeridDiff(toUpdate, getDateInTef());
+            Duration duration3Minute = Duration.ZERO.plusMinutes(3);
+            return diff.toMinutes() > duration3Minute.toMinutes();
+        } catch (Exception e) {
+            return true;
         }
 
     }
 
-    public void setStarGestionAttributExemplaire(Date updateDate, String indicSudoc, String trace) throws InstantiationException {
-        checkDocumenTef();
+    private Duration getPeridDiff(LocalDateTime firstDate, LocalDateTime secondDate) {
+        return Duration.between(secondDate, firstDate);
+    }
 
-        SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        setDate(formater.format(updateDate));
-        setIndicSudoc(indicSudoc);
-        setTrace(trace);
-
+    private LocalDateTime getDateInTef() {
+        DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        String majSudocString = XPathService.getAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "majSudoc", documentTef);
+        String dateSudocString = XPathService.getAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "dateSudoc", documentTef);
+        if (majSudocString.isEmpty()) {
+            if (dateSudocString.isEmpty()) {
+                throw new NullPointerException("No date set in Tef");
+            } else {
+                return LocalDateTime.parse(dateSudocString);
+            }
+        } else {
+            if (dateSudocString.isEmpty()) {
+                return LocalDateTime.parse(majSudocString);
+            } else {
+                LocalDateTime majSudoc = LocalDateTime.parse(majSudocString, formater);
+                LocalDateTime dateSudoc = LocalDateTime.parse(dateSudocString, formater);
+                if (majSudoc.isAfter(dateSudoc)) {
+                    return majSudoc;
+                } else {
+                    return dateSudoc;
+                }
+            }
+        }
     }
 
     private void setIndicSudoc(String indicSudoc) {
         XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "indicSudoc", indicSudoc, documentTef);
     }
 
+    private void setTrace(String trace, String indicSudoc) {
+        if ("KO".equals(indicSudoc)) {
+            XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", trace, documentTef);
+        } else {
+            XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", "", documentTef);
+        }
+    }
+
     private void setTrace(String trace) {
         XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "trace", trace, documentTef);
-    }
-
-    private void setMessage(Document retour, String path, String trace) {
-        String message = XPathService.getValue(path, retour);
-        XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, trace, message, documentTef);
-    }
-
-    private String setCodeRetour(Document retour) {
-        String codeRetour = XPathService.getValue("THESE/BIBLIO/CODERETOUR", retour);
-        setIndicSudoc(codeRetour);
-        return codeRetour;
     }
 
     private void setDate(String date) {
@@ -99,6 +139,12 @@ public class Tef {
             XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "majSudoc", date, documentTef);
         } else {
             XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "dateSudoc", date, documentTef);
+        }
+    }
+
+    private void setPpn(String ppn) {
+        if (ppn != null && !ppn.isEmpty()) {
+            XPathService.setAttribut(XPATH_STAR_GEST_TRTS_SORTIES_SUDOC, "PPN", ppn, documentTef);
         }
     }
 
