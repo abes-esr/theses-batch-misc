@@ -21,7 +21,8 @@ import java.util.List;
 
 @Slf4j
 public class SelectNoticesBibliosATraiter implements Tasklet, StepExecutionListener {
-    @Autowired @Getter
+    @Autowired
+    @Getter
     ServiceProvider service;
 
     @Value("${previousJobIdToRestartFrom}")
@@ -32,7 +33,8 @@ public class SelectNoticesBibliosATraiter implements Tasklet, StepExecutionListe
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public SelectNoticesBibliosATraiter(){}
+    public SelectNoticesBibliosATraiter() {
+    }
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
@@ -46,12 +48,14 @@ public class SelectNoticesBibliosATraiter implements Tasklet, StepExecutionListe
 
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-
-        if (previousJobIdToRestartFrom != -1){
-            updateNoticesAlreadyDone(jobId);
-            log.info("Job restarted from job : " + previousJobIdToRestartFrom);
+        try {
+            if (previousJobIdToRestartFrom != null && previousJobIdToRestartFrom != -1) {
+                updateNoticesAlreadyDone(jobId);
+                log.info("Job restarted from job : " + previousJobIdToRestartFrom);
+            }
+        } catch (Exception e) {
+            log.info(e.getMessage());
         }
-
         return RepeatStatus.FINISHED;
     }
 
