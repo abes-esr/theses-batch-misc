@@ -27,9 +27,11 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, Not
     @Getter
     ServiceProvider service;
 
+    private Integer jobId;
+
     @Override
     public void beforeStep(StepExecution stepExecution) {
-
+        jobId = stepExecution.getJobExecutionId().intValue();
     }
 
     /**
@@ -56,7 +58,7 @@ public class NoticeBiblioProcessor implements ItemProcessor<NoticeBiblioDto, Not
             noticeBiblioDto.setIndicSudoc("KO");
         }
 
-        log.info("Processor " + noticeBiblioDto.getRetourSudoc());
+        log.info("JobId " + jobId + " iddoc " + noticeBiblioDto.getIddoc() +" Processor " + noticeBiblioDto.getRetourSudoc());
         return noticeBiblioDto;
     }
 

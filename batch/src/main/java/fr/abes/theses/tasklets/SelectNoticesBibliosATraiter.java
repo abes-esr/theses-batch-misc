@@ -13,21 +13,27 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 public class SelectNoticesBibliosATraiter implements Tasklet, StepExecutionListener {
-    @Autowired @Getter
+    @Autowired
+    @Getter
     ServiceProvider service;
 
-    private List<NoticeBiblioDto> noticeBiblioDtos;
-    private String login;
+    @Value("${previousJobIdToRestartFrom}")
+    private Integer previousJobIdToRestartFrom;
+
     private Integer jobId;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     public SelectNoticesBibliosATraiter() {
-        this.noticeBiblioDtos = new ArrayList<>();
     }
 
     @Override
@@ -37,27 +43,29 @@ public class SelectNoticesBibliosATraiter implements Tasklet, StepExecutionListe
 
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
-        if (ExitStatus.COMPLETED.equals(stepExecution.getExitStatus())) {
-            stepExecution.getJobExecution().getExecutionContext().put("noticesBiblio", new ArrayList<NoticeBiblioDto>());
-            //stepExecution.getJobExecution().getExecutionContext().put("noticesBiblio", this.noticeBiblioDtos);
-            stepExecution.getJobExecution().getExecutionContext().put("login", this.login);
-        }
-        return stepExecution.getExitStatus();
+        return null;
     }
 
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-        log.info("SNBTT size noticebib : " + this.noticeBiblioDtos.size());
-        this.noticeBiblioDtos = new ArrayList<>();
-        List<NoticeBiblio> NoticeBiblios = getService().getNoticeBiblioService().getNoticesNonTraiteByJobId(jobId);
-        for (NoticeBiblio noticeBiblio : NoticeBiblios) {
-            this.noticeBiblioDtos.add(new NoticeBiblioDto(noticeBiblio));
+        try {
+            if (previousJobIdToRestartFrom != null && previousJobIdToRestartFrom != -1) {
+                updateNoticesAlreadyDone(jobId);
+                log.info("Job restarted from job : " + previousJobIdToRestartFrom);
+            }
+        } catch (Exception e) {
+            log.info(e.getMessage());
         }
-        if (this.noticeBiblioDtos.isEmpty()) {
-            log.error("Aucune notice à traiter pour le job " + jobId);
-            stepContribution.setExitStatus(ExitStatus.FAILED);
-        }
-
         return RepeatStatus.FINISHED;
+    }
+
+    private void updateNoticesAlreadyDone(Integer jobId) {
+        jdbcTemplate.update("update T_E_TRAITEMENT_NOTICEBIB_TNB set TRAITEE=1 " +
+                        "WHERE JOB_ID= ? " +
+                        "and THE_ID in (select the_id from T_E_TRAITEMENT_NOTICEBIB_TNB where job_id= ? and traitee=1)",
+                jobId,
+                previousJobIdToRestartFrom);
+        jdbcTemplate.update("commit");
+
     }
 }

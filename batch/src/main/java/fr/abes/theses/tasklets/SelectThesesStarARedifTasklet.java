@@ -25,12 +25,13 @@ import java.net.URL;
 
 @Slf4j
 public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionListener {
-    @Autowired @Getter
+    @Autowired
+    @Getter
     ServiceProvider service;
 
     private Integer jobId;
     private String jobName;
-    
+
     @Value("${rowsNumber}")
     private Integer rowsNumber;
 
@@ -51,11 +52,10 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
 
     private final String urlDiffusionTotale = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=SGcodeEtab%20asc&wt=json";
     private final String urlDiffusionExemp = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]&fl=SGRCRSudoc,id&sort=id%20asc&wt=json";
+
     @Override
     public void beforeStep(StepExecution stepExecution) {
-        log.info("entree dans beforeStep de SelectThesesStarARedifTasklet");
         jobId = stepExecution.getJobExecutionId().intValue();
-        log.info("Lancement Job n° " + jobId);
         jobName = stepExecution.getJobExecution().getJobInstance().getJobName();
     }
 
@@ -63,8 +63,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
         log.info("Entrée dans SelectThesesStarARedif");
 
-        try
-        {
+        try {
             String requete;
             if (jobName.equals("diffuserThesesVersSudoc")) {
                 requete = urlSolr + urlDiffusionTotale;
@@ -73,21 +72,17 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
             }
             requete += "&start=" + startRow + "&rows=" + rowsNumber;
 
-            if (!idThese.equals("null"))
-            {
+            if (!idThese.equals("null")) {
                 requete = getRequeteParIdThese();
             }
 
             JSONArray docs = getJson(requete);
 
-            if (docs.isEmpty())
-            {
-                log.info("Aucune notice à rediffuser");
+            if (docs.isEmpty()) {
+                log.info("JobId " + jobId + " Aucune notice à rediffuser");
                 stepContribution.setExitStatus(new ExitStatus("AUCUNE NOTICE"));
-            }
-            else
-            {
-                log.info("Notices à rediffuser : " + docs.toString());
+            } else {
+                log.info("JobId " + jobId + " Notices à rediffuser : " + docs.toString());
                 if (jobName.equals("diffuserThesesVersSudoc")) {
                     extractJsonBiblio(docs);
                 } else {
@@ -95,9 +90,8 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                 }
                 stepContribution.setExitStatus(new ExitStatus("COMPLETED"));
             }
-        }
-        catch (Exception e) {
-            log.error(e.getMessage());
+        } catch (Exception e) {
+            log.error("JobId " + jobId + e.getMessage());
             stepContribution.setExitStatus(ExitStatus.FAILED);
         }
         return RepeatStatus.FINISHED;
@@ -105,14 +99,14 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
 
     private String getRequeteParIdThese() {
         String requete;
-        if(jobName.equals("diffuserThesesVersSudoc")){
+        if (jobName.equals("diffuserThesesVersSudoc")) {
             requete = urlSolr + "/solr1/select/?" +
                     "q=SGindicCines:OK+SGetabProd:oui" + "+id:" + idThese +
                     "&fl=id,SGetatWF,SGcodeEtab" +
                     "&sort=id%20asc" +
                     "&wt=json";
         } else {
-            requete = urlSolr +"/solr1/select/?" +
+            requete = urlSolr + "/solr1/select/?" +
                     "q=SGindicCines:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]" + "+id:" + idThese +
                     "&fl=SGRCRSudoc,id" +
                     "&wt=json";
@@ -127,29 +121,27 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                 int iddoc = Integer.parseInt(docs.optJSONObject(i).optString("id"));
                 for (int j = 0; j < docs.optJSONObject(i).optJSONArray("SGRCRSudoc").length(); j++) {
                     String rcr = docs.optJSONObject(i).optJSONArray("SGRCRSudoc").getString(j);
-                    log.info("rcr n° "+ rcr);
+                    log.info("JobId " + jobId + " rcr n° " + rcr);
                     //si le rcr appartient un ILN d'établissement non déployé, on se connectera avec un login de rcr spécifique pour l'exemplarisation
                     try {
                         if (Integer.parseInt(getService().getMajStarSudocService().getClientBiblio().ilnRattachement(rcr)) > 199
                                 && Integer.parseInt(getService().getMajStarSudocService().getClientBiblio().ilnRattachement(rcr)) <= 300)
                             rcr = "341720008";
-                    } catch (NumberFormatException e){
-                        log.warn("Impossible de verrifier l'ILN de rattachement pour le rcr :" + rcr);
+                    } catch (NumberFormatException e) {
+                        log.warn("JobId " + jobId + " Impossible de verrifier l'ILN de rattachement pour le rcr :" + rcr);
                     }
                     getService().getNoticeBiblioService().save(new NoticeBiblio(jobId, iddoc, rcr, 0, "", null, null, null, null, null));
                 }
             }
             getService().getMajStarSudocService().disconnectBiblio();
-        }catch (CBSException ex) {
-            log.error("Impossible de se connecter au cbs " + ex.getMessage());
+        } catch (CBSException ex) {
+            log.error("JobId " + jobId + " Impossible de se connecter au cbs " + ex.getMessage());
         }
     }
 
     private void extractJsonBiblio(JSONArray docs) {
-        for (int i=0;i<docs.length();i++)
-        {
+        for (int i = 0; i < docs.length(); i++) {
             int iddoc = Integer.parseInt(docs.optJSONObject(i).optString("id"));
-            log.info("traite : " + iddoc);
             String codeEtab = docs.optJSONObject(i).optString("SGcodeEtab");
             getService().getNoticeBiblioService().save(new NoticeBiblio(jobId, iddoc, codeEtab, 0, "", null, null, null, null, null));
         }
@@ -173,7 +165,6 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
     public ExitStatus afterStep(StepExecution stepExecution) {
         return stepExecution.getExitStatus();
     }
-
 
 
 }

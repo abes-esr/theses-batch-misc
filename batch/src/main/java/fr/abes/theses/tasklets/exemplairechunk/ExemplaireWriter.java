@@ -24,12 +24,15 @@ public class ExemplaireWriter implements ItemWriter<NoticeBiblioDto>, StepExecut
     @Getter
     final ServiceProvider service;
 
+    private Integer jobId;
+
     public ExemplaireWriter(ServiceProvider service) {
         this.service = service;
     }
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
+        jobId = stepExecution.getJobExecutionId().intValue();
     }
 
     @Override
@@ -44,8 +47,8 @@ public class ExemplaireWriter implements ItemWriter<NoticeBiblioDto>, StepExecut
                 this.majNoticeBiblio(noticeBiblioDto);
                 this.majDonneesGestion(noticeBiblioDto);
             } catch (Exception e) {
-                log.error(e.getMessage());
-                log.error("Erreur dans la mise à jour de la ligne " + noticeBiblioDto.getId());
+                log.error("JobId " + jobId + e.getMessage());
+                log.error("JobId " + jobId + " Erreur dans la mise à jour de la ligne " + noticeBiblioDto.getId());
                 throw e;
             }
         }
@@ -58,8 +61,7 @@ public class ExemplaireWriter implements ItemWriter<NoticeBiblioDto>, StepExecut
     private void majNoticeBiblio(NoticeBiblioDto noticeBiblioDto) throws DataAccessException {
         noticeBiblioDto.setDone(1);
         NoticeBiblio noticeBiblio = NoticeBiblioDtoMapper.getNoticeBiblioEntity(noticeBiblioDto);
-        log.info("majNoticeBiblio RetourSudoc : " + noticeBiblio.getRetourSudoc());
         service.getNoticeBiblioService().save(noticeBiblio);
-        log.info("Exemplaire traité : " + noticeBiblio.getIddoc());
+        log.info("JobId " + jobId + " iddoc " + noticeBiblioDto.getIddoc() + " Writter " + noticeBiblioDto.getRetourSudoc());
     }
 }
