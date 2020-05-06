@@ -22,9 +22,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class ExemplaireReader implements ItemReader<NoticeBiblioDto>, StepExecutionListener {
 
-    @Value("${previousJobIdToRestartFrom}")
-    private Integer previousJobIdToRestartFrom;
-
     private List<NoticeBiblioDto> noticeBiblios;
     private AtomicInteger i = new AtomicInteger();
     @Getter
