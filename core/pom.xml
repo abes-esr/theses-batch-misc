@@ -51,10 +51,15 @@
             <artifactId>dom4j</artifactId>
             <version>2.1.1</version>
         </dependency>
-       <dependency>
-            <groupId>jaxen</groupId>
-            <artifactId>jaxen</artifactId>
-            <version>1.2.0</version>
+        <dependency>
+        <groupId>jaxen</groupId>
+        <artifactId>jaxen</artifactId>
+        <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon</artifactId>
+            <version>8.7</version>
         </dependency>
     </dependencies>
 </project>
