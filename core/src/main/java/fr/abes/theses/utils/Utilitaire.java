@@ -21,7 +21,7 @@ public class Utilitaire {
         try {
             Source stylesheet = new StreamSource(new File(cheminXslTef2Marc + fichierXslTef2Marc));
             StreamSource stream = new StreamSource(new StringReader(doc.getDoc()));
-            TransformerFactory tFactory = TransformerFactory.newInstance();
+            TransformerFactory tFactory = new net.sf.saxon.TransformerFactoryImpl();
             Transformer transformer = tFactory.newTransformer(stylesheet);
             final StringWriter writer = new StringWriter();
             final StreamResult output = new StreamResult(writer);
