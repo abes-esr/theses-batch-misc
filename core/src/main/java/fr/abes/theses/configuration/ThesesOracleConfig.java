@@ -1,5 +1,7 @@
 package fr.abes.theses.configuration;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -58,12 +60,21 @@ public class ThesesOracleConfig {
 
     @Bean
     public DataSource thesesDatasource() {
-        final DriverManagerDataSource datasource = new DriverManagerDataSource();
+/*        final DriverManagerDataSource datasource = new DriverManagerDataSource();
         datasource.setDriverClassName(this.driver);
         datasource.setUrl(this.url);
         datasource.setUsername(this.username);
         datasource.setPassword(this.password);
-        return datasource;
+        return datasource;*/
+        HikariConfig config = new HikariConfig();
+        config.setDriverClassName(this.driver);
+        config.setJdbcUrl(this.url);
+        config.setUsername(this.username);
+        config.setPassword(this.password);
+        config.setMinimumIdle(300);
+
+
+        return new HikariDataSource(config);
     }
 
     @Bean
