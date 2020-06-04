@@ -2,7 +2,6 @@ package fr.abes.theses.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.*;
-import org.springframework.context.annotation.Bean;
 
 import java.util.List;
 

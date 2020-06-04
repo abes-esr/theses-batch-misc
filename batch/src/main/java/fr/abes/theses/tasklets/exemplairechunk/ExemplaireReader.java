@@ -22,9 +22,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class ExemplaireReader implements ItemReader<NoticeBiblioDto>, StepExecutionListener {
 
-    @Value("${previousJobIdToRestartFrom}")
-    private Integer previousJobIdToRestartFrom;
-
     private List<NoticeBiblioDto> noticeBiblios;
     private AtomicInteger i = new AtomicInteger();
     @Getter
@@ -43,10 +40,6 @@ public class ExemplaireReader implements ItemReader<NoticeBiblioDto>, StepExecut
 
         Integer jobId = stepExecution.getJobExecutionId().intValue();
 
-        if (previousJobIdToRestartFrom != -1){
-            updateNoticesAlreadyTraitee(jobId);
-        }
-
         log.info("BeforeStep de ExemplaireReader");
         this.noticeBiblios = new ArrayList<>();
         List<NoticeBiblio> NoticeBiblios = getService().getNoticeBiblioService().getNoticesNonTraiteByJobId(jobId);
@@ -62,21 +55,10 @@ public class ExemplaireReader implements ItemReader<NoticeBiblioDto>, StepExecut
 
     @Override
     public NoticeBiblioDto read() {
-        log.info("Read Exemplaire");
         NoticeBiblioDto noticeBiblio = null;
         if (i.intValue() < this.noticeBiblios.size()) {
             noticeBiblio = this.noticeBiblios.get(i.getAndIncrement());
         }
         return noticeBiblio;
-    }
-
-    private void updateNoticesAlreadyTraitee(Integer jobId) {
-        jdbcTemplate.update("update T_E_TRAITEMENT_NOTICEBIB_TNB set TRAITEE=1 " +
-                        "WHERE JOB_ID= ? " +
-                        "and THE_ID in (select the_id from T_E_TRAITEMENT_NOTICEBIB_TNB where job_id= ? and traitee=1)",
-                jobId,
-                previousJobIdToRestartFrom);
-        jdbcTemplate.update("commit");
-
     }
 }

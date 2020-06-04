@@ -6,6 +6,9 @@ import fr.abes.theses.service.ServiceProvider;
 import fr.abes.theses.utils.Utilitaire;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.ExitStatus;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +18,7 @@ import java.util.Date;
 
 @Slf4j
 @Component
-public class ExemplaireProcessor implements ItemProcessor<NoticeBiblioDto, NoticeBiblioDto> {
+public class ExemplaireProcessor implements ItemProcessor<NoticeBiblioDto, NoticeBiblioDto>, StepExecutionListener {
 
     @Value("${star.xsl}")
     private String cheminXslTef2Marc;
@@ -29,6 +32,8 @@ public class ExemplaireProcessor implements ItemProcessor<NoticeBiblioDto, Notic
     @Autowired
     @Getter
     ServiceProvider service;
+
+    private Integer jobId;
 
     @Override
     public NoticeBiblioDto process(NoticeBiblioDto noticeBiblio) throws Exception {
@@ -62,6 +67,18 @@ public class ExemplaireProcessor implements ItemProcessor<NoticeBiblioDto, Notic
             noticeBiblio.setIndicSudoc("KO");
         }
 
+        log.info("JobId " + jobId + " iddoc " + noticeBiblio.getIddoc() +" Processor " + noticeBiblio.getRetourSudoc());
+
         return noticeBiblio;
+    }
+
+    @Override
+    public void beforeStep(StepExecution stepExecution) {
+        jobId = stepExecution.getJobExecutionId().intValue();
+    }
+
+    @Override
+    public ExitStatus afterStep(StepExecution stepExecution) {
+        return null;
     }
 }
