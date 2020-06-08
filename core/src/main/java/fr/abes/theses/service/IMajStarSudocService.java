@@ -5,6 +5,7 @@ import fr.abes.cbs.notices.Exemplaire;
 import fr.abes.cbs.notices.NoticeConcrete;
 import fr.abes.cbs.process.ProcessCBS;
 import fr.abes.theses.model.dto.NoticeBiblioDto;
+import org.dom4j.DocumentException;
 
 public interface IMajStarSudocService {
     ProcessCBS getClientBiblio();
@@ -17,7 +18,7 @@ public interface IMajStarSudocService {
 
     NoticeBiblioDto majStarSudocBiblio(String marcXml, NoticeBiblioDto noticeBiblioDto);
 
-    NoticeBiblioDto majStarSudocExemp(String marcXml, NoticeBiblioDto noticeBiblioDto, boolean premiereExemplarisationRcrNonDeploye) throws CBSException;
+    NoticeBiblioDto majStarSudocExemp(String marcXml, NoticeBiblioDto noticeBiblioDto, boolean premiereExemplarisationRcrNonDeploye) throws CBSException, DocumentException;
 
     void creerTheseBiblio(NoticeConcrete noticeBiblio, NoticeBiblioDto trace);
 
