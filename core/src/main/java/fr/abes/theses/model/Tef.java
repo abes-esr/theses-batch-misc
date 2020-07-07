@@ -100,11 +100,11 @@ public class Tef {
             if (dateSudocString.isEmpty()) {
                 throw new NullPointerException("No date set in Tef");
             } else {
-                return LocalDateTime.parse(dateSudocString);
+                return LocalDateTime.parse(dateSudocString, formater);
             }
         } else {
             if (dateSudocString.isEmpty()) {
-                return LocalDateTime.parse(majSudocString);
+                return LocalDateTime.parse(majSudocString, formater);
             } else {
                 LocalDateTime majSudoc = LocalDateTime.parse(majSudocString, formater);
                 LocalDateTime dateSudoc = LocalDateTime.parse(dateSudocString, formater);
