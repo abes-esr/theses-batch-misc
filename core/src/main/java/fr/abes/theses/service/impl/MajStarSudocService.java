@@ -311,7 +311,7 @@ public class MajStarSudocService implements IMajStarSudocService {
     public NoticeBiblioDto majStarSudocExemp(String noticeStarXml, NoticeBiblioDto trace, boolean premiereExemplarisationRcrNonDeploye) throws CBSException {
         NoticeConcrete notice = new NoticeConcrete(noticeStarXml);
         String idStar = notice.getNoticeBiblio().findZone("002", 0).findSousZone("$a").getValeur();
-        Zone e856 = findE856IntoXml(noticeStarXml);
+        List<Zone> e856 = findE856IntoXml(noticeStarXml);
 
         try {
             if (!getNumThesePrecedent().equals(idStar)) {
@@ -332,7 +332,7 @@ public class MajStarSudocService implements IMajStarSudocService {
     }
 
 
-    private void rediffuserExemplaireStarDansSudoc(NoticeBiblioDto trace, NoticeConcrete notice, Zone e856, boolean premiereExemplarisationRcrNonDeploye, String idStar) throws CBSException {
+    private void rediffuserExemplaireStarDansSudoc(NoticeBiblioDto trace, NoticeConcrete notice, List<Zone> e856s, boolean premiereExemplarisationRcrNonDeploye, String idStar) throws CBSException {
 
         this.clientExpl.search("che sou " + idStar);
         clientExpl.editer("1");
@@ -343,7 +343,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             exemplaire.addZone("e" + numExemplaireCurrent, "$b", "x");
             exemplaire.addZone("991", "$a", "exemplaire créé automatiquement par STAR");
 
-            if (e856 != null) {
+            for (Zone e856 : e856s) {
                 exemplaire.addZone(e856);
             }
 
@@ -447,28 +447,29 @@ public class MajStarSudocService implements IMajStarSudocService {
         return !zones.isEmpty();
     }
 
-    private Zone findE856IntoXml(String noticeStarXml) {
+    private List<Zone> findE856IntoXml(String noticeStarXml) {
 
         final String regex = "(<datafield tag=\"E856\".+?<\\/datafield>)";
-        final Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
+        final Pattern pattern = Pattern.compile(regex, Pattern.DOTALL | Pattern.MULTILINE);
         final Matcher matcher = pattern.matcher(noticeStarXml);
 
-        Zone zoneE856 = null;
+        List<Zone> zoneE856s = new ArrayList<>();
 
-        if (matcher.find()) {
-            NodeList childNodesE856 = convertStringToDocument(matcher.group(0)).getChildNodes();
-            Node tag = childNodesE856.item(0);
+        while (matcher.find()) {
+                NodeList childNodesE856 = convertStringToDocument(matcher.group(0)).getChildNodes();
+                Node tag = childNodesE856.item(0);
 
-            zoneE856 = new Zone(EnumZones.E856, Notice.getIndicateurs(tag));
+                Zone zoneE856 = new Zone(EnumZones.E856, Notice.getIndicateurs(tag));
 
-            for (int i = 0; i < tag.getChildNodes().getLength(); i++) {
-                if (tag.getChildNodes().item(i).getNodeName().equals("subfield")) {
-                    zoneE856.ajoutSousZone("$" + tag.getChildNodes().item(i).getAttributes().getNamedItem("code").getTextContent(),
-                            tag.getChildNodes().item(i).getTextContent());
+                for (int i = 0; i < tag.getChildNodes().getLength(); i++) {
+                    if ("subfield".equals(tag.getChildNodes().item(i).getNodeName())) {
+                        zoneE856.ajoutSousZone("$" + tag.getChildNodes().item(i).getAttributes().getNamedItem("code").getTextContent(),
+                                tag.getChildNodes().item(i).getTextContent());
+                    }
                 }
-            }
+                zoneE856s.add(zoneE856);
         }
-        return zoneE856;
+        return zoneE856s;
     }
 
     private static Document convertStringToDocument(String xmlStr) {
