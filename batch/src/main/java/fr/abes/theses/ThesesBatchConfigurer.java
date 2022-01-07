@@ -1,6 +1,7 @@
 package fr.abes.theses;
 
 import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
@@ -18,7 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-@Log4j
+@Slf4j
 public class ThesesBatchConfigurer implements BatchConfigurer {
 
     private final EntityManagerFactory entityManagerFactory;

@@ -4,6 +4,7 @@ import fr.abes.theses.configuration.ThesesOracleConfig;
 import fr.abes.theses.listener.DefaultListenerSupport;
 import fr.abes.theses.tasklets.*;
 import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersIncrementer;
 import org.springframework.batch.core.Step;
@@ -24,7 +25,7 @@ import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-@Log4j
+@Slf4j
 @Configuration
 @EnableBatchProcessing
 @Import(ThesesOracleConfig.class)
@@ -127,8 +128,8 @@ public class BatchConfiguration {
 
         return steps.get("diffuserNoticeBiblio").chunk(10)
                 .reader(reader) //on lit iddoc dans star
-                .processor(processor) //on transfo tef to unimarc
-                .writer(writer) //ecrire dans le sudoc + dire dans bdd
+                .processor(processor) //on transfo tef to unimarc + ecrire dans le sudoc
+                .writer(writer) //écrire dans fichier résultat bilan opération
                 .faultTolerant()
                 .retry(Exception.class)
                 .retryLimit(6)
