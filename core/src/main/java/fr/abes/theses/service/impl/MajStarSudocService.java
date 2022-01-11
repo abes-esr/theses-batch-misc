@@ -131,14 +131,18 @@ public class MajStarSudocService implements IMajStarSudocService {
         try {
             clientBiblio.search("che sou " + getNumSource());
             if (clientBiblio.getNbNotices() == 0) {
-                //pas de notice avec recherche sur le num. source donc on lance la recherche sur le num. de thèse (zone unimarc 029)
-                clientBiblio.search("che num " + getNumThese());
-                if (clientBiblio.getNbNotices() >= 1) {
-                    //quand la notice trouvée est une thèse papier, on doit créer la notice biblio electronique
-                    if (!notice.getNoticeBiblio().isTheseElectronique()) {
+                //pas de notice avec recherche sur le num. source donc on lance la recherche sur le num. de thèse (zone unimarc 029 $b)
+                if (getNumThese() != null) {
+                    clientBiblio.search("che num " + getNumThese());
+                    if (clientBiblio.getNbNotices() >= 1) {
+                        //quand la notice trouvée est une thèse papier, on doit créer la notice biblio electronique
+                        if (!notice.getNoticeBiblio().isTheseElectronique()) {
+                            return false;
+                        }
+                    } else {
                         return false;
                     }
-                } else {
+                }else {
                     return false;
                 }
             }
