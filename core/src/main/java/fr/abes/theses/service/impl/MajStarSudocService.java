@@ -15,7 +15,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.dom4j.Node;
+import org.dom4j.tree.DefaultElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -432,12 +434,13 @@ public class MajStarSudocService implements IMajStarSudocService {
 
         while (matcher.find()) {
                 Document document = convertStringToDocument(matcher.group(0));
-                Node tag = document.selectNodes("E856").get(0);
+                Element tag = document.getRootElement();
 
                 Zone zoneE856 = new Zone("E856", TYPE_NOTICE.EXEMPLAIRE, Notice.getIndicateurs(tag));
 
-                for (int i = 0; i < tag.selectNodes("subfield").size(); i++) {
-                    zoneE856.addSubLabel("$" + tag.selectNodes("subfield").get(i).selectNodes("code").get(0).getName(),tag.selectNodes("subfield").get(i).selectNodes("code").get(0).getText());
+                List<Node> nodes = document.selectNodes("/datafield/subfield");
+                for (Node node : nodes) {
+                    zoneE856.addSubLabel("$" + ((DefaultElement) node).attribute("code").getValue(), node.getText());
                 }
                 zoneE856s.add(zoneE856);
         }
