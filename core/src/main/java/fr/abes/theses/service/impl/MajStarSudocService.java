@@ -251,6 +251,7 @@ public class MajStarSudocService implements IMajStarSudocService {
     }
 
     private void traitementPreliminaire(Biblio noticeSudoc, Biblio noticeStar) {
+        noticeSudoc.deleteZone("310");
         noticeSudoc.deleteZone("702");
         noticeSudoc.deleteZone("712");
         noticeStar.deleteZone("702");
