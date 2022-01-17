@@ -1,11 +1,10 @@
 package fr.abes.theses.service.impl;
 
 import fr.abes.cbs.exception.CBSException;
+import fr.abes.cbs.exception.ZoneException;
 import fr.abes.cbs.notices.*;
 import fr.abes.cbs.process.ProcessCBS;
 import fr.abes.cbs.utilitaire.Constants;
-import fr.abes.cbs.zones.enumSousZones.Zone_214;
-import fr.abes.cbs.zones.enumSousZones.Zone_219;
 import fr.abes.cbs.zones.enumZones.EnumZones;
 import fr.abes.theses.dao.impl.DaoProvider;
 import fr.abes.theses.model.dto.NoticeBiblioDto;
@@ -14,26 +13,19 @@ import jdk.jshell.spi.ExecutionControl;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.EnumUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.Node;
+import org.dom4j.tree.DefaultElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import java.io.StringReader;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 @Slf4j
 @Service
@@ -119,8 +111,8 @@ public class MajStarSudocService implements IMajStarSudocService {
     public NoticeBiblioDto majStarSudocBiblio(String noticeStarXml, NoticeBiblioDto trace) {
         try {
             NoticeConcrete notice = new NoticeConcrete(noticeStarXml);
-            this.setNumSource(notice.getNoticeBiblio().findZones("002").get(0).findSousZone("$a").getValeur());
-            this.setNumThese(notice.getNoticeBiblio().findZones("029").get(0).findSousZone("$b").getValeur());
+            this.setNumSource(notice.getNoticeBiblio().findZones("002").get(0).findSubLabel("$a"));
+            this.setNumThese(notice.getNoticeBiblio().findZones("029").get(0).findSubLabel("$b"));
 
             if (noticeBiblioElecFinded(notice)) {
                 fusionNoticeStarEtSudoc(notice, trace);
@@ -141,14 +133,18 @@ public class MajStarSudocService implements IMajStarSudocService {
         try {
             clientBiblio.search("che sou " + getNumSource());
             if (clientBiblio.getNbNotices() == 0) {
-                //pas de notice avec recherche sur le num. source donc on lance la recherche sur le num. de thèse (zone unimarc 029)
-                clientBiblio.search("che num " + getNumThese());
-                if (clientBiblio.getNbNotices() >= 1) {
-                    //quand la notice trouvée est une thèse papier, on doit créer la notice biblio electronique
-                    if (!notice.getNoticeBiblio().isTheseElectronique()) {
+                //pas de notice avec recherche sur le num. source donc on lance la recherche sur le num. de thèse (zone unimarc 029 $b)
+                if (getNumThese() != null) {
+                    clientBiblio.search("che num " + getNumThese());
+                    if (clientBiblio.getNbNotices() >= 1) {
+                        //quand la notice trouvée est une thèse papier, on doit créer la notice biblio electronique
+                        if (!notice.getNoticeBiblio().isTheseElectronique()) {
+                            return false;
+                        }
+                    } else {
                         return false;
                     }
-                } else {
+                }else {
                     return false;
                 }
             }
@@ -255,6 +251,7 @@ public class MajStarSudocService implements IMajStarSudocService {
     }
 
     private void traitementPreliminaire(Biblio noticeSudoc, Biblio noticeStar) {
+        noticeSudoc.deleteZone("310");
         noticeSudoc.deleteZone("702");
         noticeSudoc.deleteZone("712");
         noticeStar.deleteZone("702");
@@ -270,7 +267,6 @@ public class MajStarSudocService implements IMajStarSudocService {
      * @return
      */
     private Biblio traitementSpecifique(Biblio noticeStar, Biblio noticeSudoc, Biblio noticeFusionnee) {
-        traitement219(noticeStar, noticeFusionnee);
         traitementZoneStar(noticeStar, noticeSudoc, noticeFusionnee);
         return noticeFusionnee;
     }
@@ -289,50 +285,32 @@ public class MajStarSudocService implements IMajStarSudocService {
         }
     }
 
-    private void traitement219(Biblio noticeStar, Biblio noticeFusionnee) {
-        List<Zone> zone219s = noticeStar.findZones("219");
-        for (Zone zone219 : zone219s) {
-            List<SousZone> sousZones214 = new ArrayList<>();
-            for (Zone_219 sousZone : EnumUtils.getEnumList(Zone_219.class)) {
-                if (EnumUtils.isValidEnum(Zone_214.class, sousZone.name())) {
-                    SousZone ssZone219 = zone219.findSousZone(sousZone.name());
-                    if (ssZone219 != null) {
-                        sousZones214.add(new SousZone(Zone_214.valueOf(sousZone.name()), ssZone219.getValeur()));
-                    }
-                }
-            }
-            Zone zone214 = new Zone(EnumZones.Z214, sousZones214, zone219.getIndicateurs());
-            noticeFusionnee.deleteZone("214");
-            noticeFusionnee.addZone(zone214);
-        }
-    }
 
     @Override
     public NoticeBiblioDto majStarSudocExemp(String noticeStarXml, NoticeBiblioDto trace, boolean premiereExemplarisationRcrNonDeploye) throws CBSException {
         NoticeConcrete notice = new NoticeConcrete(noticeStarXml);
-        String idStar = notice.getNoticeBiblio().findZone("002", 0).findSousZone("$a").getValeur();
-        List<Zone> e856 = findE856IntoXml(noticeStarXml);
+        String idStar = notice.getNoticeBiblio().findZone("002", 0).findSubLabel("$a");
 
         try {
+            List<Zone> e856 = findE856IntoXml(noticeStarXml);
             if (!getNumThesePrecedent().equals(idStar)) {
                 supprimerExemplaireGenereParStarDansSudoc(idStar);
             }
             setNumThesePrecedent(idStar);
             rediffuserExemplaireStarDansSudoc(trace, notice, e856, premiereExemplarisationRcrNonDeploye, idStar);
-        } catch (CBSException e) {
+        } catch (CBSException | ZoneException e) {
             trace.setRetourSudoc(e.getMessage());
             trace.setIndicSudoc("KO");
-        } catch (IllegalStateException e) {
+        } catch (Exception e) {
             trace.setRetourSudoc(e.getMessage());
             trace.setIndicSudoc("KO");
         }
-
 
         return trace;
     }
 
 
-    private void rediffuserExemplaireStarDansSudoc(NoticeBiblioDto trace, NoticeConcrete notice, List<Zone> e856s, boolean premiereExemplarisationRcrNonDeploye, String idStar) throws CBSException {
+    private void rediffuserExemplaireStarDansSudoc(NoticeBiblioDto trace, NoticeConcrete notice, List<Zone> e856s, boolean premiereExemplarisationRcrNonDeploye, String idStar) throws Exception {
 
         this.clientExpl.search("che sou " + idStar);
         clientExpl.editer("1");
@@ -375,7 +353,7 @@ public class MajStarSudocService implements IMajStarSudocService {
     }
 
     private boolean estExemplaireDuRcr(Exemplaire exemplaire, NoticeBiblioDto trace, boolean premiereExemplarisationRcrNonDeploye) throws CBSException {
-        String rcrExemplaire = exemplaire.findZone("930", 0).findSousZone("$b").getValeur();
+        String rcrExemplaire = exemplaire.findZone("930", 0).findSubLabel("$b");
         if (rcrExemplaire.equals(trace.getCodeEtab())) {
             return true;
         } else {
@@ -388,7 +366,7 @@ public class MajStarSudocService implements IMajStarSudocService {
         }
     }
 
-    private void supprimerExemplaireGenereParStarDansSudoc(String idStar) throws CBSException {
+    private void supprimerExemplaireGenereParStarDansSudoc(String idStar) throws CBSException, ZoneException {
         this.clientExpl.search("che sou " + idStar);
         if (this.clientExpl.getNbNotices() == 1) {
 
@@ -447,7 +425,7 @@ public class MajStarSudocService implements IMajStarSudocService {
         return !zones.isEmpty();
     }
 
-    private List<Zone> findE856IntoXml(String noticeStarXml) {
+    private List<Zone> findE856IntoXml(String noticeStarXml) throws ZoneException {
 
         final String regex = "(<datafield tag=\"E856\".+?<\\/datafield>)";
         final Pattern pattern = Pattern.compile(regex, Pattern.DOTALL | Pattern.MULTILINE);
@@ -456,16 +434,14 @@ public class MajStarSudocService implements IMajStarSudocService {
         List<Zone> zoneE856s = new ArrayList<>();
 
         while (matcher.find()) {
-                NodeList childNodesE856 = convertStringToDocument(matcher.group(0)).getChildNodes();
-                Node tag = childNodesE856.item(0);
+                Document document = convertStringToDocument(matcher.group(0));
+                Element tag = document.getRootElement();
 
-                Zone zoneE856 = new Zone(EnumZones.E856, Notice.getIndicateurs(tag));
+                Zone zoneE856 = new Zone("E856", TYPE_NOTICE.EXEMPLAIRE, Notice.getIndicateurs(tag));
 
-                for (int i = 0; i < tag.getChildNodes().getLength(); i++) {
-                    if ("subfield".equals(tag.getChildNodes().item(i).getNodeName())) {
-                        zoneE856.ajoutSousZone("$" + tag.getChildNodes().item(i).getAttributes().getNamedItem("code").getTextContent(),
-                                tag.getChildNodes().item(i).getTextContent());
-                    }
+                List<Node> nodes = document.selectNodes("/datafield/subfield");
+                for (Node node : nodes) {
+                    zoneE856.addSubLabel("$" + ((DefaultElement) node).attribute("code").getValue(), node.getText());
                 }
                 zoneE856s.add(zoneE856);
         }
@@ -473,11 +449,8 @@ public class MajStarSudocService implements IMajStarSudocService {
     }
 
     private static Document convertStringToDocument(String xmlStr) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder;
         try {
-            builder = factory.newDocumentBuilder();
-            return builder.parse(new InputSource(new StringReader(xmlStr)));
+            return DocumentHelper.parseText(xmlStr);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,6 +1,7 @@
 package fr.abes.theses;
 
 
+import fr.abes.cbs.exception.ZoneException;
 import fr.abes.cbs.notices.Biblio;
 import fr.abes.cbs.utilitaire.Constants;
 import fr.abes.theses.dao.impl.DaoProvider;
@@ -36,7 +37,7 @@ public class MajStarSudocServiceTest {
     }
 
     @Test
-    void fusionTheseTest() {
+    void fusionTheseTest() throws ZoneException {
         Biblio noticeStar = new Biblio(Constants.STR_1F + "008 $aOax3\r" +
                 "200 1#$aTitre notice Star$eComplément titre notice Star$fMention de responsabilité notice Star\r" +
                 "610 0#$aTraits spécifiques humains\r" +

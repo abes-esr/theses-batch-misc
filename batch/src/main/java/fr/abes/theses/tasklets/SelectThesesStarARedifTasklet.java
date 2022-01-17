@@ -111,6 +111,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                     "&fl=SGRCRSudoc,id" +
                     "&wt=json";
         }
+        log.info("requete pour select theses : " + requete);
         return requete;
     }
 
