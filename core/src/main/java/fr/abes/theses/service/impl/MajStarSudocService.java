@@ -325,7 +325,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             if (estExemplaireDuRcr(exemplaire, trace, premiereExemplarisationRcrNonDeploye)) {
                 try {
                     this.clientExpl.creerExemplaire(numExemplaireCurrent);
-                    String exempToWrite = exemplaire.toString();
+                    String exempToWrite = exemplaire.toString().substring(1, exemplaire.toString().length() - 1);
                     this.clientExpl.newExemplaire(exempToWrite);
                     String resultatCreation = this.clientExpl.editer("1");
                     List<Exemplaire> exemplairesCree = NoticeConcrete.listeExemplaireUnimarc(resultatCreation);
