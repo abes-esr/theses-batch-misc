@@ -1,11 +1,11 @@
 package fr.abes.theses.service.impl;
 
 import fr.abes.cbs.exception.CBSException;
+import fr.abes.cbs.exception.NoticeException;
 import fr.abes.cbs.exception.ZoneException;
 import fr.abes.cbs.notices.*;
 import fr.abes.cbs.process.ProcessCBS;
 import fr.abes.cbs.utilitaire.Constants;
-import fr.abes.cbs.zones.enumZones.EnumZones;
 import fr.abes.theses.dao.impl.DaoProvider;
 import fr.abes.theses.model.dto.NoticeBiblioDto;
 import fr.abes.theses.service.IMajStarSudocService;
@@ -13,10 +13,7 @@ import jdk.jshell.spi.ExecutionControl;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Node;
+import org.dom4j.*;
 import org.dom4j.tree.DefaultElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -119,7 +116,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             } else {
                 creerTheseBiblio(notice, trace);
             }
-        } catch (CBSException ex) {
+        } catch (CBSException | ZoneException | DocumentException | NoticeException ex) {
             log.error("Erreur dans la création de la notice bibliographique " + ex.getMessage());
             trace.setIndicSudoc("KO");
             trace.setRetourSudoc(ex.getMessage());
@@ -247,7 +244,7 @@ public class MajStarSudocService implements IMajStarSudocService {
 
         noticeFusionnee = traitementSpecifique(noticeStar, noticeSudoc, noticeFusionnee);
 
-        return noticeFusionnee.toString().substring(1, noticeFusionnee.toString().length() - 1);
+        return noticeFusionnee.toString();
     }
 
     private void traitementPreliminaire(Biblio noticeSudoc, Biblio noticeStar) {
@@ -287,7 +284,7 @@ public class MajStarSudocService implements IMajStarSudocService {
 
 
     @Override
-    public NoticeBiblioDto majStarSudocExemp(String noticeStarXml, NoticeBiblioDto trace, boolean premiereExemplarisationRcrNonDeploye) throws CBSException {
+    public NoticeBiblioDto majStarSudocExemp(String noticeStarXml, NoticeBiblioDto trace, boolean premiereExemplarisationRcrNonDeploye) throws CBSException, ZoneException, DocumentException, NoticeException {
         NoticeConcrete notice = new NoticeConcrete(noticeStarXml);
         String idStar = notice.getNoticeBiblio().findZone("002", 0).findSubLabel("$a");
 
@@ -492,13 +489,13 @@ public class MajStarSudocService implements IMajStarSudocService {
     }
 
     @Override
-    public void disconnectBiblio() {
+    public void disconnectBiblio() throws CBSException {
         log.info("Déconnexion du Sudoc login M4001");
         this.clientBiblio.disconnect();
     }
 
     @Override
-    public void disconnectExemp() {
+    public void disconnectExemp() throws CBSException {
         if (this.clientExpl.getClientCBS().isConnected()) {
             log.info("Déconnexion du client exemplarisation");
             this.clientExpl.disconnect();
