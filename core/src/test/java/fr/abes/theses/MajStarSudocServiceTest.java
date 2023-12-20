@@ -38,17 +38,17 @@ public class MajStarSudocServiceTest {
 
     @Test
     void fusionTheseTest() throws ZoneException {
-        Biblio noticeStar = new Biblio(Constants.STR_1F + "008 $aOax3\r" +
+        Biblio noticeStar = new Biblio( "008 $aOax3\r" +
                 "200 1#$aTitre notice Star$eComplément titre notice Star$fMention de responsabilité notice Star\r" +
                 "610 0#$aTraits spécifiques humains\r" +
                 "610 0#$aImagerie génétique\r" +
-                "702 #1$3456789123$4888\r" + Constants.STR_1E);
+                "702 #1$3456789123$4888\r");
 
-        Biblio noticeSudoc = new Biblio(Constants.STR_1F + "008 $aAax3\r" +
+        Biblio noticeSudoc = new Biblio( "008 $aAax3\r" +
                 "200 ##$aTitre notice Sudoc$eComplément titre notice Sudoc$fMention de responsabilité notice Sudoc\r" +
                 "610 0#$aAsymétries cérébrales\r" +
                 "702 #1$3123456789$4111\r" +
-                "702 #1$3987654321$4999\r" + Constants.STR_1E);
+                "702 #1$3987654321$4999\r");
 
         assertThat(service.fusionThese(noticeStar, noticeSudoc)).isEqualTo("008 $aOax3\r" +
                 "200 ##$aTitre notice Sudoc$eComplément titre notice Sudoc$fMention de responsabilité notice Sudoc\r" +
