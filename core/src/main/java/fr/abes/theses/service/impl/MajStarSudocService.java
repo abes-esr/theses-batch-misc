@@ -251,8 +251,6 @@ public class MajStarSudocService implements IMajStarSudocService {
         noticeSudoc.deleteZone("310");
         noticeSudoc.deleteZone("702");
         noticeSudoc.deleteZone("712");
-        noticeSudoc.deleteZone("000");
-        noticeSudoc.deleteZone("00A");
         noticeStar.deleteZone("702");
         noticeStar.deleteZone("712");
     }
