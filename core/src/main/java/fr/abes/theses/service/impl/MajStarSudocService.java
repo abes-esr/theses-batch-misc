@@ -200,7 +200,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             trace.setRetourSudoc("Notice biblio fusionnée");
             trace.setDateModification(new Date());
         } catch (Exception ex) {
-            log.info("fusionNoticeStarEtSudoc " + ex.getMessage());
+            log.error("fusionNoticeStarEtSudoc " + ex.getMessage());
             trace.setIndicSudoc("KO");
             trace.setRetourSudoc(ex.getMessage());
         }
@@ -244,7 +244,7 @@ public class MajStarSudocService implements IMajStarSudocService {
 
         noticeFusionnee = traitementSpecifique(noticeStar, noticeSudoc, noticeFusionnee);
 
-        return noticeFusionnee.toString();
+        return noticeFusionnee.toString().substring(1, noticeFusionnee.toString().length() - 1);
     }
 
     private void traitementPreliminaire(Biblio noticeSudoc, Biblio noticeStar) {
@@ -265,6 +265,10 @@ public class MajStarSudocService implements IMajStarSudocService {
      */
     private Biblio traitementSpecifique(Biblio noticeStar, Biblio noticeSudoc, Biblio noticeFusionnee) {
         traitementZoneStar(noticeStar, noticeSudoc, noticeFusionnee);
+
+        String ppn = noticeFusionnee.getListeZones().get("700").get(0).findSubLabel("3").split(Constants.STR_1B)[0];
+        noticeFusionnee.getListeZones().get("700").get(0).editSubLabel("$3", ppn);
+
         return noticeFusionnee;
     }
 
