@@ -265,10 +265,6 @@ public class MajStarSudocService implements IMajStarSudocService {
      */
     private Biblio traitementSpecifique(Biblio noticeStar, Biblio noticeSudoc, Biblio noticeFusionnee) {
         traitementZoneStar(noticeStar, noticeSudoc, noticeFusionnee);
-
-        String ppn = noticeFusionnee.getListeZones().get("700").get(0).findSubLabel("3").split(Constants.STR_1B)[0];
-        noticeFusionnee.getListeZones().get("700").get(0).editSubLabel("$3", ppn);
-
         return noticeFusionnee;
     }
 
