@@ -116,7 +116,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             } else {
                 creerTheseBiblio(notice, trace);
             }
-        } catch (CBSException | ZoneException | DocumentException | NoticeException ex) {
+        } catch (CBSException /*| ZoneException | DocumentException | NoticeException*/ ex) {
             log.error("Erreur dans la création de la notice bibliographique " + ex.getMessage());
             trace.setIndicSudoc("KO");
             trace.setRetourSudoc(ex.getMessage());
@@ -200,7 +200,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             trace.setRetourSudoc("Notice biblio fusionnée");
             trace.setDateModification(new Date());
         } catch (Exception ex) {
-            log.info("fusionNoticeStarEtSudoc " + ex.getMessage());
+            log.error("fusionNoticeStarEtSudoc " + ex.getMessage());
             trace.setIndicSudoc("KO");
             trace.setRetourSudoc(ex.getMessage());
         }
@@ -251,6 +251,8 @@ public class MajStarSudocService implements IMajStarSudocService {
         noticeSudoc.deleteZone("310");
         noticeSudoc.deleteZone("702");
         noticeSudoc.deleteZone("712");
+        noticeSudoc.deleteZone("000");
+        noticeSudoc.deleteZone("00A");
         noticeStar.deleteZone("702");
         noticeStar.deleteZone("712");
     }
@@ -265,6 +267,10 @@ public class MajStarSudocService implements IMajStarSudocService {
      */
     private Biblio traitementSpecifique(Biblio noticeStar, Biblio noticeSudoc, Biblio noticeFusionnee) {
         traitementZoneStar(noticeStar, noticeSudoc, noticeFusionnee);
+
+        String ppn = noticeFusionnee.getListeZones().get("700").get(0).findSubLabel("3").split(Constants.STR_1B)[0];
+        noticeFusionnee.getListeZones().get("700").get(0).editSubLabel("$3", ppn);
+
         return noticeFusionnee;
     }
 
