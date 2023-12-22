@@ -116,7 +116,7 @@ public class MajStarSudocService implements IMajStarSudocService {
             } else {
                 creerTheseBiblio(notice, trace);
             }
-        } catch (CBSException /*| ZoneException | DocumentException | NoticeException*/ ex) {
+        } catch (CBSException | ZoneException | DocumentException | NoticeException ex) {
             log.error("Erreur dans la création de la notice bibliographique " + ex.getMessage());
             trace.setIndicSudoc("KO");
             trace.setRetourSudoc(ex.getMessage());
@@ -244,7 +244,7 @@ public class MajStarSudocService implements IMajStarSudocService {
 
         noticeFusionnee = traitementSpecifique(noticeStar, noticeSudoc, noticeFusionnee);
 
-        return noticeFusionnee.toString();
+        return noticeFusionnee.toString().substring(1, noticeFusionnee.toString().length() - 1);
     }
 
     private void traitementPreliminaire(Biblio noticeSudoc, Biblio noticeStar) {
