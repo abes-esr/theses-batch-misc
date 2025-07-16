@@ -50,8 +50,8 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
     @Value("${sudoc.passwdM4001}")
     private String passwd;
 
-    private final String urlDiffusionTotale = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=SGcodeEtab%20asc&wt=json";
-    private final String urlDiffusionExemp = "/solr1/select/?q=SGindicCines:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]&fl=SGRCRSudoc,id&sort=id%20asc&wt=json";
+    private final String urlDiffusionTotale = "/select/?q=SGindicCines:OK+SGetabProd:oui&fl=id,SGetatWF,SGcodeEtab&sort=SGcodeEtab%20asc&wt=json";
+    private final String urlDiffusionExemp = "/select/?q=SGindicCines:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]&fl=SGRCRSudoc,id&sort=id%20asc&wt=json";
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
@@ -100,13 +100,13 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
     private String getRequeteParIdThese() {
         String requete;
         if (jobName.equals("diffuserThesesVersSudoc")) {
-            requete = urlSolr + "/solr1/select/?" +
+            requete = urlSolr + "/select/?" +
                     "q=SGindicCines:OK+SGetabProd:oui" + "+id:" + idThese +
                     "&fl=id,SGetatWF,SGcodeEtab" +
                     "&sort=id%20asc" +
                     "&wt=json";
         } else {
-            requete = urlSolr + "/solr1/select/?" +
+            requete = urlSolr + "/select/?" +
                     "q=SGindicCines:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]" + "+id:" + idThese +
                     "&fl=SGRCRSudoc,id" +
                     "&wt=json";
