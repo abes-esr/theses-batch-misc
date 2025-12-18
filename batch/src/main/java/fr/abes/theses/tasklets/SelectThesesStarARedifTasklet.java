@@ -116,12 +116,14 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                     "q=SGindicCines:OK+SGetabProd:oui" + "+id:(" + idsTheses + ")" +
                     "&fl=id,SGetatWF,SGcodeEtab" +
                     "&sort=id%20asc" +
+                    "&rows=1000000" +
                     "&wt=json";
         } else {
             String idsTheses = getIdsEtSaveDansContext(chunkContext, "exempl");
             requete = urlSolr + "/select/?" +
                     "q=SGindicCines:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]" + "+id:(" + idsTheses + ")" +
                     "&fl=SGRCRSudoc,id" +
+                    "&rows=1000000" +
                     "&wt=json";
         }
         log.info("requete pour select theses : " + requete);
