@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>fr.abes.these-batch</groupId>
-        <artifactId>batch-batch-misc</artifactId>
+        <artifactId>batch-rediffusion</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>core</artifactId>
