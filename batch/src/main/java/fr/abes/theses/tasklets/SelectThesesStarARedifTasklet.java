@@ -16,15 +16,19 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
 public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionListener {
+
     @Autowired
     @Getter
     ServiceProvider service;
@@ -43,6 +47,9 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
 
     @Value("${idThese}")
     private String idThese;
+
+    @Value("${batch_bdd}")
+    private boolean batchBdd;
 
     @Value("${sudoc.loginM4001}")
     private String login;
@@ -76,6 +83,10 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                 requete = getRequeteParIdThese();
             }
 
+            if (batchBdd) {
+                requete = getRequeteBdd(chunkContext);
+            }
+
             JSONArray docs = getJson(requete);
 
             if (docs.isEmpty()) {
@@ -95,6 +106,39 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
             stepContribution.setExitStatus(ExitStatus.FAILED);
         }
         return RepeatStatus.FINISHED;
+    }
+
+    private String getRequeteBdd(ChunkContext chunkContext) {
+        String requete;
+        if (jobName.equals("diffuserThesesVersSudoc")) {
+            String idsTheses = getIdsEtSaveDansContext(chunkContext, "biblio");
+            requete = urlSolr + "/select/?" +
+                    "q=SGindicCines:OK+SGetabProd:oui" + "+id:(" + idsTheses + ")" +
+                    "&fl=id,SGetatWF,SGcodeEtab" +
+                    "&sort=id%20asc" +
+                    "&wt=json";
+        } else {
+            String idsTheses = getIdsEtSaveDansContext(chunkContext, "exempl");
+            requete = urlSolr + "/select/?" +
+                    "q=SGindicCines:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]" + "+id:(" + idsTheses + ")" +
+                    "&fl=SGRCRSudoc,id" +
+                    "&wt=json";
+        }
+        log.info("requete pour select theses : " + requete);
+        return requete;
+    }
+
+    private String getIdsEtSaveDansContext(ChunkContext chunkContext, String niveau) {
+        List<Integer> ids = getService().getDocumentService().getIdDocAEnvoyerAuSudoc(niveau);
+
+        chunkContext.getStepContext()
+                .getStepExecution()
+                .getJobExecution()
+                .getExecutionContext()
+                .put("ids_"+niveau, ids);
+
+        String idsTheses = ids.stream().map(Object::toString).collect(Collectors.joining("%20OR%20"));
+        return idsTheses;
     }
 
     private String getRequeteParIdThese() {

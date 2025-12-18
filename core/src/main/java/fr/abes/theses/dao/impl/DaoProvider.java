@@ -1,6 +1,7 @@
 package fr.abes.theses.dao.impl;
 
 import fr.abes.theses.dao.IDocumentDao;
+import fr.abes.theses.dao.IDocumentEnvoiSudoc;
 import fr.abes.theses.dao.INoticeBiblioDao;
 import fr.abes.theses.dao.IZonePrioritaireDao;
 import lombok.Getter;
@@ -19,4 +20,7 @@ public class DaoProvider {
 
     @Resource
     private IZonePrioritaireDao zonePrioritaire;
+
+    @Resource
+    private IDocumentEnvoiSudoc documentEnvoiSudoc;
 }
