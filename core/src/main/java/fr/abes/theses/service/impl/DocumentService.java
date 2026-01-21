@@ -5,9 +5,9 @@ import fr.abes.theses.model.entities.Document;
 import fr.abes.theses.service.IDocumentService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,8 +29,8 @@ public class DocumentService implements IDocumentService {
     }
 
     @Override
-    public List<Integer> getIdDocAEnvoyerAuSudoc(String niveau) {
-        return getDao().getDocumentEnvoiSudoc().findAllByNiveau(niveau).stream().map(a -> a.getIddoc()).collect(Collectors.toList());
+    public List<Integer> getIdDocAEnvoyerAuSudoc(String niveau, Integer maxResult) {
+        return getDao().getDocumentEnvoiSudoc().findAllByNiveau(niveau, Pageable.ofSize(maxResult)).stream().map(a -> a.getIddoc()).collect(Collectors.toList());
     }
 
     public void deleteByIddocDeDocumentEnvoiSudoc(Integer iddoc, String niveau) {

@@ -16,7 +16,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -84,7 +83,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
             }
 
             if (batchBdd) {
-                requete = getRequeteBdd(chunkContext);
+                requete = getRequeteBdd(chunkContext, rowsNumber);
             }
 
             JSONArray docs = getJson(requete);
@@ -108,10 +107,10 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
         return RepeatStatus.FINISHED;
     }
 
-    private String getRequeteBdd(ChunkContext chunkContext) {
+    private String getRequeteBdd(ChunkContext chunkContext, Integer rowsNumber) {
         String requete;
         if (jobName.equals("diffuserThesesVersSudoc")) {
-            String idsTheses = getIdsEtSaveDansContext(chunkContext, "biblio");
+            String idsTheses = getIdsEtSaveDansContext(chunkContext, "biblio", rowsNumber);
             requete = urlSolr + "/select/?" +
                     "q=SGindicCines:OK+SGetabProd:oui" + "+id:(" + idsTheses + ")" +
                     "&fl=id,SGetatWF,SGcodeEtab" +
@@ -119,7 +118,7 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                     "&rows=1000000" +
                     "&wt=json";
         } else {
-            String idsTheses = getIdsEtSaveDansContext(chunkContext, "exempl");
+            String idsTheses = getIdsEtSaveDansContext(chunkContext, "exempl", rowsNumber);
             requete = urlSolr + "/select/?" +
                     "q=SGindicCines:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]" + "+id:(" + idsTheses + ")" +
                     "&fl=SGRCRSudoc,id" +
@@ -130,8 +129,8 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
         return requete;
     }
 
-    private String getIdsEtSaveDansContext(ChunkContext chunkContext, String niveau) {
-        List<Integer> ids = getService().getDocumentService().getIdDocAEnvoyerAuSudoc(niveau);
+    private String getIdsEtSaveDansContext(ChunkContext chunkContext, String niveau, Integer rowsNumber) {
+        List<Integer> ids = getService().getDocumentService().getIdDocAEnvoyerAuSudoc(niveau, rowsNumber);
 
         chunkContext.getStepContext()
                 .getStepExecution()
