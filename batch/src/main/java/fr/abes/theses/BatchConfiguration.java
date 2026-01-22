@@ -3,7 +3,6 @@ package fr.abes.theses;
 import fr.abes.theses.configuration.ThesesOracleConfig;
 import fr.abes.theses.listener.DefaultListenerSupport;
 import fr.abes.theses.tasklets.*;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersIncrementer;
@@ -70,7 +69,8 @@ public class BatchConfiguration {
                 .from(stepAuthentifierToSudoc()).on("COMPLETED").to(stepDiffuserNoticeBiblio(reader, processor, writer))
                 .from(stepDiffuserNoticeBiblio(reader, processor, writer)).on("FAILED").to(stepDisconnect())
                 .from(stepDiffuserNoticeBiblio(reader, processor, writer)).on("COMPLETED").to(stepGenererFichier())
-                .from(stepGenererFichier()).next(stepDisconnect())
+                .from(stepGenererFichier()).on("*").to(stepSupprimerIdsEnvoiSudocBdd())
+                .next(stepDisconnect())
                 .build().build();
     }
 
@@ -89,7 +89,8 @@ public class BatchConfiguration {
                 .from(stepSelectNoticesBibliosATraiter()).on("COMPLETED").to(stepDiffuserExemp(reader, processor, writer))
                 .from(stepDiffuserExemp(reader, processor, writer)).on("FAILED").end()
                 .from(stepDiffuserExemp(reader, processor, writer)).on("COMPLETED").to(stepGenererFichier())
-                .from(stepGenererFichier()).end()
+                .from(stepGenererFichier()).on("*").to(stepSupprimerIdsEnvoiSudocBdd())
+                .end()
                 .build();
     }
 
@@ -108,6 +109,12 @@ public class BatchConfiguration {
     public Step stepSelectNoticesBibliosATraiter() {
         return steps.get("selectNoticesBibliosATraiter").allowStartIfComplete(true)
                 .tasklet(selectNoticesBibliosATraiter()).build();
+    }
+
+    @Bean
+    public Step stepSupprimerIdsEnvoiSudocBdd() {
+        return steps.get("stepSupprimerIdsEnvoiSudocBdd")
+                .tasklet(supprimerIdsEnvoiSudocBddTasklet()).build();
     }
 
     @Bean
@@ -190,6 +197,11 @@ public class BatchConfiguration {
     @Bean
     public SelectNoticesBibliosATraiter selectNoticesBibliosATraiter() {
         return new SelectNoticesBibliosATraiter();
+    }
+
+    @Bean
+    public SupprimerIdsEnvoiSudocBddTasklet supprimerIdsEnvoiSudocBddTasklet() {
+        return new SupprimerIdsEnvoiSudocBddTasklet();
     }
 
     @Bean

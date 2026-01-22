@@ -21,10 +21,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
 public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionListener {
+
     @Autowired
     @Getter
     ServiceProvider service;
@@ -43,6 +46,9 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
 
     @Value("${idThese}")
     private String idThese;
+
+    @Value("${batch_bdd}")
+    private boolean batchBdd;
 
     @Value("${sudoc.loginM4001}")
     private String login;
@@ -76,6 +82,10 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
                 requete = getRequeteParIdThese();
             }
 
+            if (batchBdd) {
+                requete = getRequeteBdd(chunkContext, rowsNumber);
+            }
+
             JSONArray docs = getJson(requete);
 
             if (docs.isEmpty()) {
@@ -95,6 +105,41 @@ public class SelectThesesStarARedifTasklet implements Tasklet, StepExecutionList
             stepContribution.setExitStatus(ExitStatus.FAILED);
         }
         return RepeatStatus.FINISHED;
+    }
+
+    private String getRequeteBdd(ChunkContext chunkContext, Integer rowsNumber) {
+        String requete;
+        if (jobName.equals("diffuserThesesVersSudoc")) {
+            String idsTheses = getIdsEtSaveDansContext(chunkContext, "biblio", rowsNumber);
+            requete = urlSolr + "/select/?" +
+                    "q=SGindicCines:OK+SGetabProd:oui" + "+id:(" + idsTheses + ")" +
+                    "&fl=id,SGetatWF,SGcodeEtab" +
+                    "&sort=id%20asc" +
+                    "&rows=1000000" +
+                    "&wt=json";
+        } else {
+            String idsTheses = getIdsEtSaveDansContext(chunkContext, "exempl", rowsNumber);
+            requete = urlSolr + "/select/?" +
+                    "q=SGindicCines:OK+SGetabProd:oui+SGRCRSudoc:[''%20TO%20*]" + "+id:(" + idsTheses + ")" +
+                    "&fl=SGRCRSudoc,id" +
+                    "&rows=1000000" +
+                    "&wt=json";
+        }
+        log.info("requete pour select theses : " + requete);
+        return requete;
+    }
+
+    private String getIdsEtSaveDansContext(ChunkContext chunkContext, String niveau, Integer rowsNumber) {
+        List<Integer> ids = getService().getDocumentService().getIdDocAEnvoyerAuSudoc(niveau, rowsNumber);
+
+        chunkContext.getStepContext()
+                .getStepExecution()
+                .getJobExecution()
+                .getExecutionContext()
+                .put("ids_"+niveau, ids);
+
+        String idsTheses = ids.stream().map(Object::toString).collect(Collectors.joining("%20OR%20"));
+        return idsTheses;
     }
 
     private String getRequeteParIdThese() {
