@@ -69,7 +69,8 @@ public class BatchConfiguration {
                 .from(stepAuthentifierToSudoc()).on("COMPLETED").to(stepDiffuserNoticeBiblio(reader, processor, writer))
                 .from(stepDiffuserNoticeBiblio(reader, processor, writer)).on("FAILED").to(stepDisconnect())
                 .from(stepDiffuserNoticeBiblio(reader, processor, writer)).on("COMPLETED").to(stepGenererFichier())
-                .from(stepGenererFichier()).on("*").to(stepSupprimerIdsEnvoiSudocBdd())
+                .from(stepGenererFichier()).on("*").to(stepAjouteDemandeExemplEnvoiSudocBdd())
+                .from(stepAjouteDemandeExemplEnvoiSudocBdd()).on("*").to(stepSupprimerIdsEnvoiSudocBdd())
                 .next(stepDisconnect())
                 .build().build();
     }
@@ -115,6 +116,12 @@ public class BatchConfiguration {
     public Step stepSupprimerIdsEnvoiSudocBdd() {
         return steps.get("stepSupprimerIdsEnvoiSudocBdd")
                 .tasklet(supprimerIdsEnvoiSudocBddTasklet()).build();
+    }
+
+    @Bean
+    public Step stepAjouteDemandeExemplEnvoiSudocBdd() {
+        return steps.get("stepAjouteDemandeExemplEnvoiSudocBdd")
+                .tasklet(ajouteDemandeExemplTasklet()).build();
     }
 
     @Bean
@@ -202,6 +209,11 @@ public class BatchConfiguration {
     @Bean
     public SupprimerIdsEnvoiSudocBddTasklet supprimerIdsEnvoiSudocBddTasklet() {
         return new SupprimerIdsEnvoiSudocBddTasklet();
+    }
+
+    @Bean
+    public AjouteDemandeExemplTasklet ajouteDemandeExemplTasklet() {
+        return new AjouteDemandeExemplTasklet();
     }
 
     @Bean

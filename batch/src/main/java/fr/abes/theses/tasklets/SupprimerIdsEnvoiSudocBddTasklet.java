@@ -19,7 +19,6 @@ public class SupprimerIdsEnvoiSudocBddTasklet implements Tasklet {
     @Getter
     ServiceProvider service;
 
-    private Integer jobId;
     private String jobName;
 
 
@@ -29,7 +28,6 @@ public class SupprimerIdsEnvoiSudocBddTasklet implements Tasklet {
         log.info("Suppression des ids envoi Sudoc dans la BDD");
 
         StepExecution stepExecution = chunkContext.getStepContext().getStepExecution();
-        jobId = stepExecution.getJobExecutionId().intValue();
         jobName = stepExecution.getJobExecution().getJobInstance().getJobName();
 
         if (jobName.equals("diffuserThesesVersSudoc")) {
