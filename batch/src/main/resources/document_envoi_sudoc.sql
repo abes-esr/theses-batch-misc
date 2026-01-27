@@ -6,12 +6,19 @@ CREATE TABLE document_envoi_sudoc
     CONSTRAINT document_envoi_sudoc_pk PRIMARY KEY (id)
 );
 
-CREATE OR REPLACE TRIGGER trg_keep_latest
-AFTER INSERT ON document_envoi_sudoc
-FOR EACH ROW
+create or replace TRIGGER trg_keep_latest_document_envoi_sudoc
+FOR INSERT ON document_envoi_sudoc
+COMPOUND TRIGGER
+
+AFTER STATEMENT IS
 BEGIN
-DELETE FROM document_envoi_sudoc
-WHERE IDDoc = :NEW.IDDoc
-  AND Niveau = :NEW.Niveau
-  AND ID <> :NEW.ID;
-END;
+DELETE FROM document_envoi_sudoc d
+WHERE EXISTS (
+    SELECT 1 FROM document_envoi_sudoc d2
+    WHERE d.iddoc = d2.iddoc
+      AND d.niveau = d2.niveau
+      AND d.id < d2.id
+);
+END AFTER STATEMENT;
+
+END trg_keep_latest_document_envoi_sudoc;
